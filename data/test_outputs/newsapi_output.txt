@@ -1,0 +1,121 @@
+=== NewsAPI data validation ===
+
+--- /v2/everything: 'Apple stock' (5 most recent) ---
+  totalResults: 848
+
+  [1] title:       PYPL ALERT: Hagens Berman Alerts PayPal (PYPL) Investors to Securities Class Action Following CEO Ouster and $10B Market Cap Wipeout
+       source:      GlobeNewswire
+       publishedAt: 2026-03-19T23:48:00Z
+       description: Investors who lost money in PYPL after its stock plunged due to allegedly misleading financial statements are urged to contact Hagens Berman....
+       url:         https://www.globenewswire.com/news-release/2026/03/19/3259519/32716/en/PYPL-ALERT-Hagens-Berman-Alerts-PayPal-PYPL-Investors-to-Securities-Class-Action-Following-CEO-Ouster-and-10B-Market-Cap-Wipeout.html
+
+  [2] title:       These 3 ASX ETFs can help protect your portfolio in 2026
+       source:      Motley Fool Australia
+       publishedAt: 2026-03-19T21:00:00Z
+       description: The US isn't looking quite as appealing as it did...
+The post These 3 ASX ETFs can help protect your portfolio in 2026 appeared first on The Motley Fool Australia.
+       url:         https://www.fool.com.au/?p=1833324
+
+  [3] title:       Indiana Sports Betting: IN Sportsbooks, Apps, and Promos
+       source:      Fox Sports
+       publishedAt: 2026-03-19T20:31:49Z
+       description: Compare the best Indiana sportsbooks and betting apps for 2026. Learn how to sign up, claim sportsbook promos, and legally bet on sports in IN.
+       url:         https://www.foxsports.com/stories/betting/indiana-sports-betting
+
+  [4] title:       How I Configure My Phone Camera Apps for Snapshots ⭐️
+       source:      Thurrott.com
+       publishedAt: 2026-03-19T20:11:26Z
+       description: Like most of you, I take thousands of photos each year with my phones, most of which are simple snapshots.
+The post How I Configure My Phone Camera Apps for Snapshots ⭐️ appeared first on Thurrott.com.
+       url:         https://www.thurrott.com/music-videos/333991/how-i-configure-my-phone-camera-apps-for-snapshots
+
+  [5] title:       Which Brokers Have AI Trading Features?
+       source:      NerdWallet
+       publishedAt: 2026-03-19T19:24:08Z
+       description: Some of the brokers we review can place trades for you with just a text prompt. Here's the scoop on their AI trading assistants.
+       url:         https://www.nerdwallet.com/investing/learn/ai-trading-brokers#article
+
+
+--- /v2/top-headlines: US business (5 articles) ---
+  totalResults: 53
+
+  [1] title:       Super Micro Computer Employees Arrested for Alleged Sales to China - WSJ
+       source:      The Wall Street Journal
+       publishedAt: 2026-03-20T03:19:00Z
+       description: None
+       url:         https://www.wsj.com/tech/super-micro-computer-employees-arrested-for-alleged-sales-to-china-45a2bd73
+
+  [2] title:       Stock futures tick higher, but S&P 500 heads for fourth losing week in a row amid rising oil prices: Live updates - CNBC
+       source:      CNBC
+       publishedAt: 2026-03-20T02:37:00Z
+       description: The major averages posted back-to-back losses on Thursday, placing the S&P 500 on track for a fourth consecutive losing week.
+       url:         https://www.cnbc.com/2026/03/19/stock-market-today-live-updates.html
+
+  [3] title:       Oil Prices Slide as Netanyahu Signals Iran War Could End Soon - Crude Oil Prices Today | OilPrice.com
+       source:      OilPrice.com
+       publishedAt: 2026-03-20T02:12:45Z
+       description: Oil prices fell sharply after Netanyahu suggested the Iran war may end sooner than expected.
+       url:         https://oilprice.com/Latest-Energy-News/World-News/Oil-Prices-Slide-as-Netanyahu-Signals-Iran-War-Could-End-Soon.html
+
+  [4] title:       FDA Approves New High-Dose Wegovy in US For Boosted Weight Loss - ScienceAlert
+       source:      ScienceAlert
+       publishedAt: 2026-03-20T00:36:44Z
+       description: (AP) – Federal regulators on Thursday approved a new higher-dose version of the blockbuster obesity drug Wegovy that may help users lose more weight and keep it off.
+       url:         https://www.sciencealert.com/fda-approves-new-high-dose-wegovy-in-us-for-boosted-weight-loss
+
+  [5] title:       The Worst-Case Economic Outcome of Trump’s Iran War - The Bulwark
+       source:      The Bulwark
+       publishedAt: 2026-03-20T00:25:53Z
+       description: Oil shocks don’t only raise prices. They also destroy growth and jobs.
+       url:         https://www.thebulwark.com/p/global-recession-worst-case-economic-outcome-of-trump-iran-war
+
+
+--- /v2/everything: 'stock market sentiment' (last 7 days, 5 articles) ---
+  from: 2026-03-14
+  totalResults: 218
+
+  [1] title:       D-St rebounds: Rs 6 lakh crore added! Sensex jumps 900 points; Nifty nears 23,300; easing oil prices among key factors
+       source:      The Times of India
+       publishedAt: 2026-03-20T04:02:30Z
+       description: Why stock market is up today: Indian stock markets surged on Friday. The Sensex and Nifty saw substantial gains, reversing yesterday's losses. Easing oil prices and other factors boosted investor confidence. Several major companies experienced significant upt…
+       url:         https://economictimes.indiatimes.com/markets/stocks/news/d-st-rebounds-rs-6-lakh-crore-added-sensex-jumps-900-points-nifty-nears-23300-easing-oil-prices-among-key-factors/articleshow/129691437.cms
+
+  [2] title:       TCS, Infosys, other IT stocks in focus on Accenture’s Q2 results. What are analysts saying?
+       source:      The Times of India
+       publishedAt: 2026-03-20T03:31:38Z
+       description: Indian IT stocks surged following Accenture's robust results, which beat revenue expectations and saw record bookings. The global IT giant also raised its full-year revenue growth forecast. Analysts see strong AI-driven demand, particularly in financial servi…
+       url:         https://economictimes.indiatimes.com/markets/stocks/news/tcs-infosys-other-it-stocks-in-focus-on-accentures-q2-results-what-are-analysts-saying/articleshow/129691432.cms
+
+  [3] title:       ETMarkets Smart Talk | Nifty’s 10% fall not a trend reversal; use dips to build portfolios: Pradeep Gupta, Anand Rathi
+       source:      The Times of India
+       publishedAt: 2026-03-20T03:30:00Z
+       description: Despite geopolitical tensions and rising crude prices, Indian equities' recent correction is seen as a reaction to global risks, not a structural shift. Experts advise using the dip to build long-term portfolios, highlighting intact domestic fundamentals and …
+       url:         https://economictimes.indiatimes.com/markets/expert-view/etmarkets-smart-talk-niftys-10-fall-not-a-trend-reversal-use-dips-to-build-portfolios-pradeep-gupta-anand-rathi/articleshow/129673307.cms
+
+  [4] title:       HDFC Bank crisis, war fears, and market chaos: What should investors do right now? Gurmeet Chadha answers
+       source:      The Times of India
+       publishedAt: 2026-03-20T03:30:00Z
+       description: India's financial markets are navigating a perfect storm. HDFC Bank's chairman's exit and rising oil prices create uncertainty. Expert Gurmeet Chadha advises a nuanced approach. He sees HDFC Bank's issues as communication-related, not fundamental. For broader…
+       url:         https://economictimes.indiatimes.com/markets/expert-view/hdfc-bank-crisis-war-fears-and-market-chaos-what-should-investors-do-right-now-gurmeet-chadha-answers/articleshow/129679158.cms
+
+  [5] title:       Indian shares set to rise after steep drop as oil eases
+       source:      BusinessLine
+       publishedAt: 2026-03-20T03:17:13Z
+       description: GIFT Nifty futures were ⁠trading at 23,250.5 as of 08:24 a.m. IST, indicating the Nifty 50 will open above Thursday’s close of 23,002.15
+       url:         https://www.thehindubusinessline.com/markets/indian-shares-set-to-rise-after-steep-drop-as-oil-eases/article70764111.ece
+
+
+--- Raw JSON: First Article from /v2/everything ---
+{
+  "source": {
+    "id": null,
+    "name": "GlobeNewswire"
+  },
+  "author": "Hagens Berman Sobol Shapiro LLP",
+  "title": "PYPL ALERT: Hagens Berman Alerts PayPal (PYPL) Investors to Securities Class Action Following CEO Ouster and $10B Market Cap Wipeout",
+  "description": "Investors who lost money in PYPL after its stock plunged due to allegedly misleading financial statements are urged to contact Hagens Berman....",
+  "url": "https://www.globenewswire.com/news-release/2026/03/19/3259519/32716/en/PYPL-ALERT-Hagens-Berman-Alerts-PayPal-PYPL-Investors-to-Securities-Class-Action-Following-CEO-Ouster-and-10B-Market-Cap-Wipeout.html",
+  "urlToImage": "https://ml.globenewswire.com/Resource/Download/2c81cd72-0ffb-43c9-9d0f-b622c3e44e43",
+  "publishedAt": "2026-03-19T23:48:00Z",
+  "content": "SAN FRANCISCO, March 19, 2026 (GLOBE NEWSWIRE) -- National shareholder rights law firm Hagens Berman is notifying investors that a securities class action lawsuit has been filed against PayPal Holdin\u2026 [+3605 chars]"
+}

@@ -1,0 +1,137 @@
+=== Finnhub data validation for: AAPL ===
+
+--- Company News: AAPL (last 7 days, first 5 articles) ---
+  Total articles returned: 215
+  Keys in first article:   ['category', 'datetime', 'headline', 'id', 'image', 'related', 'source', 'summary', 'url']
+
+  [1] headline:  Apple App Rules On AI Coding And China Scrutiny Shape Investor Focus
+       source:    Yahoo
+       datetime:  2026-03-21T01:06:35+00:00
+       sentiment: None
+       url:       https://finnhub.io/api/news?id=cb2e0bec78104261ff1e3c3df2583e804649202e39ea24ec3c3dc4da9d9d75c9
+
+  [2] headline:  The Two Forces Reshaping Your Portfolio - February Dividend Income Report
+       source:    SeekingAlpha
+       datetime:  2026-03-20T23:45:00+00:00
+       sentiment: None
+       url:       https://finnhub.io/api/news?id=bad7d9a14f19e7473960e1955f68c8eb847e088b0f0e94eecdc51d0405e3849a
+
+  [3] headline:  Warren Buffett Bought 8 Million Shares of This Oil Giant and $100 Oil Proves Him Right
+       source:    Yahoo
+       datetime:  2026-03-20T21:25:00+00:00
+       sentiment: None
+       url:       https://finnhub.io/api/news?id=d9e71df2a0cc383f6666907fa5590b1f3eefd5794647f880a542c30d4c230f32
+
+  [4] headline:  Market Madness: Palantir, Walmart, & other hot stock picks
+       source:    Yahoo
+       datetime:  2026-03-20T21:13:31+00:00
+       sentiment: None
+       url:       https://finnhub.io/api/news?id=4f4dda3e6ef85b24ebd5cc975168a638104d4c164ecfbc5a43d963249e807587
+
+  [5] headline:  The Dealmaking 3: MLB & Adobe Expanding Partnership, AI in Pickleball, Apple TV’s Deal with F1
+       source:    Yahoo
+       datetime:  2026-03-20T21:02:32+00:00
+       sentiment: None
+       url:       https://finnhub.io/api/news?id=7081c3ff70de7921210685383056788af76934ea7036c605bace789ed4e92b30
+
+
+--- Social Sentiment: AAPL (last 7 days) ---
+  *** REQUEST FAILED: status 403
+  Response text: {"error":"You don't have access to this resource."}
+
+--- Insider Sentiment / MSPR: AAPL (2025-01-01 to today) ---
+  Records returned: 9
+
+  year:   2025
+  month:  8
+  change: -125256
+  mspr:   -100
+
+  year:   2025
+  month:  9
+  change: 587183
+  mspr:   100
+
+  year:   2025
+  month:  10
+  change: -527282
+  mspr:   -31.315598
+
+  year:   2025
+  month:  11
+  change: -7502
+  mspr:   -100
+
+  year:   2026
+  month:  2
+  change: 6732
+  mspr:   25.651577
+
+  year:   2026
+  month:  3
+  change: -32528
+  mspr:   -21.267916
+
+
+--- Earnings Surprises: AAPL (last 5 quarters) ---
+  Records returned: 4
+
+  period:          2025-12-31
+  actual:          2.84
+  estimate:        2.7257
+  surprise:        0.1143
+  surprisePercent: 4.1934
+
+  period:          2025-09-30
+  actual:          1.85
+  estimate:        1.8075
+  surprise:        0.0425
+  surprisePercent: 2.3513
+
+  period:          2025-06-30
+  actual:          1.57
+  estimate:        1.4626
+  surprise:        0.1074
+  surprisePercent: 7.3431
+
+  period:          2025-03-31
+  actual:          1.65
+  estimate:        1.6596
+  surprise:        -0.0096
+  surprisePercent: -0.5785
+
+
+--- SEC Filing Sentiment: AAPL (latest filing) ---
+  Latest filing:
+    form:         4
+    filedDate:    2026-03-17 00:00:00
+    accessNumber: 0001780525-26-000005
+
+  *** REQUEST FAILED: status 403
+  Response text: {"error":"You don't have access to this resource."}
+
+--- Quote: AAPL ---
+  c: 247.99
+  d: -0.97
+  dp: -0.3896
+  h: 249.1999
+  l: 246
+  o: 247.975
+  pc: 248.96
+  t: 1774036800
+
+--- Raw JSON: First Article from Section 1 ---
+{
+  "category": "company",
+  "datetime": 1774055195,
+  "headline": "Apple App Rules On AI Coding And China Scrutiny Shape Investor Focus",
+  "id": 139493065,
+  "image": "https://s.yimg.com/rz/stage/p/yahoo_finance_en-US_h_p_finance_2.png",
+  "related": "AAPL",
+  "source": "Yahoo",
+  "summary": "Apple is reportedly blocking updates to certain AI powered vibe coding apps, citing App Store policy violations. The move raises questions about how Apple applies its rules to third party tools that touch software development and app distribution. At the same time, Apple is under increased regulatory scrutiny in China after cutting its App Store commission rate and facing calls to further ease restrictions. For investors watching NasdaqGS:AAPL, these app policy decisions come against a...",
+  "url": "https://finnhub.io/api/news?id=cb2e0bec78104261ff1e3c3df2583e804649202e39ea24ec3c3dc4da9d9d75c9"
+}
+
+--- Raw JSON: Full Social Sentiment Response from Section 2 ---
+null

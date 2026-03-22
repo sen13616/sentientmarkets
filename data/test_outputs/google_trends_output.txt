@@ -1,0 +1,88 @@
+=== Google Trends data validation ===
+
+
+--- Interest Over Time: AAPL (last 90 days, daily) ---
+  Shape: (91, 2)
+
+  First 10 rows:
+            AAPL  isPartial
+date                       
+2025-12-21    15      False
+2025-12-22    36      False
+2025-12-23    33      False
+2025-12-24    27      False
+2025-12-25    14      False
+2025-12-26    28      False
+2025-12-27    14      False
+2025-12-28    14      False
+2025-12-29    29      False
+2025-12-30    28      False
+
+  Last 10 rows:
+            AAPL  isPartial
+date                       
+2026-03-12    25      False
+2026-03-13    27      False
+2026-03-14    13      False
+2026-03-15    26      False
+2026-03-16    31      False
+2026-03-17    37      False
+2026-03-18    33      False
+2026-03-19    38      False
+2026-03-20    31      False
+2026-03-21    26       True
+
+--- Related Queries: AAPL ---
+  Top queries:
+           query  value
+      aapl price    100
+aapl stock price     61
+            nvda     56
+            msft     44
+            amzn     38
+      nvda stock     30
+            tsla     30
+            meta     28
+      msft stock     23
+           googl     21
+
+  Rising queries:
+             query  value
+   walmart near me   1300
+        sndk stock    550
+     sandisk stock    300
+         slv stock    300
+           v stock    110
+      silver price     90
+silver price today     80
+         cvx stock     80
+         xom stock     80
+             googl     60
+
+--- Related Topics: AAPL ---
+  ERROR: list index out of range
+
+--- Multi-Ticker Comparison: AAPL vs TSLA vs NVDA (last 30 days) ---
+  Shape: (29, 4)
+
+  Last 10 rows:
+            AAPL  TSLA  NVDA  isPartial
+date                                   
+2026-03-12     6    13    25      False
+2026-03-13     6    12    25      False
+2026-03-14     3     4     8      False
+2026-03-15     6     7    10      False
+2026-03-16     8    14    32      False
+2026-03-17     9    14    33      False
+2026-03-18     8    13    30      False
+2026-03-19     9    16    27      False
+2026-03-20     8    15    29      False
+2026-03-21     6    10    18       True
+
+--- Raw Response Check: Column Names and Dtypes ---
+  Columns and dtypes:
+AAPL         int64
+isPartial     bool
+
+  Index name:  date
+  Index dtype: datetime64[ns]

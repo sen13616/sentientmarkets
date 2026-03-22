@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(BASE=\"/Users/aayudhyindahoodie/Documents/Primary/My Projects/TheMarketMood.ai\")",
+      "Bash(mkdir -p \"$BASE/backend/app/services/sources\" \"$BASE/backend/app/models\" \"$BASE/frontend/app/stock/[ticker]\" \"$BASE/frontend/components\" \"$BASE/frontend/lib\" \"$BASE/frontend/public\")",
+      "Bash(pip install:*)",
+      "Bash(python -c \"from app.main import app; print\\(''import ok''\\)\")",
+      "Bash(python3 -c \":*)",
+      "Bash(\"/Users/aayudhyindahoodie/Documents/Primary/My Projects/TheMarketMood.ai/.env\")",
+      "Bash(\"/Users/aayudhyindahoodie/Documents/Primary/My Projects/TheMarketMood.ai/backend/.env\")",
+      "Bash(python3 -c \"from app.services.scorer import score_sentiment; print\\(''import ok''\\)\")",
+      "Bash(python3:*)",
+      "Bash(curl -s \"http://localhost:8000/api/search?q=Apple\")",
+      "Bash(curl -s \"http://localhost:8000/api/search?q=TSLA\")",
+      "Bash(curl -s \"http://localhost:8000/api/trending\")",
+      "Bash(curl -s \"http://localhost:8000/api/health\")",
+      "Bash(curl -s \"http://localhost:8000/api/home\")",
+      "Bash(curl -s \"http://localhost:8000/api/sentiment/AAPL\")",
+      "Bash(npm install:*)",
+      "Bash(curl -s http://localhost:3000/stock/AAPL -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s http://localhost:3000/stock/AAPL)",
+      "Bash(screencapture -x /tmp/stock_aapl.png)",
+      "Bash(open -a \"Google Chrome\" \"http://localhost:3000/stock/AAPL\")",
+      "Bash(screencapture -x /tmp/stock_aapl2.png)",
+      "Bash(xargs kill:*)",
+      "Bash(open:*)",
+      "Bash(curl:*)"
+    ]
+  }
+}

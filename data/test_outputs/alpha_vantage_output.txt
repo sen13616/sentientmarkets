@@ -1,0 +1,2965 @@
+=== Alpha Vantage data validation for: AAPL ===
+
+--- GLOBAL_QUOTE (latest price snapshot) ---
+{
+  "Global Quote": {
+    "01. symbol": "AAPL",
+    "02. open": "247.9750",
+    "03. high": "249.1999",
+    "04. low": "246.0000",
+    "05. price": "247.9900",
+    "06. volume": "88331081",
+    "07. latest trading day": "2026-03-20",
+    "08. previous close": "248.9600",
+    "09. change": "-0.9700",
+    "10. change percent": "-0.3896%"
+  }
+}
+
+--- TIME_SERIES_DAILY (last 30 trading days) ---
+{
+  "Meta Data": {
+    "1. Information": "Daily Prices (open, high, low, close) and Volumes",
+    "2. Symbol": "AAPL",
+    "3. Last Refreshed": "2026-03-20",
+    "4. Output Size": "Compact",
+    "5. Time Zone": "US/Eastern"
+  },
+  "Time Series (Daily) [first 30 days]": {
+    "2026-03-20": {
+      "1. open": "247.9750",
+      "2. high": "249.1999",
+      "3. low": "246.0000",
+      "4. close": "247.9900",
+      "5. volume": "88331081"
+    },
+    "2026-03-19": {
+      "1. open": "249.4000",
+      "2. high": "251.8300",
+      "3. low": "247.3000",
+      "4. close": "248.9600",
+      "5. volume": "34864082"
+    },
+    "2026-03-18": {
+      "1. open": "252.6250",
+      "2. high": "254.9400",
+      "3. low": "249.0000",
+      "4. close": "249.9400",
+      "5. volume": "35757874"
+    },
+    "2026-03-17": {
+      "1. open": "252.9550",
+      "2. high": "255.1300",
+      "3. low": "252.1800",
+      "4. close": "254.2300",
+      "5. volume": "32361607"
+    },
+    "2026-03-16": {
+      "1. open": "252.1050",
+      "2. high": "253.8850",
+      "3. low": "249.8800",
+      "4. close": "252.8200",
+      "5. volume": "32074209"
+    },
+    "2026-03-13": {
+      "1. open": "255.4800",
+      "2. high": "256.3300",
+      "3. low": "249.5200",
+      "4. close": "250.1200",
+      "5. volume": "36929988"
+    },
+    "2026-03-12": {
+      "1. open": "258.6600",
+      "2. high": "258.9500",
+      "3. low": "254.1800",
+      "4. close": "255.7600",
+      "5. volume": "40794020"
+    },
+    "2026-03-11": {
+      "1. open": "261.0900",
+      "2. high": "262.1300",
+      "3. low": "259.5500",
+      "4. close": "260.8100",
+      "5. volume": "26218927"
+    },
+    "2026-03-10": {
+      "1. open": "257.6450",
+      "2. high": "262.4800",
+      "3. low": "256.9500",
+      "4. close": "260.8300",
+      "5. volume": "30590765"
+    },
+    "2026-03-09": {
+      "1. open": "255.6900",
+      "2. high": "261.1500",
+      "3. low": "253.6805",
+      "4. close": "259.8800",
+      "5. volume": "38218533"
+    },
+    "2026-03-06": {
+      "1. open": "258.6300",
+      "2. high": "258.7700",
+      "3. low": "254.3700",
+      "4. close": "257.4600",
+      "5. volume": "41120042"
+    },
+    "2026-03-05": {
+      "1. open": "260.7900",
+      "2. high": "261.5550",
+      "3. low": "257.2500",
+      "4. close": "260.2900",
+      "5. volume": "49658626"
+    },
+    "2026-03-04": {
+      "1. open": "264.6500",
+      "2. high": "266.1500",
+      "3. low": "261.4200",
+      "4. close": "262.5200",
+      "5. volume": "39803119"
+    },
+    "2026-03-03": {
+      "1. open": "263.4800",
+      "2. high": "265.5600",
+      "3. low": "260.1300",
+      "4. close": "263.7500",
+      "5. volume": "38568921"
+    },
+    "2026-03-02": {
+      "1. open": "262.4100",
+      "2. high": "266.5300",
+      "3. low": "260.2000",
+      "4. close": "264.7200",
+      "5. volume": "41827946"
+    },
+    "2026-02-27": {
+      "1. open": "272.8100",
+      "2. high": "272.8100",
+      "3. low": "262.8900",
+      "4. close": "264.1800",
+      "5. volume": "72366505"
+    },
+    "2026-02-26": {
+      "1. open": "274.9450",
+      "2. high": "276.1100",
+      "3. low": "270.7950",
+      "4. close": "272.9500",
+      "5. volume": "32345114"
+    },
+    "2026-02-25": {
+      "1. open": "271.7800",
+      "2. high": "274.9400",
+      "3. low": "271.0500",
+      "4. close": "274.2300",
+      "5. volume": "33714342"
+    },
+    "2026-02-24": {
+      "1. open": "267.8600",
+      "2. high": "274.8900",
+      "3. low": "267.7100",
+      "4. close": "272.1400",
+      "5. volume": "47014619"
+    },
+    "2026-02-23": {
+      "1. open": "263.4900",
+      "2. high": "269.4300",
+      "3. low": "263.3810",
+      "4. close": "266.1800",
+      "5. volume": "37308155"
+    },
+    "2026-02-20": {
+      "1. open": "258.9700",
+      "2. high": "264.7500",
+      "3. low": "258.1600",
+      "4. close": "264.5800",
+      "5. volume": "42070499"
+    },
+    "2026-02-19": {
+      "1. open": "262.6000",
+      "2. high": "264.4800",
+      "3. low": "260.0500",
+      "4. close": "260.5800",
+      "5. volume": "30845294"
+    },
+    "2026-02-18": {
+      "1. open": "263.6000",
+      "2. high": "266.8200",
+      "3. low": "262.4500",
+      "4. close": "264.3500",
+      "5. volume": "34203337"
+    },
+    "2026-02-17": {
+      "1. open": "258.0500",
+      "2. high": "266.2900",
+      "3. low": "255.5400",
+      "4. close": "263.8800",
+      "5. volume": "58469094"
+    },
+    "2026-02-13": {
+      "1. open": "262.0100",
+      "2. high": "262.2300",
+      "3. low": "255.4500",
+      "4. close": "255.7800",
+      "5. volume": "56290673"
+    },
+    "2026-02-12": {
+      "1. open": "275.5900",
+      "2. high": "275.7200",
+      "3. low": "260.1800",
+      "4. close": "261.7300",
+      "5. volume": "81077229"
+    },
+    "2026-02-11": {
+      "1. open": "274.6950",
+      "2. high": "280.1800",
+      "3. low": "274.4500",
+      "4. close": "275.5000",
+      "5. volume": "51931283"
+    },
+    "2026-02-10": {
+      "1. open": "274.8850",
+      "2. high": "275.3700",
+      "3. low": "272.9400",
+      "4. close": "273.6800",
+      "5. volume": "34376898"
+    },
+    "2026-02-09": {
+      "1. open": "277.9050",
+      "2. high": "278.2000",
+      "3. low": "271.7000",
+      "4. close": "274.6200",
+      "5. volume": "44623396"
+    },
+    "2026-02-06": {
+      "1. open": "277.1200",
+      "2. high": "280.9050",
+      "3. low": "276.9250",
+      "4. close": "278.1200",
+      "5. volume": "50453414"
+    }
+  }
+}
+
+--- OVERVIEW (company fundamentals and metadata) ---
+{
+  "Symbol": "AAPL",
+  "AssetType": "Common Stock",
+  "Name": "Apple Inc",
+  "Description": "Apple Inc. is an American multinational technology company that specializes in consumer electronics, computer software, and online services. Apple is the world's largest technology company by revenue (totalling $274.5 billion in 2020) and, since January 2021, the world's most valuable company. As of 2021, Apple is the world's fourth-largest PC vendor by unit sales, and fourth-largest smartphone manufacturer. It is one of the Big Five American information technology companies, along with Amazon, Google, Microsoft, and Facebook.",
+  "CIK": "320193",
+  "Exchange": "NASDAQ",
+  "Currency": "USD",
+  "Country": "USA",
+  "Sector": "TECHNOLOGY",
+  "Industry": "CONSUMER ELECTRONICS",
+  "Address": "ONE APPLE PARK WAY, CUPERTINO, CA, UNITED STATES, 95014",
+  "OfficialSite": "https://www.apple.com",
+  "FiscalYearEnd": "September",
+  "LatestQuarter": "2025-12-31",
+  "MarketCapitalization": "3659195744000",
+  "EBITDA": "152901992000",
+  "PERatio": "31.55",
+  "PEGRatio": "2.212",
+  "BookValue": "6.0",
+  "DividendPerShare": "1.03",
+  "DividendYield": "0.0041",
+  "EPS": "7.89",
+  "RevenuePerShareTTM": "29.3",
+  "ProfitMargin": "0.27",
+  "OperatingMarginTTM": "0.354",
+  "ReturnOnAssetsTTM": "0.244",
+  "ReturnOnEquityTTM": "1.52",
+  "RevenueTTM": "435617006000",
+  "GrossProfitTTM": "206157005000",
+  "DilutedEPSTTM": "7.89",
+  "QuarterlyEarningsGrowthYOY": "0.183",
+  "QuarterlyRevenueGrowthYOY": "0.157",
+  "AnalystTargetPrice": "295.44",
+  "AnalystRatingStrongBuy": "5",
+  "AnalystRatingBuy": "25",
+  "AnalystRatingHold": "16",
+  "AnalystRatingSell": "1",
+  "AnalystRatingStrongSell": "1",
+  "TrailingPE": "31.55",
+  "ForwardPE": "28.9",
+  "PriceToSalesRatioTTM": "8.4",
+  "PriceToBookRatio": "41.44",
+  "EVToRevenue": "8.44",
+  "EVToEBITDA": "24.06",
+  "Beta": "1.116",
+  "52WeekHigh": "288.35",
+  "52WeekLow": "168.48",
+  "50DayMovingAverage": "261.64",
+  "200DayMovingAverage": "246.36",
+  "SharesOutstanding": "14681140000",
+  "SharesFloat": "14656182000",
+  "PercentInsiders": "1.638",
+  "PercentInstitutions": "65.265",
+  "DividendDate": "2026-02-12",
+  "ExDividendDate": "2026-02-09"
+}
+
+--- NEWS_SENTIMENT (5 most recent articles for AAPL) ---
+{
+  "items": "50",
+  "sentiment_score_definition": "x <= -0.35: Bearish; -0.35 < x <= -0.15: Somewhat-Bearish; -0.15 < x < 0.15: Neutral; 0.15 <= x < 0.35: Somewhat_Bullish; x >= 0.35: Bullish",
+  "relevance_score_definition": "0 < x <= 1, with a higher score indicating higher relevance.",
+  "feed": [
+    {
+      "title": "Korean OLED Firms Lead with Superior Cost Efficiency Amidst China\u2019s Struggles",
+      "url": "https://www.businesskorea.co.kr/news/articleView.html?idxno=265756",
+      "time_published": "20260320T220916",
+      "authors": [
+        "Kim Eun-jin"
+      ],
+      "summary": "Korean display manufacturers, particularly in the OLED sector, are maintaining a significant cost advantage over Chinese rivals, despite China's aggressive, subsidy-backed expansion. While Korean companies like Samsung Display and LG Display show strong profitability with low cost-of-sales ratios, Chinese firms struggle with profitability due to high costs and low unit prices, leading to financial losses despite increased market share. Korean companies are continuing preemptive investments in next-generation OLED technology, such as 8.6-generation production, to solidify their competitive edge and prevent a repeat of past losses in the LCD market.",
+      "banner_image": "https://www.businesskorea.co.kr/news/photo/202603/265756_272241_2013.jpg",
+      "source": "Businesskorea",
+      "category_within_source": "General",
+      "source_domain": "Businesskorea",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.910435"
+        },
+        {
+          "topic": "manufacturing",
+          "relevance_score": "0.831296"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.846253"
+        },
+        {
+          "topic": "economy_macro",
+          "relevance_score": "0.611248"
+        }
+      ],
+      "overall_sentiment_score": 0.540035,
+      "overall_sentiment_label": "Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "LPL",
+          "relevance_score": "0.926338",
+          "ticker_sentiment_score": "0.711979",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.628363",
+          "ticker_sentiment_score": "0.347472",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "How to Get the iPhone 17e for Free by Switching to T-Mobile",
+      "url": "https://www.rollingstone.com/product-recommendations/tech/how-to-get-iphone-17e-free-t-mobile-1235534871/",
+      "time_published": "20260320T203125",
+      "authors": [
+        "Jonathan Zavaleta"
+      ],
+      "summary": "T-Mobile is offering the iPhone 17e for free to new customers who switch carriers, with no trade-in required. The iPhone 17e features MagSafe charging, a 48MP camera, and all-day battery life, making it an affordable yet capable option. T-Mobile's perks include free streaming services, discounted movie tickets, and highly-rated mobile network coverage.",
+      "banner_image": "https://www.rollingstone.com/wp-content/themes/vip/pmc-rollingstone-2022/assets/public/lazyload-fallback.gif",
+      "source": "Rolling Stone",
+      "category_within_source": "General",
+      "source_domain": "Rolling Stone",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "1.000000"
+        },
+        {
+          "topic": "retail_wholesale",
+          "relevance_score": "0.830029"
+        }
+      ],
+      "overall_sentiment_score": 0.338691,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "TMUS",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.308893",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.908744",
+          "ticker_sentiment_score": "0.311037",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "LUV",
+          "relevance_score": "0.603928",
+          "ticker_sentiment_score": "0.300320",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "DAL",
+          "relevance_score": "0.608324",
+          "ticker_sentiment_score": "0.338454",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "NFLX",
+          "relevance_score": "0.628069",
+          "ticker_sentiment_score": "0.333315",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "PYPL SHAREHOLDER NOTICE: Hagens Berman Alerts PayPal (PYPL) Investors to Securities Class Action Following CEO Ouster and $10B Market Cap Wipeout",
+      "url": "https://www.morningstar.com/news/pr-newswire/20260320sf15646/pypl-shareholder-notice-hagens-berman-alerts-paypal-pypl-investors-to-securities-class-action-following-ceo-ouster-and-10b-market-cap-wipeout",
+      "time_published": "20260320T202815",
+      "authors": [],
+      "summary": "Hagens Berman has alerted PayPal (PYPL) investors to a securities class action lawsuit filed against the company and its executives, alleging they misled investors about Branded Checkout growth and Salesforce readiness. The lawsuit, filed in the U.S. District Court for the Northern District of California, follows a surprise leadership change and the withdrawal of long-term financial targets that led to a significant drop in PayPal's stock price. Investors who purchased PayPal common stock between February 25, 2025, and February 2, 2026, have until April 20, 2026, to apply to be lead plaintiff.",
+      "banner_image": "https://morningstar-morningstar-prod.web.arc-cdn.net/resizer/vAKMPi0u5V6yDQ0VZGNIinwzz1g=/2400x2400/cloudfront-us-east-1.images.arcpublishing.com/morningstar/A2OIM543UVBD3LKX2SAK43CU4I.jpg",
+      "source": "Morningstar",
+      "category_within_source": "General",
+      "source_domain": "Morningstar",
+      "topics": [
+        {
+          "topic": "finance",
+          "relevance_score": "0.942968"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.802459"
+        }
+      ],
+      "overall_sentiment_score": -0.278285,
+      "overall_sentiment_label": "Somewhat-Bearish",
+      "ticker_sentiment": [
+        {
+          "ticker": "PYPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "-0.452973",
+          "ticker_sentiment_label": "Bearish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.635780",
+          "ticker_sentiment_score": "-0.163211",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        },
+        {
+          "ticker": "CRM",
+          "relevance_score": "0.626023",
+          "ticker_sentiment_score": "-0.141097",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Japan Post sells $1.32 million in Aflac shares",
+      "url": "https://www.investing.com/news/insider-trading-news/japan-post-sells-132-million-in-aflac-shares-93CH-4573314",
+      "time_published": "20260320T200659",
+      "authors": [
+        "Investing.com"
+      ],
+      "summary": "Japan Post Holdings Co., Ltd. sold 12,200 shares of Aflac Inc. common stock on March 18, 2026, totaling approximately $1.32 million. The transactions occurred at prices between $107.76 and $109.18, and Japan Post Holdings indirectly retains 52,088,700 shares. This follows Aflac's mixed Q4 2025 earnings, where EPS missed forecasts but revenue exceeded expectations, leading Mizuho to adjust its price target to $107 with an Underperform rating.",
+      "banner_image": "https://i-invdn-com.investing.com/news/World_News_10_800x533_L_1420026292.jpg",
+      "source": "Investing.com",
+      "category_within_source": "General",
+      "source_domain": "Investing.com",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.946617"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.817474"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.715243"
+        }
+      ],
+      "overall_sentiment_score": -0.204393,
+      "overall_sentiment_label": "Somewhat-Bearish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AFL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "-0.229505",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.524880",
+          "ticker_sentiment_score": "-0.197754",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.528632",
+          "ticker_sentiment_score": "-0.198354",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.542677",
+          "ticker_sentiment_score": "-0.206118",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        },
+        {
+          "ticker": "GOOGL",
+          "relevance_score": "0.544195",
+          "ticker_sentiment_score": "-0.193814",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        }
+      ]
+    },
+    {
+      "title": "Horizon Kinetics buys Texas Pacific Land (TPL) shares worth $527",
+      "url": "https://www.investing.com/news/insider-trading-news/horizon-kinetics-buys-texas-pacific-land-tpl-shares-worth-527-93CH-4573362",
+      "time_published": "20260320T163830",
+      "authors": [
+        "Investing.com",
+        "Insider Trading"
+      ],
+      "summary": "Horizon Kinetics Asset Management LLC, a significant owner of Texas Pacific Land Corp (NYSE:TPL), recently acquired 1 share of the company's common stock for $527.28 on March 19, 2026, increasing its direct ownership to 3,467,929 shares. This transaction follows the company's Q4 2025 earnings report, which saw EPS and revenue slightly miss expectations, and KeyBanc raising its price target for TPL shares to $639 due to opportunities in power generation and data centers.",
+      "banner_image": "https://i-invdn-com.investing.com/news/World_News_10_800x533_L_1420026292.jpg",
+      "source": "Investing.com",
+      "category_within_source": "General",
+      "source_domain": "Investing.com",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.946242"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.834114"
+        }
+      ],
+      "overall_sentiment_score": 0.062886,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "TPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.112785",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "KEY",
+          "relevance_score": "0.619106",
+          "ticker_sentiment_score": "0.314738",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.549531",
+          "ticker_sentiment_score": "-0.146186",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.555456",
+          "ticker_sentiment_score": "-0.130035",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "GOOGL",
+          "relevance_score": "0.546322",
+          "ticker_sentiment_score": "-0.130633",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Here\u2019s Why Apple (AAPL) Could Be The Best Tech Stock to Buy Now According to Warren Buffett",
+      "url": "https://www.insidermonkey.com/blog/heres-why-apple-aapl-could-be-the-best-tech-stock-to-buy-now-according-to-warren-buffett-1720582/",
+      "time_published": "20260320T161600",
+      "authors": [
+        "Fahad Saleem"
+      ],
+      "summary": "This article argues why Apple (AAPL) remains a strong investment, despite Warren Buffett's Berkshire Hathaway reducing its stake. It highlights Apple's prudent AI strategy compared to other tech giants' high CapEx, and its successful diversification into services, which now account for 21% of revenue with nearly double the gross margins of physical products. The piece suggests Apple's large installed base positions it well for continued profitability even if iPhone sales plateau.",
+      "banner_image": "https://d2w7kw43nye0pi.cloudfront.net/a_w8Wqkf32GHRjF2ylFF4gFflvI5YVBfhBdhMUP2i68/resize:fit:480:320:0/plain/https://imonkeyblog.s3.us-east-1.amazonaws.com/blog/wp-content/uploads/2023/01/31074729/fitbit-Apple-Watch-Health-Tracking-fitness-andres-urena-V7UoMNWsYsg-unsplash.jpg",
+      "source": "Insider Monkey",
+      "category_within_source": "General",
+      "source_domain": "Insider Monkey",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "0.910311"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.836430"
+        },
+        {
+          "topic": "earnings",
+          "relevance_score": "0.705867"
+        }
+      ],
+      "overall_sentiment_score": 0.217207,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.422703",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.617270",
+          "ticker_sentiment_score": "0.138292",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "GOOGL",
+          "relevance_score": "0.613612",
+          "ticker_sentiment_score": "0.127774",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "META",
+          "relevance_score": "0.629436",
+          "ticker_sentiment_score": "0.148010",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Apple Mac Sees Best Ever Launch Week For First Time Customers",
+      "url": "https://www.benzinga.com/markets/tech/26/03/51382655/apple-mac-sees-best-ever-launch-week-for-first-time-customers",
+      "time_published": "20260320T154000",
+      "authors": [
+        "Anusuya Lahiri"
+      ],
+      "summary": "Apple's Mac line has experienced its best-ever launch week for first-time customers, driven by the introduction of the budget-friendly MacBook Neo. Analysts believe this new model, along with AI-focused M5 chips, will expand Apple's presence in the education market and contribute significantly to Mac revenue without impacting margins. Despite a \"wait for confirmation\" signal from Benzinga Edge, the stock shows strong quality and growth factors, with analysts maintaining a Buy Rating and a strong price target.",
+      "banner_image": "https://cdn.benzinga.com/files/images/story/2025/07/24/article-header-background-image.png?quality=85&auto=webp&width=1300",
+      "source": "Benzinga",
+      "category_within_source": "General",
+      "source_domain": "Benzinga",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "0.808790"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.746638"
+        },
+        {
+          "topic": "earnings",
+          "relevance_score": "0.700462"
+        }
+      ],
+      "overall_sentiment_score": 0.121122,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.977700",
+          "ticker_sentiment_score": "0.310098",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "INTC",
+          "relevance_score": "0.554858",
+          "ticker_sentiment_score": "-0.113762",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Tim Cook\u2019s China visit reinforces country\u2019s importance to Apple as global frictions rise",
+      "url": "https://www.cnbc.com/2026/03/20/tim-cooks-china-visit-reinforces-countrys-importance-to-apple-.html",
+      "time_published": "20260320T151258",
+      "authors": [
+        "MacKenzie Sigalos"
+      ],
+      "summary": "Apple CEO Tim Cook visited Chengdu, China, for an Apple Store event, highlighting the country's continued importance to the tech giant despite rising U.S.-China tensions. Apple recently cut its App Store commission in China responding to regulatory pressure, and saw a significant 23% jump in iPhone sales early 2026 even as the broader Chinese smartphone market declined. The company is relying on its strong iPhone performance in China as it seeks to develop a clearer growth strategy in artificial intelligence.",
+      "banner_image": "https://image.cnbcfm.com/api/v1/image/107265578-1767141361533-Screenshot_2025-12-30_at_73451_PM.png?v=1767578085&w=60&h=60&ffmt=webp",
+      "source": "CNBC",
+      "category_within_source": "General",
+      "source_domain": "CNBC",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "1.000000"
+        },
+        {
+          "topic": "economy_macro",
+          "relevance_score": "0.842040"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.619943"
+        }
+      ],
+      "overall_sentiment_score": 0.197388,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.954869",
+          "ticker_sentiment_score": "0.273116",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.610325",
+          "ticker_sentiment_score": "0.106230",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Apple's App Store growth slows slightly while iPhone demand jumps: Morgan Stanley",
+      "url": "https://seekingalpha.com/news/4566997-apples-app-store-growth-slows-slightly-while-iphone-demand-jumps-morgan-stanley?source=generic_rss",
+      "time_published": "20260320T150002",
+      "authors": [
+        "Brandon Evans"
+      ],
+      "summary": "Morgan Stanley and Sensor Tower data indicate a slight slowdown in Apple's App Store revenue growth this month. Despite this, there is strong demand for iPhones, evidenced by a year-over-year increase in iPhone builds. The article highlights these contrasting trends within Apple's ecosystem.",
+      "banner_image": "https://static.seekingalpha.com/cdn/s3/uploads/getty_images/2243457928/image_2243457928.jpg?io=getty-c-w630",
+      "source": "Seeking Alpha",
+      "category_within_source": "General",
+      "source_domain": "Seeking Alpha",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.931968"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.838367"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.716318"
+        }
+      ],
+      "overall_sentiment_score": 0.150347,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "MS",
+          "relevance_score": "0.812453",
+          "ticker_sentiment_score": "0.104432",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.222770",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "Why Is AZTR Stock Rising Today?",
+      "url": "https://stocktwits.com/news-articles/markets/equity/why-is-aztr-stock-rising-today/cZ3Xs8uRILN",
+      "time_published": "20260320T142251",
+      "authors": [
+        "Arnab Paul"
+      ],
+      "summary": "Azitra Inc. (AZTR) shares surged over 80% after the biopharmaceutical firm announced a private placement to raise more than $31 million. This rally comes days after the company received a listing warning from NYSE American LLC for failing to meet minimum stockholders' equity requirements. The funding will be used to advance new protein and peptide research programs for skincare solutions, despite the company reporting widening net losses.",
+      "banner_image": "https://news.stocktwits-cdn.com/large_Getty_Images_2203138957_jpg_dd735f9905.webp",
+      "source": "Stocktwits",
+      "category_within_source": "General",
+      "source_domain": "Stocktwits",
+      "topics": [
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.941527"
+        },
+        {
+          "topic": "life_sciences",
+          "relevance_score": "0.844387"
+        },
+        {
+          "topic": "earnings",
+          "relevance_score": "0.705537"
+        }
+      ],
+      "overall_sentiment_score": 0.019288,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "AZTR",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.239136",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.635938",
+          "ticker_sentiment_score": "-0.245617",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        }
+      ]
+    },
+    {
+      "title": "Apple Blocks Updates for AI Vibe Coding Apps in App Store",
+      "url": "https://mlq.ai/news/apple-blocks-updates-for-ai-vibe-coding-apps-in-app-store/",
+      "time_published": "20260320T142000",
+      "authors": [
+        "MLQ Agent"
+      ],
+      "summary": "Apple has blocked updates for several AI-powered \"vibe coding\" apps like Replit and Vibecode from its App Store, citing violations of Guideline 2.5.2 which prohibits apps from executing code that alters their functionality. The company states this is to maintain user safety and platform integrity, not specifically to target AI. Developers are working on modifications, such as using external browsers for app previews, to regain approval.",
+      "banner_image": "https://mlqpdf.s3.amazonaws.com/news_images/apple-vibe-code-apps.png",
+      "source": "MLQ.ai",
+      "category_within_source": "General",
+      "source_domain": "MLQ.ai",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "0.820366"
+        }
+      ],
+      "overall_sentiment_score": -0.237138,
+      "overall_sentiment_label": "Somewhat-Bearish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "-0.210940",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        }
+      ]
+    },
+    {
+      "title": "Arm Holdings PLC Stock (ARM) Opened Up by 5.89% on Mar 20: A Full Analysis",
+      "url": "https://www.tradingkey.com/news/Market-Movers/261704326-market-movers-arm-20260320",
+      "time_published": "20260320T140947",
+      "authors": [
+        "TradingKey"
+      ],
+      "summary": "Arm Holdings PLC (ARM) experienced a significant 5.89% increase in its stock price on March 20, driven by analyst upgrades and its strong position in the AI chip market. HSBC upgraded ARM to a \"Buy\" rating with a $205 price target, citing its transition to AI server CPUs and projecting substantial growth in royalty revenue from this segment. The company's robust Q3 FY26 financial performance, with 26% revenue growth, further contributed to the positive market sentiment.",
+      "banner_image": null,
+      "source": "TradingKey",
+      "category_within_source": "General",
+      "source_domain": "TradingKey",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.901469"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.833309"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.808822"
+        }
+      ],
+      "overall_sentiment_score": 0.17923,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "ARM",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.612930",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.623312",
+          "ticker_sentiment_score": "0.267443",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.576219",
+          "ticker_sentiment_score": "-0.136263",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "MU",
+          "relevance_score": "0.577521",
+          "ticker_sentiment_score": "-0.114747",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Qualcomm Could Be the Biggest AI Bargain of the Year",
+      "url": "https://247wallst.com/investing/2026/03/20/qualcomm-could-be-the-biggest-ai-bargain-of-the-year/",
+      "time_published": "20260320T140823",
+      "authors": [
+        "Joey Frenette"
+      ],
+      "summary": "Qualcomm (QCOM) is presented as a potential AI bargain, despite underperforming other semiconductor stocks. The company is shifting its focus from smartphones to robotics and autonomous driving, with CEO Cristiano Amon stating robotics represents a larger opportunity within two years. Analysts like Wells Fargo provide a bullish outlook with a $150 price target, supported by Qualcomm's $20 billion share buyback program.",
+      "banner_image": "https://247wallst.com/wp-content/uploads/2022/03/imageForEntry8-5JB.jpg",
+      "source": "24/7 Wall St.",
+      "category_within_source": "General",
+      "source_domain": "24/7 Wall St.",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "0.942347"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.848542"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.646249"
+        }
+      ],
+      "overall_sentiment_score": 0.040866,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "QCOM",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.310611",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.703002",
+          "ticker_sentiment_score": "-0.272292",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        },
+        {
+          "ticker": "WFC",
+          "relevance_score": "0.608667",
+          "ticker_sentiment_score": "0.341315",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AMD",
+          "relevance_score": "0.565065",
+          "ticker_sentiment_score": "-0.243228",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.561759",
+          "ticker_sentiment_score": "-0.135708",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Garmin Ltd stock gains spotlight in fitness sector watchlist amid strong wearables demand and shareh",
+      "url": "https://www.ad-hoc-news.de/boerse/news/ueberblick/garmin-ltd-stock-gains-spotlight-in-fitness-sector-watchlist-amid-strong/68942553",
+      "time_published": "20260320T140742",
+      "authors": [
+        "Elena Voss"
+      ],
+      "summary": "Garmin Ltd. is drawing significant investor attention due to its strong performance in the fitness wearables market, recent positive guidance, stock buybacks, and increased dividends. The company's Fitness segment reported substantial Q4 2025 sales growth, driven by advanced smartwatches with enhanced health tracking features. Garmin's financial health, shareholder-friendly actions, and market position in the growing wellness sector make it an appealing prospect, particularly for DACH investors looking for exposure to resilient tech with a growth and income profile.",
+      "banner_image": "https://mdb.ad-hoc-news.de/bild/bild-2471712_1200_675.webp",
+      "source": "AD HOC NEWS",
+      "category_within_source": "General",
+      "source_domain": "AD HOC NEWS",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.937512"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.841032"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.744635"
+        },
+        {
+          "topic": "retail_wholesale",
+          "relevance_score": "0.635751"
+        },
+        {
+          "topic": "economy_macro",
+          "relevance_score": "0.603953"
+        }
+      ],
+      "overall_sentiment_score": 0.230099,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "GRMN",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.432181",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.721403",
+          "ticker_sentiment_score": "0.108267",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "GOOGL",
+          "relevance_score": "0.610390",
+          "ticker_sentiment_score": "0.114212",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Kobach demands Apple, Inc. take action against spread of child sexual abuse material in new letter",
+      "url": "https://www.ksnt.com/news/kansas/kobach-demands-apple-inc-take-action-against-spread-of-child-sexual-abuse-material-in-new-letter/amp/",
+      "time_published": "20260320T140658",
+      "authors": [
+        "Matthew Self"
+      ],
+      "summary": "Kansas Attorney General Kris Kobach has sent a letter to Apple, Inc. demanding immediate action to implement safeguards against the distribution of child sexual abuse material (CSAM) on its iCloud services. He threatens legal action if Apple fails to comply by April 17, stating the company has prioritized profits over child protection. This action follows a similar lawsuit against Apple Inc. by West Virginia's Attorney General.",
+      "banner_image": null,
+      "source": "KSNT 27 News",
+      "category_within_source": "General",
+      "source_domain": "KSNT 27 News",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "1.000000"
+        }
+      ],
+      "overall_sentiment_score": -0.441371,
+      "overall_sentiment_label": "Bearish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "-0.424030",
+          "ticker_sentiment_label": "Bearish"
+        }
+      ]
+    },
+    {
+      "title": "Cincinnati Financial Corporation share price",
+      "url": "https://www.livemint.com/market/market-stats/us-stocks-cincinnati-financial-corporation-share-price-cinf",
+      "time_published": "20260320T133713",
+      "authors": [],
+      "summary": "This article provides details on Cincinnati Financial Corporation's (CINF) stock performance, current price, key financial metrics, and analyst ratings as of March 19-20, 2026. It highlights the company's financial health with a market cap of $24.99 billion, annual revenue of $12.63 billion, and a dividend yield of 2.11%. The article also includes historical return data for various periods and answers frequently asked questions about the company.",
+      "banner_image": null,
+      "source": "Mint",
+      "category_within_source": "General",
+      "source_domain": "Mint",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.936010"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.801855"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.848968"
+        },
+        {
+          "topic": "economy_macro",
+          "relevance_score": "0.615000"
+        }
+      ],
+      "overall_sentiment_score": 0.151683,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "CINF",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.228138",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.601637",
+          "ticker_sentiment_score": "0.220388",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "GOOG",
+          "relevance_score": "0.642261",
+          "ticker_sentiment_score": "0.224824",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.626848",
+          "ticker_sentiment_score": "0.126366",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "TSLA",
+          "relevance_score": "0.625985",
+          "ticker_sentiment_score": "-0.149825",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Union Bancaire Privee UBP SA Invests $24.19 Million in VeriSign, Inc. $VRSN",
+      "url": "https://www.marketbeat.com/instant-alerts/filing-union-bancaire-privee-ubp-sa-invests-2419-million-in-verisign-inc-vrsn-2026-03-20/",
+      "time_published": "20260320T120538",
+      "authors": [
+        "MarketBeat"
+      ],
+      "summary": "Union Bancaire Privee UBP SA recently acquired a new stake in VeriSign, Inc. (NASDAQ:VRSN) worth approximately $24.19 million, representing 0.11% of the company. Other institutional investors like Vanguard Group Inc. and AQR Capital Management LLC have also adjusted their holdings. VeriSign's stock performance, earnings, dividend increase, and recent insider transactions are detailed, alongside analyst ratings and a company profile.",
+      "banner_image": "https://www.marketbeat.com/logos/verisign-inc-logo-1200x675.png",
+      "source": "MarketBeat",
+      "category_within_source": "General",
+      "source_domain": "MarketBeat",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.918588"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.823763"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.739311"
+        }
+      ],
+      "overall_sentiment_score": 0.130169,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "VRSN",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.245501",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.701118",
+          "ticker_sentiment_score": "-0.249338",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        },
+        {
+          "ticker": "GOOGL",
+          "relevance_score": "0.641805",
+          "ticker_sentiment_score": "0.342007",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "JPM",
+          "relevance_score": "0.603601",
+          "ticker_sentiment_score": "0.105705",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.615098",
+          "ticker_sentiment_score": "0.149973",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "5 Companies At the Center of America's Rare-Earth Revival",
+      "url": "https://www.stocktitan.net/news/CAT/5-companies-at-the-center-of-america-s-rare-earth-by51l7tq0mrw.html",
+      "time_published": "20260320T115926",
+      "authors": [
+        "Charles Kennedy"
+      ],
+      "summary": "This article highlights five key companies playing a crucial role in rebuilding the U.S. rare-earth supply chain: REalloys, USA Rare Earth, Critical Metals Corp., Caterpillar, Apple, and Microsoft. It emphasizes the strategic importance of domestic rare-earth production for national security and addresses the U.S. goal of reducing reliance on Chinese supply ahead of 2027 procurement rules. The piece details how these companies are contributing through mining, metallization, magnet production, equipment provision, and circular economy initiatives.",
+      "banner_image": null,
+      "source": "Stock Titan",
+      "category_within_source": "General",
+      "source_domain": "Stock Titan",
+      "topics": [
+        {
+          "topic": "manufacturing",
+          "relevance_score": "0.905752"
+        },
+        {
+          "topic": "energy_transportation",
+          "relevance_score": "0.810973"
+        },
+        {
+          "topic": "economy_macro",
+          "relevance_score": "0.727289"
+        }
+      ],
+      "overall_sentiment_score": 0.23462,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "CAT",
+          "relevance_score": "0.971827",
+          "ticker_sentiment_score": "0.315472",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.776713",
+          "ticker_sentiment_score": "0.284289",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.687762",
+          "ticker_sentiment_score": "0.233139",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "DE",
+          "relevance_score": "0.574049",
+          "ticker_sentiment_score": "0.120444",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "WJ Wealth Management LLC Sells 6,184 Shares of Apple Inc. $AAPL",
+      "url": "https://www.marketbeat.com/instant-alerts/filing-wj-wealth-management-llc-sells-6184-shares-of-apple-inc-aapl-2026-03-20/",
+      "time_published": "20260320T114407",
+      "authors": [
+        "MarketBeat"
+      ],
+      "summary": "WJ Wealth Management LLC significantly reduced its stake in Apple Inc. by 50.9% in the third quarter, selling 6,184 shares and retaining 5,970 shares valued at $1.614 million. Despite this sale, other major institutions like Norges Bank and Nuveen LLC made substantial new investments in Apple. The article also highlights Apple's recent strong earnings, a surge in iPhone sales in China, and a consensus \"Moderate Buy\" rating from analysts with a $297.58 price target.",
+      "banner_image": "https://www.marketbeat.com/logos/apple-inc-logo-1200x675.png",
+      "source": "MarketBeat",
+      "category_within_source": "General",
+      "source_domain": "MarketBeat",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.947010"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.832431"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.744474"
+        }
+      ],
+      "overall_sentiment_score": 0.188508,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.984773",
+          "ticker_sentiment_score": "0.274801",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "JBL",
+          "relevance_score": "0.621502",
+          "ticker_sentiment_score": "0.106952",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Coinbase Launches 24/7 Stock Trading For Tesla, Apple, Nvidia With 10X Leverage",
+      "url": "https://www.benzinga.com/crypto/cryptocurrency/26/03/51375063/coinbase-launches-24-7-stock-trading-for-tesla-apple-nvidia-with-10x-leverage",
+      "time_published": "20260320T114404",
+      "authors": [
+        "Parshwa Turakhiya"
+      ],
+      "summary": "Coinbase has introduced 24/7 perpetual futures trading for eligible non-U.S. users, offering up to 10x leverage on single-name stocks like Tesla, Apple, and Nvidia, and up to 20x leverage on ETF products. This move expands Coinbase's vision of an \"Everything Exchange\" where users can trade crypto, traditional, and emerging assets on one platform. The initiative addresses the growing demand for continuous equity exposure and capital-efficient access to U.S. markets, setting it apart from traditional 24/5 stock markets.",
+      "banner_image": "https://cdn.benzinga.com/files/images/story/2025/07/24/article-header-background-image.png?quality=85&auto=webp&width=1300",
+      "source": "Benzinga",
+      "category_within_source": "General",
+      "source_domain": "Benzinga",
+      "topics": [
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.937264"
+        },
+        {
+          "topic": "blockchain",
+          "relevance_score": "0.841494"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.715279"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.646686"
+        }
+      ],
+      "overall_sentiment_score": 0.281113,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.991585",
+          "ticker_sentiment_score": "0.307898",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.908778",
+          "ticker_sentiment_score": "0.344430",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "TSLA",
+          "relevance_score": "0.935743",
+          "ticker_sentiment_score": "0.346184",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "COIN",
+          "relevance_score": "0.807795",
+          "ticker_sentiment_score": "0.292855",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.747591",
+          "ticker_sentiment_score": "0.250688",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "TCM Advisors LLC Lowers Stake in Apple Inc. $AAPL",
+      "url": "https://www.marketbeat.com/instant-alerts/filing-tcm-advisors-llc-lowers-stake-in-apple-inc-aapl-2026-03-20/",
+      "time_published": "20260320T114404",
+      "authors": [
+        "MarketBeat"
+      ],
+      "summary": "TCM Advisors LLC significantly reduced its stake in Apple Inc. by 78.6% in the third quarter, selling 5,694 shares and owning 1,551 shares valued at $395,000. Despite this, other major institutional investors like Vanguard Group Inc., State Street Corp, and Northern Trust Corp increased their holdings in Apple. The article also provides details on Apple's financial performance, recent dividend announcement, and market sentiment influenced by factors like China demand, legal wins, AI monetization, and valuation concerns.",
+      "banner_image": "https://www.marketbeat.com/logos/apple-inc-logo-1200x675.png",
+      "source": "MarketBeat",
+      "category_within_source": "General",
+      "source_domain": "MarketBeat",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.901412"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.936901"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.821811"
+        }
+      ],
+      "overall_sentiment_score": 0.19504,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.214886",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "JBL",
+          "relevance_score": "0.631862",
+          "ticker_sentiment_score": "0.198672",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "Apple Inc. stock faces uncertainty after US court ruling on Watch patents and China CEO meeting",
+      "url": "https://www.ad-hoc-news.de/boerse/news/ueberblick/apple-inc-stock-faces-uncertainty-after-us-court-ruling-on-watch-patents/68941599",
+      "time_published": "20260320T112458",
+      "authors": [
+        "ad-hoc-news.de",
+        "Dr. Lukas Meier"
+      ],
+      "summary": "Apple Inc. stock is experiencing mixed market reactions following a favorable US court ruling that Apple Watch's redesigned models do not infringe on Masimo Corp's blood oxygen patents, and a high-level meeting between Apple CEO Tim Cook and China's Commerce Minister. While the patent victory clears a significant hurdle for Apple Watch sales, the company continues to navigate regulatory challenges in China and broader geopolitical risks. German-speaking investors are advised to closely monitor these developments, along with supply chain risks and AI growth catalysts, given Apple's significant presence in global indices and European portfolios.",
+      "banner_image": "https://mdb.ad-hoc-news.de/bild/bild-2405031_1200_675.webp",
+      "source": "AD HOC NEWS",
+      "category_within_source": "General",
+      "source_domain": "AD HOC NEWS",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "0.944402"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.833014"
+        },
+        {
+          "topic": "earnings",
+          "relevance_score": "0.731514"
+        },
+        {
+          "topic": "economy_macro",
+          "relevance_score": "0.611330"
+        }
+      ],
+      "overall_sentiment_score": 0.058357,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.983476",
+          "ticker_sentiment_score": "0.061275",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "QYLG ETF Analysis: Dividends, Returns NASDAQ:QYLG",
+      "url": "https://www.tradingview.com/symbols/NASDAQ-QYLG/analysis/",
+      "time_published": "20260320T100948",
+      "authors": [],
+      "summary": "This article provides a detailed analysis of the Global X Nasdaq 100 Covered Call & Growth ETF (QYLG), focusing on its dividends and returns. It covers key statistics such as AUM, expense ratio, dividend yield, and its strategy of providing Nasdaq-100 exposure while generating income through covered calls. The fund invests mainly in technology stocks, with NVIDIA Corporation and Apple Inc. as top holdings, and pays monthly dividends.",
+      "banner_image": null,
+      "source": "TradingView",
+      "category_within_source": "General",
+      "source_domain": "TradingView",
+      "topics": [
+        {
+          "topic": "financial_markets",
+          "relevance_score": "1.000000"
+        }
+      ],
+      "overall_sentiment_score": 0.155676,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "QYLG",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.130783",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.618190",
+          "ticker_sentiment_score": "0.175140",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.623166",
+          "ticker_sentiment_score": "0.153747",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "14,596 Shares in Apple Inc. $AAPL Acquired by KERR FINANCIAL PLANNING Corp",
+      "url": "https://www.marketbeat.com/instant-alerts/filing-14596-shares-in-apple-inc-aapl-acquired-by-kerr-financial-planning-corp-2026-03-20/",
+      "time_published": "20260320T090859",
+      "authors": [
+        "MarketBeat"
+      ],
+      "summary": "KERR FINANCIAL PLANNING Corp has acquired 14,596 shares of Apple Inc. (NASDAQ:AAPL) during the third quarter, representing a new position valued at approximately $3.93 million and making Apple its fourth-largest holding. Apple exceeded quarterly expectations with EPS of $2.84 and revenue of $143.76 billion, driven by strong iPhone demand in China, a favorable legal ruling, and growth in AI/services monetization. Despite positive catalysts, the article notes potential risks such as security alerts, insider selling, declining capital expenditures, and supply-chain shifts towards competitors like Nvidia.",
+      "banner_image": "https://www.marketbeat.com/logos/apple-inc-logo-1200x675.png",
+      "source": "MarketBeat",
+      "category_within_source": "General",
+      "source_domain": "MarketBeat",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "1.000000"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.933941"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.835166"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.613365"
+        }
+      ],
+      "overall_sentiment_score": 0.194343,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.272495",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.633990",
+          "ticker_sentiment_score": "0.100235",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "JBL",
+          "relevance_score": "0.557268",
+          "ticker_sentiment_score": "0.213430",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "CFG",
+          "relevance_score": "0.594915",
+          "ticker_sentiment_score": "0.246598",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "2,659 Shares in Apple Inc. $AAPL Acquired by Magnolia Wealth Management LLC",
+      "url": "https://www.marketbeat.com/instant-alerts/filing-2659-shares-in-apple-inc-aapl-acquired-by-magnolia-wealth-management-llc-2026-03-20/",
+      "time_published": "20260320T090659",
+      "authors": [
+        "MarketBeat"
+      ],
+      "summary": "Magnolia Wealth Management LLC recently acquired 2,659 shares of Apple Inc. (NASDAQ:AAPL) during the third quarter, valuing the new stake at approximately $677,000 and making it their eighth-largest holding. Institutional investors collectively own about 67.73% of Apple's stock, with major players like Vanguard, State Street, Geode Capital Management, Norges Bank, and Northern Trust Corp significantly increasing their positions. Apple continues to demonstrate strong financial performance, beating quarterly earnings estimates, maintaining a substantial market capitalization, and declaring a quarterly dividend, despite some analysts adjusting price targets and recent security concerns.",
+      "banner_image": "https://www.marketbeat.com/logos/apple-inc-logo-1200x675.png",
+      "source": "MarketBeat",
+      "category_within_source": "General",
+      "source_domain": "MarketBeat",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.909424"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.914101"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.837232"
+        }
+      ],
+      "overall_sentiment_score": 0.117467,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.292397",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.633757",
+          "ticker_sentiment_score": "0.140497",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.641248",
+          "ticker_sentiment_score": "-0.141300",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Apple Inc. $AAPL Stake Lowered by Cacti Asset Management LLC",
+      "url": "https://www.marketbeat.com/instant-alerts/filing-apple-inc-aapl-stake-lowered-by-cacti-asset-management-llc-2026-03-20/",
+      "time_published": "20260320T082002",
+      "authors": [
+        "MarketBeat"
+      ],
+      "summary": "Cacti Asset Management LLC reduced its stake in Apple Inc. by 1.2% in the fourth quarter of 2025, selling 6,402 shares and holding 506,134 shares valued at $138.56 million. Despite this, Apple remains Cacti's fourth-largest holding, representing 8.5% of its portfolio. Other institutional investors, such as Norges Bank and Northern Trust, significantly increased their positions in AAPL, contributing to institutional ownership of 67.73% of the company's stock.",
+      "banner_image": "https://www.marketbeat.com/logos/apple-inc-logo-1200x675.png",
+      "source": "MarketBeat",
+      "category_within_source": "General",
+      "source_domain": "MarketBeat",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.808817"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.916951"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.904321"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.841585"
+        },
+        {
+          "topic": "economy_macro",
+          "relevance_score": "0.629364"
+        }
+      ],
+      "overall_sentiment_score": 0.029637,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.014909",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "The Rise of AI Commerce and the Decline of Traditional Purchase Funnels",
+      "url": "https://www.fticonsulting.com/insights/articles/rise-ai-commerce-decline-traditional-purchase-funnels",
+      "time_published": "20260320T080942",
+      "authors": [],
+      "summary": "The article discusses the significant impact of agentic AI on B2C and B2B purchasing behavior, leading to the rise of \"AI-mediated commerce.\" It explains how this shift is transforming the traditional linear purchase funnel into a high-velocity, personalized, and continuous loop, where the gap between product exploration and purchase is collapsing. Retailers are urged to adapt by building AI responses across all channels to optimize for AI agents and enhance business performance in this evolving landscape.",
+      "banner_image": null,
+      "source": "FTI Consulting",
+      "category_within_source": "General",
+      "source_domain": "FTI Consulting",
+      "topics": [
+        {
+          "topic": "retail_wholesale",
+          "relevance_score": "0.905938"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.807811"
+        },
+        {
+          "topic": "economy_macro",
+          "relevance_score": "0.616219"
+        }
+      ],
+      "overall_sentiment_score": 0.235053,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "FCN",
+          "relevance_score": "0.333351",
+          "ticker_sentiment_score": "0.049494",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.728187",
+          "ticker_sentiment_score": "0.313671",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.623930",
+          "ticker_sentiment_score": "0.339135",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.646261",
+          "ticker_sentiment_score": "0.245605",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "GOOGL",
+          "relevance_score": "0.610847",
+          "ticker_sentiment_score": "0.340532",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "Family Manage LLC Invests in FLXR ETF: Strategy & 2026 Performance - News and Statistics",
+      "url": "https://www.indexbox.io/blog/family-manage-llc-acquires-1558m-stake-in-tcw-flexible-income-etf-flxr/",
+      "time_published": "20260320T050959",
+      "authors": [],
+      "summary": "Family Manage LLC has acquired a $15.58 million stake in the TCW Flexible Income ETF (FLXR), representing 1.97% of its 13F assets under management as of late 2025. The ETF, which focuses on generating income and capital growth through a diversified global bond portfolio, was trading at $39.77 in mid-February 2026, marking an 8.5% increase over the past year. This report also outlines an analysis of the global chemical products industry, covering demand, supply, trade flows, and pricing.",
+      "banner_image": "https://www.indexbox.io/landing/img/blog/telegram-fallback/84b631d5ba33ea630eed5fc7ff34295b.webp",
+      "source": "IndexBox",
+      "category_within_source": "General",
+      "source_domain": "IndexBox",
+      "topics": [
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.905896"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.839217"
+        }
+      ],
+      "overall_sentiment_score": 0.180144,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "FLXR",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.322522",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.646331",
+          "ticker_sentiment_score": "0.129976",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.648680",
+          "ticker_sentiment_score": "0.112080",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Coterra Energy Stock On Fire: Up 11% With 6-Day Winning Streak",
+      "url": "https://www.trefis.com/articles/594148/coterra-energy-stock-on-fire-up-11-with-6-day-winning-streak/2026-03-19",
+      "time_published": "20260320T033718",
+      "authors": [
+        "Trefis Team"
+      ],
+      "summary": "Coterra Energy (CTRA) has experienced an 11% surge over a 6-day winning streak, increasing its market cap by $2.5 billion to $25 billion. Despite this rapid gain, the article suggests the stock is \"Attractive\" due to strong operating performance and moderate valuation, though it cautions against investing without detailed analysis. It also highlights the importance of predictive signals for identifying future winners before market pricing occurs.",
+      "banner_image": "https://s3.amazonaws.com/wp-uploads-trefis/articles/wp-content/uploads/2025/09/30062419/Daily-Winning-Streaks-300x200.png",
+      "source": "Trefis",
+      "category_within_source": "General",
+      "source_domain": "Trefis",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.907712"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.911998"
+        },
+        {
+          "topic": "energy_transportation",
+          "relevance_score": "0.827563"
+        }
+      ],
+      "overall_sentiment_score": 0.396349,
+      "overall_sentiment_label": "Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "CTRA",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.425077",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "CRM",
+          "relevance_score": "0.627390",
+          "ticker_sentiment_score": "0.503090",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "ADBE",
+          "relevance_score": "0.636185",
+          "ticker_sentiment_score": "0.312066",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.618505",
+          "ticker_sentiment_score": "0.320972",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.631184",
+          "ticker_sentiment_score": "0.308038",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "Ascentage Pharma enhances board structure, sets shareholder vote on equity grant",
+      "url": "https://www.msn.com/en-us/money/other/ascentage-pharma-enhances-board-structure-sets-shareholder-vote-on-equity-grant/ar-AA1TiLrr?apiversion=v2&domshim=1&noservercache=1&noservertelemetry=1&batchservertelemetry=1&renderwebcomponents=1&wcseo=1",
+      "time_published": "20260320T013950",
+      "authors": [],
+      "summary": "Ascentage Pharma (6683.HK) has announced a significant board restructuring, increasing the number of independent non-executive directors from three to four and reducing the number of executive directors from three to two. This move aims to strengthen the board's independence. The company will also hold an extraordinary general meeting on April 11, 2024, to seek shareholder approval for granting new shares, comprising 1.34% of its enlarged capital, to a trustee for the purposes of incentive plans.",
+      "banner_image": null,
+      "source": "MSN",
+      "category_within_source": "General",
+      "source_domain": "MSN",
+      "topics": [
+        {
+          "topic": "life_sciences",
+          "relevance_score": "0.903556"
+        }
+      ],
+      "overall_sentiment_score": 0.10365,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPG",
+          "relevance_score": "0.313795",
+          "ticker_sentiment_score": "0.040568",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.734563",
+          "ticker_sentiment_score": "0.211452",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "BTCS Inc Stock Live Price, Chart, Analysis, News & Forecast \u2013 Buy, Sell & Trade US Equities Today",
+      "url": "https://www.livemint.com/market/market-stats/us-stocks-btcs-inc-share-price-btcs",
+      "time_published": "20260320T010905",
+      "authors": [],
+      "summary": "This article provides a detailed live price, chart, analysis, news, and forecast for BTCS Inc stock. It includes key metrics such as market cap, revenue, EBITDA, return on equity, and analyst ratings. The article also summarizes BTCS Inc's historical performance, offers insights on investing in US stocks, and answers frequently asked questions about the company.",
+      "banner_image": null,
+      "source": "Mint",
+      "category_within_source": "General",
+      "source_domain": "Mint",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.903838"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.946463"
+        },
+        {
+          "topic": "blockchain",
+          "relevance_score": "0.835084"
+        }
+      ],
+      "overall_sentiment_score": 0.022227,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "BTCS",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.046277",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.739972",
+          "ticker_sentiment_score": "0.042095",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "GOOG",
+          "relevance_score": "0.746119",
+          "ticker_sentiment_score": "0.039790",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.733166",
+          "ticker_sentiment_score": "0.017254",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "TSLA",
+          "relevance_score": "0.742599",
+          "ticker_sentiment_score": "0.007937",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Macerich Company Stock Live Price, Chart, Analysis, News & Forecast \u2013 Buy, Sell & Trade US Equities Today",
+      "url": "https://www.livemint.com/market/market-stats/us-stocks-macerich-company-share-price-mac",
+      "time_published": "20260320T000924",
+      "authors": [],
+      "summary": "This article provides a detailed financial overview of Macerich Company (MAC), a REIT specializing in retail properties, as of March 19, 2026. It covers the current stock price, 52-week high and low, key financial metrics like market cap, revenue, and dividend yield, as well as analyst ratings and historical performance. The piece also includes an FAQ section explaining the company's business model and how to invest.",
+      "banner_image": null,
+      "source": "Mint",
+      "category_within_source": "General",
+      "source_domain": "Mint",
+      "topics": [
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.914136"
+        },
+        {
+          "topic": "real_estate",
+          "relevance_score": "0.848859"
+        },
+        {
+          "topic": "earnings",
+          "relevance_score": "0.737119"
+        },
+        {
+          "topic": "retail_wholesale",
+          "relevance_score": "0.606629"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.621730"
+        }
+      ],
+      "overall_sentiment_score": 0.110546,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "MAC",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.212964",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.617434",
+          "ticker_sentiment_score": "0.116900",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "GOOGL",
+          "relevance_score": "0.618042",
+          "ticker_sentiment_score": "0.133947",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.634920",
+          "ticker_sentiment_score": "0.108741",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "TSLA",
+          "relevance_score": "0.600290",
+          "ticker_sentiment_score": "-0.147542",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Stein Deborah, RB global director, buys $39k in shares",
+      "url": "https://www.investing.com/news/insider-trading-news/stein-deborah-rb-global-director-buys-39k-in-shares-93CH-4572002",
+      "time_published": "20260319T223902",
+      "authors": [
+        "Investing.com"
+      ],
+      "summary": "Deborah Stein, a director at RB Global INC (NYSE:RBA), recently purchased 400 shares of the company's common stock for $39,496, even though the purchase price was above the current market value. This transaction follows other positive developments for RB Global, including successful auction results, a new share repurchase program, and an increased price target from RBC Capital. The company, valued at $17.82 billion, has a P/E ratio of 47.1 and has consistently paid dividends for 24 years.",
+      "banner_image": "https://i-invdn-com.investing.com/news/news_six_pile_69x52._800x533_L_1419494215.jpg",
+      "source": "Investing.com",
+      "category_within_source": "General",
+      "source_domain": "Investing.com",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.945244"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.803645"
+        },
+        {
+          "topic": "economy_macro",
+          "relevance_score": "0.648453"
+        },
+        {
+          "topic": "retail_wholesale",
+          "relevance_score": "0.615478"
+        },
+        {
+          "topic": "energy_transportation",
+          "relevance_score": "0.629877"
+        }
+      ],
+      "overall_sentiment_score": -0.080696,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "RBA",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.455988",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "WDC",
+          "relevance_score": "0.559514",
+          "ticker_sentiment_score": "-0.260999",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.736501",
+          "ticker_sentiment_score": "0.025580",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.664202",
+          "ticker_sentiment_score": "-0.241629",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        },
+        {
+          "ticker": "TSLA",
+          "relevance_score": "0.621675",
+          "ticker_sentiment_score": "-0.202837",
+          "ticker_sentiment_label": "Somewhat-Bearish"
+        }
+      ]
+    },
+    {
+      "title": "American Tower Corp Stock Live Price, Chart, Analysis, News & Forecast \u2013 Buy, Sell & Trade US Equities Today",
+      "url": "https://www.livemint.com/market/market-stats/us-stocks-american-tower-corp-share-price-amt",
+      "time_published": "20260319T223700",
+      "authors": [],
+      "summary": "This article provides comprehensive financial data for American Tower Corp (AMT) as of March 19, 2026, including its current stock price ($182.76), market capitalization ($84.59 B), and key financial metrics like revenue, EBITDA, dividend yield, and P/E ratio. It also outlines the stock's historical performance, analyst ratings (11 Buy, 7 Hold, 0 Sell), and provides information on how to invest in US stocks.",
+      "banner_image": null,
+      "source": "Mint",
+      "category_within_source": "General",
+      "source_domain": "Mint",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.826427"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.900115"
+        },
+        {
+          "topic": "real_estate",
+          "relevance_score": "0.717157"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.612789"
+        }
+      ],
+      "overall_sentiment_score": 0.039164,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "AMT",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.159860",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.717750",
+          "ticker_sentiment_score": "0.031593",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "GOOG",
+          "relevance_score": "0.602795",
+          "ticker_sentiment_score": "0.010800",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.627066",
+          "ticker_sentiment_score": "0.034145",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.622003",
+          "ticker_sentiment_score": "0.040170",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Invesco QQQ ETF",
+      "url": "https://growbeansprout.com/quote/QQQ",
+      "time_published": "20260319T220734",
+      "authors": [],
+      "summary": "The Invesco QQQ ETF (NASDAQ: QQQ) tracks the Nasdaq-100 Index, offering exposure to the 100 largest non-financial companies on the Nasdaq, including tech giants like Apple and Amazon. It is known for its focus on innovation and technology, high liquidity, and a low annual expense ratio of 0.20%. The article provides a summary, key features, and performance data for the ETF.",
+      "banner_image": null,
+      "source": "Beansprout",
+      "category_within_source": "General",
+      "source_domain": "Beansprout",
+      "topics": [
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.948208"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.810261"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.713931"
+        }
+      ],
+      "overall_sentiment_score": 0.106775,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "QQQ",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.144417",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.728217",
+          "ticker_sentiment_score": "0.109092",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.720904",
+          "ticker_sentiment_score": "0.126630",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.711796",
+          "ticker_sentiment_score": "0.117844",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.724771",
+          "ticker_sentiment_score": "0.108989",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Dropbox Plus Subscribers Hit with Lost Loyalty Benefits and Region Switch Backlash in 2026",
+      "url": "https://www.ad-hoc-news.de/boerse/news/ueberblick/dropbox-plus-subscribers-hit-with-lost-loyalty-benefits-and-region-switch/68903378",
+      "time_published": "20260319T210946",
+      "authors": [
+        "Dr. Elena Voss"
+      ],
+      "summary": "Dropbox Plus subscribers are experiencing significant frustration and backlash in 2026 due to mandatory subscription resets when changing regions. This policy erases long-standing loyalty benefits, including grandfathered features and pricing, leading to unexpected price hikes and a loss of critical services like extended file versioning. The issue highlights concerns about Dropbox's customer retention strategies and could impact its subscription revenue stability amidst a competitive cloud storage market.",
+      "banner_image": "https://mdb.ad-hoc-news.de/bild/bild-2471712_1200_675.webp",
+      "source": "AD HOC NEWS",
+      "category_within_source": "General",
+      "source_domain": "AD HOC NEWS",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "0.802056"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.747414"
+        },
+        {
+          "topic": "earnings",
+          "relevance_score": "0.601351"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.623937"
+        }
+      ],
+      "overall_sentiment_score": -0.17147,
+      "overall_sentiment_label": "Somewhat-Bearish",
+      "ticker_sentiment": [
+        {
+          "ticker": "DBX",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "-0.412632",
+          "ticker_sentiment_label": "Bearish"
+        },
+        {
+          "ticker": "GOOGL",
+          "relevance_score": "0.615532",
+          "ticker_sentiment_score": "-0.143559",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.635421",
+          "ticker_sentiment_score": "-0.109602",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "ADBE",
+          "relevance_score": "0.591128",
+          "ticker_sentiment_score": "-0.142176",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.563433",
+          "ticker_sentiment_score": "-0.147455",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Calydon Capital Sells $9.19M in ZoomInfo Shares | 2025 Q4 Filing - News and Statistics",
+      "url": "https://www.indexbox.io/blog/calydon-capital-reduces-zoominfo-stake-in-q4-2025/",
+      "time_published": "20260319T210909",
+      "authors": [],
+      "summary": "Calydon Capital significantly reduced its holdings in ZoomInfo Technologies during Q4 2025, selling 892,298 shares valued at approximately $9.19 million. Following this transaction, the firm retained a smaller position of 84,210 shares worth $856,416. ZoomInfo, trading at $5.93, has seen a substantial decline over the past year, currently holding a market valuation of $1.81 billion.",
+      "banner_image": "https://www.indexbox.io/landing/img/blog/telegram-fallback/18441af5f555761797fc04d2a777eea2.webp",
+      "source": "IndexBox",
+      "category_within_source": "General",
+      "source_domain": "IndexBox",
+      "topics": [
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.919906"
+        }
+      ],
+      "overall_sentiment_score": 0.099836,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "GTM",
+          "relevance_score": "0.348035",
+          "ticker_sentiment_score": "0.028026",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.725501",
+          "ticker_sentiment_score": "0.122998",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Five Below: Why I Changed My Mind And See 65% Total Return By 2029 (Upgrade) (NASDAQ:FIVE)",
+      "url": "https://seekingalpha.com/article/4884283-five-below-why-i-changed-my-mind-and-see-65-percent-total-return-by-2029-upgrade",
+      "time_published": "20260319T201008",
+      "authors": [
+        "Kenio Fontes"
+      ],
+      "summary": "Five Below (FIVE) delivered strong Q4 results with significant revenue and comparable sales growth, surpassing expectations. The company's strategy of offering trend-right, extreme value merchandise is driving its robust performance. Management's positive guidance for FY2025\u20132026 supports a \"buy\" rating, projecting substantial revenue and EPS, although the article notes caution due to its premium valuation and market sensitivities.",
+      "banner_image": "https://static.seekingalpha.com/cdn/s3/uploads/getty_images/1227573764/image_1227573764.jpg?io=getty-c-w630",
+      "source": "Seeking Alpha",
+      "category_within_source": "General",
+      "source_domain": "Seeking Alpha",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.904600"
+        },
+        {
+          "topic": "retail_wholesale",
+          "relevance_score": "0.803789"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.707002"
+        }
+      ],
+      "overall_sentiment_score": 0.247953,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "FIVE",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.402098",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "DG",
+          "relevance_score": "0.604908",
+          "ticker_sentiment_score": "0.124272",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.717179",
+          "ticker_sentiment_score": "0.107484",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Apple Stock Is Already A Portfolio Staple \u2014 And This ETF Is Turning It Into A Casino Chip",
+      "url": "https://www.sahmcapital.com/news/content/apple-stock-is-already-a-portfolio-staple-and-this-etf-is-turning-it-into-a-casino-chip-2026-03-18",
+      "time_published": "20260319T200922",
+      "authors": [
+        "Benzinga News"
+      ],
+      "summary": "Broad market ETFs and technology-focused funds already have significant holdings in Apple (AAPL), making it a staple in many investor portfolios. The YieldMax AAPL Option Income Strategy ETF (APLY) offers a high distribution yield of over 70% through covered call strategies, but investors sacrifice upside potential and incur high expense ratios. This can lead to double exposure and increased risk concentration for investors who hold both broad ETFs and APLY.",
+      "banner_image": null,
+      "source": "Sahm",
+      "category_within_source": "General",
+      "source_domain": "Sahm",
+      "topics": [
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.938594"
+        }
+      ],
+      "overall_sentiment_score": -0.157064,
+      "overall_sentiment_label": "Somewhat-Bearish",
+      "ticker_sentiment": [
+        {
+          "ticker": "APLY",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "-0.414900",
+          "ticker_sentiment_label": "Bearish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.925674",
+          "ticker_sentiment_score": "0.107691",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Prometheus lands $145M refi for Cupertino office campus",
+      "url": "https://therealdeal.com/san-francisco/2026/03/19/prometheus-gets-wells-fargo-financing-for-cupertino-offices/",
+      "time_published": "20260319T194238",
+      "authors": [
+        "TRD Staff"
+      ],
+      "summary": "Prometheus Real Estate Group secured a $145 million refinancing deal from Wells Fargo for its Cupertino office campus, \"The Towers,\" near Apple's headquarters. This financing will fund upgrades to the 357,000-square-foot office buildings at 20400 and 20450 Stevens Creek Boulevard, which are part of the larger Cupertino City Center mixed-use development. The move marks Prometheus's second refinancing of the property in a decade and continues ongoing modernization efforts aimed at meeting the needs of innovative Silicon Valley companies.",
+      "banner_image": "https://static.therealdeal.com/wp-content/uploads/2026/03/SFO-Prometheus-lands-145M-refi-for-Cupertino-office-campus-MAIN-50x33.jpg",
+      "source": "The Real Deal",
+      "category_within_source": "General",
+      "source_domain": "The Real Deal",
+      "topics": [
+        {
+          "topic": "real_estate",
+          "relevance_score": "0.936894"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.707556"
+        }
+      ],
+      "overall_sentiment_score": 0.147873,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "WFC",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.268464",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.704380",
+          "ticker_sentiment_score": "0.117243",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.635348",
+          "ticker_sentiment_score": "0.129880",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "MS",
+          "relevance_score": "0.628863",
+          "ticker_sentiment_score": "0.037329",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "R&D Tax Credits: Fueling Growth for Consumer and Industrial Product Innovators",
+      "url": "https://www.cbiz.com/insights/article/rd-tax-credits-fueling-growth-for-consumer-and-industrial-product-innovators",
+      "time_published": "20260319T190903",
+      "authors": [
+        "Myunghee Geerts"
+      ],
+      "summary": "The article discusses the significant role of R&D tax credits in driving innovation and growth within the consumer and industrial product (C&IP) sector. It details how the R&D tax credit reduces federal income tax, can lower alternative minimum tax, and has beneficial carry-forward rules, while also explaining the impact of recent legislative changes like the One Big Beautiful Bill Act (OBBBA) on R&E costs. The piece outlines the four-part test for qualifying R&D activities and provides examples of C&IP innovations that typically qualify for these crucial tax benefits.",
+      "banner_image": "https://www.cbiz.com/wp-content/uploads/insights-rd-tax-credits-fueling-growth-for-consumer-and-industrial-product-innovators.jpg",
+      "source": "CBIZ",
+      "category_within_source": "General",
+      "source_domain": "CBIZ",
+      "topics": [
+        {
+          "topic": "economy_fiscal",
+          "relevance_score": "1.000000"
+        },
+        {
+          "topic": "manufacturing",
+          "relevance_score": "0.838284"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.748200"
+        }
+      ],
+      "overall_sentiment_score": 0.314414,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "CBZ",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.548205",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "AMD",
+          "relevance_score": "0.645218",
+          "ticker_sentiment_score": "0.325528",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.607282",
+          "ticker_sentiment_score": "0.215120",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "GE",
+          "relevance_score": "0.625338",
+          "ticker_sentiment_score": "0.212221",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "BA",
+          "relevance_score": "0.648269",
+          "ticker_sentiment_score": "0.202330",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "Apple fends off bid for new Apple Watch import ban at US trade tribunal",
+      "url": "https://www.reuters.com/legal/litigation/apple-fends-off-bid-new-apple-watch-import-ban-us-trade-tribunal-2026-03-19/",
+      "time_published": "20260319T161357",
+      "authors": [
+        "Blake Brittain"
+      ],
+      "summary": "A U.S. trade tribunal has preliminarily ruled that current Apple Watches do not infringe patents owned by Masimo, rejecting Masimo's attempt to renew an import ban. Apple had previously altered its watches to circumvent a 2023 import ban, and a judge agreed that these redesigned watches do not violate Masimo's blood-oxygen reading technology patents. Although a separate appeals court affirmed the 2023 ban, Apple has resumed importing its redesigned watches and faces ongoing patent disputes with Masimo.",
+      "banner_image": "https://www.reuters.com/resizer/v2/COHQUO6BUJM6FPEQGUOPREIYRI.jpg?auth=5137e3f5a93f16b5ecd8fdeaf6103407875741358e5554f28fcbd8ca2435decc&width=1080&quality=80",
+      "source": "Reuters",
+      "category_within_source": "General",
+      "source_domain": "Reuters",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "1.000000"
+        },
+        {
+          "topic": "life_sciences",
+          "relevance_score": "0.824636"
+        },
+        {
+          "topic": "mergers_and_acquisitions",
+          "relevance_score": "0.730354"
+        }
+      ],
+      "overall_sentiment_score": 0.218359,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.328251",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "DHR",
+          "relevance_score": "0.614157",
+          "ticker_sentiment_score": "0.135842",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Warren Buffett, Markwayne Mullin Bet On The Same 10 Stocks \u2013 Some Might Surprise You",
+      "url": "https://www.benzinga.com/news/politics/26/03/51360295/warren-buffett-markwayne-mullin-bet-on-the-same-10-stocks-some-might-surprise-you",
+      "time_published": "20260319T160714",
+      "authors": [
+        "Chris Katje"
+      ],
+      "summary": "The article highlights that Senator Markwayne Mullin and Warren Buffett's Berkshire Hathaway share 10 common stock holdings, with Mullin's active trading in small-cap and \"Magnificent Seven\" stocks contrasting Buffett's long-term value investing strategy. These shared investments include major companies like Apple, American Express, Coca-Cola, and Amazon, among others. Mullin's investment activities, particularly in defense and oil stocks while serving on the Armed Services Committee, have raised conflict-of-interest questions.",
+      "banner_image": "https://cdn.benzinga.com/files/images/story/2026/03/19/Markwayne-Mullin-Warren-Buffett-Stocks-I.png?quality=85&auto=webp&width=400",
+      "source": "Benzinga",
+      "category_within_source": "General",
+      "source_domain": "Benzinga",
+      "topics": [
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.940439"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.812394"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.605975"
+        },
+        {
+          "topic": "economy_macro",
+          "relevance_score": "0.639558"
+        }
+      ],
+      "overall_sentiment_score": 0.107407,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.607112",
+          "ticker_sentiment_score": "0.142607",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.700699",
+          "ticker_sentiment_score": "0.131611",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AXP",
+          "relevance_score": "0.601205",
+          "ticker_sentiment_score": "0.132109",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "KO",
+          "relevance_score": "0.611078",
+          "ticker_sentiment_score": "0.144344",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Your Apple TV Is Completely Changing How It Recommends Movies And Shows",
+      "url": "https://www.bgr.com/2127231/apple-tv-new-movie-show-recommendation-feature-genius-browse/",
+      "time_published": "20260319T160457",
+      "authors": [
+        "Jos\u00e9 Adorno"
+      ],
+      "summary": "Apple is set to launch tvOS 26.4, introducing a new \"Genius Browse\" feature to the Apple TV app that will redefine movie and show recommendations. This update coincides with the phasing out of iTunes Movies and iTunes TV Show apps, aiming to offer users a more intuitive content discovery experience. The Genius Browse will provide consistently updated recommendations from various services, and its introduction might also lay the groundwork for a more personalized Apple TV experience, potentially powered by an enhanced Siri.",
+      "banner_image": "https://www.bgr.com/img/gallery/your-apple-tv-is-completely-changing-how-it-recommends-movies-and-shows/intro-1773936198.jpg",
+      "source": "BGR",
+      "category_within_source": "General",
+      "source_domain": "BGR",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "0.934040"
+        }
+      ],
+      "overall_sentiment_score": 0.169544,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.341662",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.630879",
+          "ticker_sentiment_score": "0.121398",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "GOOGL",
+          "relevance_score": "0.604965",
+          "ticker_sentiment_score": "0.126128",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Apple Stock (AAPL): Price Target, Forecast & Analysis 2026",
+      "url": "https://www.techi.com/apple-stock/",
+      "time_published": "20260319T154058",
+      "authors": [
+        "Fatimah Misbah Hussain"
+      ],
+      "summary": "This comprehensive analysis of Apple (AAPL) stock in March 2026 examines its premium valuation, record-breaking Q1 FY2026 earnings driven by the iPhone 17 super-cycle and a resurgence in China, and its capital-light AI strategy leveraging a landmark partnership with Google's Gemini. The article details Apple's $109 billion Services growth engine, past stock performance, analyst price targets, and risks such as geopolitical tensions, valuation premium, and regulatory headwinds. It concludes that while not a bargain, AAPL remains a high-quality equity with compelling setups for the next 12-18 months, recommending dollar-cost averaging for long-term investors.",
+      "banner_image": "https://www.techi.com/wp-content/uploads/2026/03/2026-03-12-Is-Apple-Stock-Back-to-Being-a-Market-Leader-techi@2x-1200x600.webp",
+      "source": "Techi",
+      "category_within_source": "General",
+      "source_domain": "Techi",
+      "topics": [
+        {
+          "topic": "earnings",
+          "relevance_score": "0.930463"
+        },
+        {
+          "topic": "technology",
+          "relevance_score": "0.831435"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.739699"
+        }
+      ],
+      "overall_sentiment_score": 0.27905,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.326302",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "GOOGL",
+          "relevance_score": "0.741148",
+          "ticker_sentiment_score": "0.347499",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.643265",
+          "ticker_sentiment_score": "0.213667",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.649840",
+          "ticker_sentiment_score": "0.212969",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "Apple Watch Redesign Doesn\u2019t Infringe Patents, Early Ruling Says",
+      "url": "https://news.bloomberglaw.com/ip-law/apple-watch-redesign-doesnt-infringe-patents-early-ruling-says",
+      "time_published": "20260319T152058",
+      "authors": [
+        "Christopher Yasiejko"
+      ],
+      "summary": "A US trade judge has issued an early ruling stating that a redesigned Apple Watch does not infringe on two patents held by Masimo Corp. This decision could pave the way for Apple to resume imports of the device, overturning a previous ban from 2023, if the full agency upholds the ruling. The administrative law judge found that Apple's \"Redesign 2 Watch\" neither directly infringes nor induces infringement of the specified patents.",
+      "banner_image": "https://news-api.bloomberglaw.com/v1/resize-image?url=https%3A%2F%2Fbloomberg-bna-brightspot.s3.us-east-1.amazonaws.com%2F40%2F63%2F17ef176849da9a6cb83478059389%2Fapple-watch.jpg&width=1240&height=480&fit=cover&crop=3997x1541%2B0%2B513",
+      "source": "Bloomberg Law News",
+      "category_within_source": "General",
+      "source_domain": "Bloomberg Law News",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "1.000000"
+        }
+      ],
+      "overall_sentiment_score": 0.325356,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.957468",
+          "ticker_sentiment_score": "0.307686",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    },
+    {
+      "title": "TD Bank (NYSE: TD) offers callable 13.05% barrier notes due 2029",
+      "url": "https://www.stocktitan.net/sec-filings/TD/424b2-toronto-dominion-bank-prospectus-supplement-6a556768b8de.html",
+      "time_published": "20260319T143959",
+      "authors": [],
+      "summary": "TD Bank is offering Callable Contingent Interest Barrier Notes linked to the performance of the Dow Jones Industrial Average, Nasdaq-100 Technology Sector, and Russell 2000 Index. These notes offer a 13.05% annual contingent interest rate, payable monthly if each reference asset meets a 70% barrier value. The notes are callable by TD monthly, starting from the third interest payment date, and investors face principal loss if any reference asset falls below its barrier at maturity and the notes are not called.",
+      "banner_image": "https://www.sec.gov/Archives/edgar/data/0000947263/000114036126010359/image0.jpg",
+      "source": "Stock Titan",
+      "category_within_source": "General",
+      "source_domain": "Stock Titan",
+      "topics": [
+        {
+          "topic": "financial_markets",
+          "relevance_score": "1.000000"
+        },
+        {
+          "topic": "finance",
+          "relevance_score": "0.921849"
+        }
+      ],
+      "overall_sentiment_score": 0.129517,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "TD",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.136544",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.589819",
+          "ticker_sentiment_score": "0.116667",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.583915",
+          "ticker_sentiment_score": "0.101894",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "GOOGL",
+          "relevance_score": "0.586555",
+          "ticker_sentiment_score": "0.118039",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.615556",
+          "ticker_sentiment_score": "0.140871",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "Apple Made $900M From AI Last Year While Rivals Burned Through Cash",
+      "url": "https://www.benzinga.com/markets/prediction-markets/26/03/51356107/apple-made-900m-from-ai-last-year-while-rivals-burned-through-cash",
+      "time_published": "20260319T143657",
+      "authors": [
+        "Daragh Thomas"
+      ],
+      "summary": "Apple generated nearly $900 million in AI-related App Store fees in 2025, primarily from OpenAI's ChatGPT. This \"invisible AI strategy\" allows Apple to monetize AI through its vast iOS distribution without incurring the massive capital expenditures of rivals like Amazon and Meta, who are burning significant cash on AI infrastructure. Wedbush analyst Dan Ives estimates Apple's AI layer could be worth $1.5 trillion, highlighting its advantageous position in the AI landscape.",
+      "banner_image": "https://cdn.benzinga.com/files/images/story/2026/03/19/Tim-Cook--Chief-Executive-Officer-Of-App_0.jpeg?quality=85&auto=webp&width=850",
+      "source": "Benzinga",
+      "category_within_source": "General",
+      "source_domain": "Benzinga",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "0.932815"
+        },
+        {
+          "topic": "earnings",
+          "relevance_score": "0.805265"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.741703"
+        }
+      ],
+      "overall_sentiment_score": -0.110253,
+      "overall_sentiment_label": "Neutral",
+      "ticker_sentiment": [
+        {
+          "ticker": "AAPL",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.464174",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.719195",
+          "ticker_sentiment_score": "-0.405660",
+          "ticker_sentiment_label": "Bearish"
+        },
+        {
+          "ticker": "META",
+          "relevance_score": "0.738422",
+          "ticker_sentiment_score": "-0.406661",
+          "ticker_sentiment_label": "Bearish"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.627537",
+          "ticker_sentiment_score": "-0.087312",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.622093",
+          "ticker_sentiment_score": "-0.090844",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "TG Therapeutics secures $750M credit facility with Blue Owl By Investing.com",
+      "url": "https://ca.investing.com/news/company-news/tg-therapeutics-secures-750m-credit-facility-with-blue-owl-93CH-4523002",
+      "time_published": "20260319T123956",
+      "authors": [],
+      "summary": "TG Therapeutics has secured a new five-year, $750 million senior secured credit facility with Blue Owl Capital, which repays an existing facility and provides a net raise of $500 million. The company plans to use the capital to support share repurchases, business development, and investments in its drug BRIUMVI and pipeline. This financing follows recent financial results showing a miss on EPS but a beat on revenue expectations, and upcoming presentations of BRIUMVI data at a medical meeting.",
+      "banner_image": "https://i-invdn-com.investing.com/news/LYNXMPEB0M0CA_L.jpg",
+      "source": "Investing.com Canada",
+      "category_within_source": "General",
+      "source_domain": "Investing.com Canada",
+      "topics": [
+        {
+          "topic": "finance",
+          "relevance_score": "0.922451"
+        },
+        {
+          "topic": "earnings",
+          "relevance_score": "0.842055"
+        },
+        {
+          "topic": "life_sciences",
+          "relevance_score": "0.738736"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.620194"
+        }
+      ],
+      "overall_sentiment_score": 0.213077,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "TGTX",
+          "relevance_score": "0.959739",
+          "ticker_sentiment_score": "0.418698",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "AVGO",
+          "relevance_score": "0.629949",
+          "ticker_sentiment_score": "0.102055",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "TSLA",
+          "relevance_score": "0.603366",
+          "ticker_sentiment_score": "0.147785",
+          "ticker_sentiment_label": "Neutral"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.603181",
+          "ticker_sentiment_score": "0.145319",
+          "ticker_sentiment_label": "Neutral"
+        }
+      ]
+    },
+    {
+      "title": "1 Tech ETF to Invest $1,000 In Right Now",
+      "url": "https://www.theglobeandmail.com/investing/markets/stocks/TSLA-Q/pressreleases/840162/1-tech-etf-to-invest-1-000-in-right-now/",
+      "time_published": "20260319T121011",
+      "authors": [
+        "Motley Fool"
+      ],
+      "summary": "The article suggests the Invesco Nasdaq 100 ETF (QQQM) as a smart investment for those looking to get into tech without the risk of individual stocks. Although not exclusively tech-focused, nearly 60% of its holdings are tech companies, providing diversification. The Nasdaq-100 has a strong historical performance, with an average annual return of 13% over the past 30 years, indicating significant long-term growth potential for investors.",
+      "banner_image": "https://barchart-news-media-prod.aws.barchart.com/FC/72212b12f105798aff00fe7f62205ee3/%3Furl%3Dhttps%253a%252f%252fg.foolcdn.com%252feditorial%252fimages%252f860842%252fgettyimages-1348968807-1.jpg%26amp%3Bw%3D700",
+      "source": "The Globe and Mail",
+      "category_within_source": "General",
+      "source_domain": "The Globe and Mail",
+      "topics": [
+        {
+          "topic": "technology",
+          "relevance_score": "0.874978"
+        },
+        {
+          "topic": "financial_markets",
+          "relevance_score": "0.728871"
+        }
+      ],
+      "overall_sentiment_score": 0.344482,
+      "overall_sentiment_label": "Somewhat-Bullish",
+      "ticker_sentiment": [
+        {
+          "ticker": "QQQM",
+          "relevance_score": "1.000000",
+          "ticker_sentiment_score": "0.430039",
+          "ticker_sentiment_label": "Bullish"
+        },
+        {
+          "ticker": "NVDA",
+          "relevance_score": "0.720204",
+          "ticker_sentiment_score": "0.343846",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AAPL",
+          "relevance_score": "0.744800",
+          "ticker_sentiment_score": "0.315315",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "MSFT",
+          "relevance_score": "0.700491",
+          "ticker_sentiment_score": "0.304833",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        },
+        {
+          "ticker": "AMZN",
+          "relevance_score": "0.640757",
+          "ticker_sentiment_score": "0.279112",
+          "ticker_sentiment_label": "Somewhat-Bullish"
+        }
+      ]
+    }
+  ]
+}
+
+--- RSI (daily, 14-period, close price) ---
+{
+  "Meta Data": {
+    "1: Symbol": "AAPL",
+    "2: Indicator": "Relative Strength Index (RSI)",
+    "3: Last Refreshed": "2026-03-20",
+    "4: Interval": "daily",
+    "5: Time Period": 14,
+    "6: Series Type": "close",
+    "7: Time Zone": "US/Eastern Time"
+  },
+  "Technical Analysis: RSI [first 30]": {
+    "2026-03-20": {
+      "RSI": "34.9042"
+    },
+    "2026-03-19": {
+      "RSI": "35.8059"
+    },
+    "2026-03-18": {
+      "RSI": "36.6952"
+    },
+    "2026-03-17": {
+      "RSI": "40.8159"
+    },
+    "2026-03-16": {
+      "RSI": "38.7156"
+    },
+    "2026-03-13": {
+      "RSI": "34.5879"
+    },
+    "2026-03-12": {
+      "RSI": "39.7856"
+    },
+    "2026-03-11": {
+      "RSI": "45.4664"
+    },
+    "2026-03-10": {
+      "RSI": "45.4903"
+    },
+    "2026-03-09": {
+      "RSI": "44.1972"
+    },
+    "2026-03-06": {
+      "RSI": "40.8798"
+    },
+    "2026-03-05": {
+      "RSI": "43.7009"
+    },
+    "2026-03-04": {
+      "RSI": "46.0249"
+    },
+    "2026-03-03": {
+      "RSI": "47.3135"
+    },
+    "2026-03-02": {
+      "RSI": "48.3039"
+    },
+    "2026-02-27": {
+      "RSI": "47.7384"
+    },
+    "2026-02-26": {
+      "RSI": "57.1699"
+    },
+    "2026-02-25": {
+      "RSI": "58.7428"
+    },
+    "2026-02-24": {
+      "RSI": "56.9469"
+    },
+    "2026-02-23": {
+      "RSI": "51.3378"
+    },
+    "2026-02-20": {
+      "RSI": "49.7044"
+    },
+    "2026-02-19": {
+      "RSI": "45.4540"
+    },
+    "2026-02-18": {
+      "RSI": "49.0843"
+    },
+    "2026-02-17": {
+      "RSI": "48.6091"
+    },
+    "2026-02-13": {
+      "RSI": "39.5871"
+    },
+    "2026-02-12": {
+      "RSI": "44.9724"
+    },
+    "2026-02-11": {
+      "RSI": "63.5509"
+    },
+    "2026-02-10": {
+      "RSI": "61.6042"
+    },
+    "2026-02-09": {
+      "RSI": "63.2237"
+    },
+    "2026-02-06": {
+      "RSI": "69.0258"
+    }
+  }
+}

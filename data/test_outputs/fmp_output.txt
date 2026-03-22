@@ -1,0 +1,44 @@
+=== Financial Modeling Prep (FMP) data validation ===
+
+--- Stock News + Sentiment: AAPL (5 most recent) ---
+  *** REQUEST FAILED: status 403
+  Response text: {
+  "Error Message": "Legacy Endpoint : Due to Legacy endpoints being no longer supported - This endpoint is only available for legacy users who have valid subscriptions prior August 31, 2025. Please visit our documentation page https://site.financialmodelingprep.com/developer/docs for our current APIs. "
+}
+
+--- Social Sentiment History: AAPL (last 10 records) ---
+  *** REQUEST FAILED: status 403
+  Response text: {
+  "Error Message": "Legacy Endpoint : Due to Legacy endpoints being no longer supported - This endpoint is only available for legacy users who have valid subscriptions prior August 31, 2025. Please visit our documentation page https://site.financialmodelingprep.com/developer/docs for our current APIs. "
+}
+
+--- Analyst Grades Consensus: AAPL ---
+  symbol: AAPL
+  strongBuy: 1
+  buy: 68
+  hold: 33
+  sell: 7
+  strongSell: 0
+  consensus: Buy
+
+
+--- Insider Trading: AAPL (10 most recent) ---
+  *** REQUEST FAILED: status 403
+  Response text: {
+  "Error Message": "Legacy Endpoint : Due to Legacy endpoints being no longer supported - This endpoint is only available for legacy users who have valid subscriptions prior August 31, 2025. Please visit our documentation page https://site.financialmodelingprep.com/developer/docs for our current APIs. "
+}
+
+--- Earnings Surprises: AAPL (last 5 quarters) ---
+  *** REQUEST FAILED: status 403
+  Response text: {
+  "Error Message": "Legacy Endpoint : Due to Legacy endpoints being no longer supported - This endpoint is only available for legacy users who have valid subscriptions prior August 31, 2025. Please visit our documentation page https://site.financialmodelingprep.com/developer/docs for our current APIs. "
+}
+
+--- Stock News Sentiment RSS Feed (first 5 results) ---
+  *** REQUEST FAILED: status 403
+  Response text: {
+  "Error Message": "Legacy Endpoint : Due to Legacy endpoints being no longer supported - This endpoint is only available for legacy users who have valid subscriptions prior August 31, 2025. Please visit our documentation page https://site.financialmodelingprep.com/developer/docs for our current APIs. "
+}
+
+--- Raw JSON: First Result from Section 1 ---
+  ERROR: 'NoneType' object is not subscriptable

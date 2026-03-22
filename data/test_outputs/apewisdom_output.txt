@@ -1,0 +1,110 @@
+=== ApeWisdom data validation ===
+
+
+--- WallStreetBets: Top 10 Mentions ---
+  rank:               1
+  ticker:             SPY
+  name:               SPDR S&amp;P 500 ETF Trust
+  mentions:           663
+  upvotes:            2824
+  rank_24h_ago:       1
+  mentions_24h_ago:   486
+
+  rank:               2
+  ticker:             SMCI
+  name:               Supermicro
+  mentions:           400
+  upvotes:            2916
+  rank_24h_ago:       7
+  mentions_24h_ago:   129
+
+  rank:               3
+  ticker:             MSFT
+  name:               Microsoft
+  mentions:           156
+  upvotes:            606
+  rank_24h_ago:       3
+  mentions_24h_ago:   136
+
+  rank:               4
+  ticker:             NVDA
+  name:               NVIDIA
+  mentions:           137
+  upvotes:            368
+  rank_24h_ago:       10
+  mentions_24h_ago:   73
+
+  rank:               5
+  ticker:             MU
+  name:               Micron Technology
+  mentions:           94
+  upvotes:            226
+  rank_24h_ago:       2
+  mentions_24h_ago:   275
+
+  rank:               6
+  ticker:             QQQ
+  name:               Invesco QQQ ETF
+  mentions:           89
+  upvotes:            189
+  rank_24h_ago:       11
+  mentions_24h_ago:   66
+
+  rank:               7
+  ticker:             DTE
+  name:               DTE Energy
+  mentions:           76
+  upvotes:            247
+  rank_24h_ago:       12
+  mentions_24h_ago:   63
+
+  rank:               8
+  ticker:             PL
+  name:               Planet Labs
+  mentions:           65
+  upvotes:            271
+  rank_24h_ago:       15
+  mentions_24h_ago:   40
+
+  rank:               9
+  ticker:             TSLA
+  name:               Tesla
+  mentions:           63
+  upvotes:            157
+  rank_24h_ago:       13
+  mentions_24h_ago:   63
+
+  rank:               10
+  ticker:             DOW
+  name:               Dow
+  mentions:           50
+  upvotes:            371
+  rank_24h_ago:       21
+  mentions_24h_ago:   27
+
+
+--- All Reddit: Top 10 Mentions ---
+
+--- AAPL in WallStreetBets Results ---
+  AAPL found:
+    rank:             31
+    mentions:         14
+    upvotes:          28
+    rank_24h_ago:     47
+    mentions_24h_ago: 10
+
+--- Pagination Info (WallStreetBets response) ---
+  count:        778
+  pages:        8
+  current_page: 1
+
+--- Raw JSON: First WallStreetBets Result ---
+{
+  "rank": 1,
+  "ticker": "SPY",
+  "name": "SPDR S&amp;P 500 ETF Trust",
+  "mentions": 663,
+  "upvotes": 2824,
+  "rank_24h_ago": 1,
+  "mentions_24h_ago": 486
+}
