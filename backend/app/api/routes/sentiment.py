@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from app.services.cache import get_cached, set_cached
 from app.services.aggregator import gather_signals
 from app.services.scorer import score_sentiment
+from app.services.sources.yfinance import get_price_history
 
 router = APIRouter()
 
@@ -21,6 +22,9 @@ async def get_sentiment(ticker: str):
 
         signals = await gather_signals(ticker)
         result = await score_sentiment(ticker, signals)
+
+        price_history = await get_price_history(ticker)
+        result["price_history"] = price_history
 
         await set_cached(cache_key, result, CACHE_TTL)
         return result

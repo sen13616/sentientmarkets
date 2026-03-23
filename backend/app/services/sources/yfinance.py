@@ -139,12 +139,37 @@ async def get_yfinance_data(ticker: str) -> dict:
         fifty_day_ma       = info.get("fiftyDayAverage")
         two_hundred_day_ma = info.get("twoHundredDayAverage")
 
+        # Fetch recent history for short-term MA calculations
+        hist = await asyncio.to_thread(lambda: t.history(period="1mo"))
+
+        five_day_ma = None
+        twenty_day_ma = None
+        price_vs_5d_ma_percent = None
+        price_vs_20d_ma_percent = None
+
+        try:
+            current = info.get('regularMarketPrice') or info.get('currentPrice')
+            if not hist.empty and len(hist) >= 5:
+                five_day_ma = round(float(hist['Close'].tail(5).mean()), 4)
+                if current and five_day_ma:
+                    price_vs_5d_ma_percent = round(((current - five_day_ma) / five_day_ma) * 100, 6)
+            if not hist.empty and len(hist) >= 20:
+                twenty_day_ma = round(float(hist['Close'].tail(20).mean()), 4)
+                if current and twenty_day_ma:
+                    price_vs_20d_ma_percent = round(((current - twenty_day_ma) / twenty_day_ma) * 100, 6)
+        except Exception as e:
+            logger.warning(f"Short-term MA calculation failed: {e}")
+
         technical_indicators = {
             # TODO: rsi_14 / rsi_signal — sourced from Alpha Vantage
             "rsi_14":                 None,
             "rsi_signal":             None,
+            "five_day_ma":            five_day_ma,
+            "twenty_day_ma":          twenty_day_ma,
             "fifty_day_ma":           fifty_day_ma,
             "two_hundred_day_ma":     two_hundred_day_ma,
+            "price_vs_5d_ma_percent":    price_vs_5d_ma_percent,
+            "price_vs_20d_ma_percent":   price_vs_20d_ma_percent,
             "price_vs_50d_ma_percent":   _safe_pct(_safe_sub(current_price, fifty_day_ma), fifty_day_ma),
             "price_vs_200d_ma_percent":  _safe_pct(_safe_sub(current_price, two_hundred_day_ma), two_hundred_day_ma),
             # TODO: macd / macd_signal / macd_histogram — sourced from Alpha Vantage
@@ -200,6 +225,114 @@ async def get_yfinance_data(ticker: str) -> dict:
 
     except Exception as exc:
         logger.error("get_yfinance_data failed for %s: %s", ticker, exc)
+        return {}
+
+
+async def get_price_history(ticker: str, period: str = "3mo") -> dict:
+    """Fetch historical OHLCV price data and index comparison for charting."""
+    try:
+        stock = yf.Ticker(ticker)
+        hist, info = await asyncio.gather(
+            asyncio.to_thread(lambda: stock.history(period=period)),
+            asyncio.to_thread(lambda: stock.info),
+        )
+
+        exchange      = (info.get("exchange")         or "").upper()
+        full_exchange = (info.get("fullExchangeName") or "").upper()
+        exchange_str  = f"{exchange} {full_exchange}"
+
+        if any(x in exchange_str for x in ["NAS", "NGM", "NCM", "NASDAQ"]):
+            index_ticker, index_name = "^IXIC",     "NASDAQ"
+        elif any(x in exchange_str for x in ["NYQ", "NYSE", "NYS", "NEW YORK"]):
+            index_ticker, index_name = "^NYA",      "NYSE Composite"
+        elif any(x in exchange_str for x in ["PCX", "ARCA", "ASE", "AMEX"]):
+            index_ticker, index_name = "^GSPC",     "S&P 500"
+        elif any(x in exchange_str for x in ["LSE", "IOB", "LONDON"]):
+            index_ticker, index_name = "^FTSE",     "FTSE 100"
+        elif any(x in exchange_str for x in ["GER", "XETRA", "FRA", "FRANKFURT"]):
+            index_ticker, index_name = "^GDAXI",    "DAX"
+        elif any(x in exchange_str for x in ["PAR", "PARIS", "ENX"]):
+            index_ticker, index_name = "^FCHI",     "CAC 40"
+        elif any(x in exchange_str for x in ["TYO", "JPX", "TOKYO", "OSA"]):
+            index_ticker, index_name = "^N225",     "Nikkei 225"
+        elif any(x in exchange_str for x in ["HKG", "HONG KONG", "HKEX"]):
+            index_ticker, index_name = "^HSI",      "Hang Seng"
+        elif any(x in exchange_str for x in ["SHA", "SHE", "SHANGHAI", "SHENZHEN"]):
+            index_ticker, index_name = "000001.SS", "Shanghai Composite"
+        elif any(x in exchange_str for x in ["ASX", "AUSTRALIA"]):
+            index_ticker, index_name = "^AXJO",     "ASX 200"
+        elif any(x in exchange_str for x in ["TSX", "TOR", "TORONTO", "CNQ", "VAN"]):
+            index_ticker, index_name = "^GSPTSE",   "TSX Composite"
+        elif any(x in exchange_str for x in ["NSE", "BSE", "BOMBAY", "NATIONAL"]):
+            index_ticker, index_name = "^BSESN",    "BSE Sensex"
+        elif any(x in exchange_str for x in ["KSC", "KOE", "KOREA", "KRX"]):
+            index_ticker, index_name = "^KS11",     "KOSPI"
+        elif any(x in exchange_str for x in ["SWX", "VTX", "SWISS", "ZURICH"]):
+            index_ticker, index_name = "^SSMI",     "SMI"
+        elif any(x in exchange_str for x in ["AMS", "AMSTERDAM"]):
+            index_ticker, index_name = "^AEX",      "AEX"
+        elif any(x in exchange_str for x in ["MCE", "MADRID", "BME"]):
+            index_ticker, index_name = "^IBEX",     "IBEX 35"
+        elif any(x in exchange_str for x in ["MIL", "MILAN", "BIT"]):
+            index_ticker, index_name = "FTSEMIB.MI","FTSE MIB"
+        elif any(x in exchange_str for x in ["SAO", "BOVESPA", "B3"]):
+            index_ticker, index_name = "^BVSP",     "Bovespa"
+        elif any(x in exchange_str for x in ["MEX", "MEXICO", "BMV"]):
+            index_ticker, index_name = "^MXX",      "IPC Mexico"
+        elif any(x in exchange_str for x in ["SES", "SGX", "SINGAPORE"]):
+            index_ticker, index_name = "^STI",      "STI"
+        elif any(x in exchange_str for x in ["STO", "STOCKHOLM", "OMX"]):
+            index_ticker, index_name = "^OMXS30",   "OMX Stockholm 30"
+        elif any(x in exchange_str for x in ["OSL", "OSLO"]):
+            index_ticker, index_name = "^OSEAX",    "Oslo All Share"
+        elif any(x in exchange_str for x in ["CPH", "COPENHAGEN"]):
+            index_ticker, index_name = "^OMXC25",   "OMX Copenhagen 25"
+        elif any(x in exchange_str for x in ["HEL", "HELSINKI"]):
+            index_ticker, index_name = "^OMXH25",   "OMX Helsinki 25"
+        elif any(x in exchange_str for x in ["JSE", "JOHANNESBURG"]):
+            index_ticker, index_name = "^J203.JO",  "JSE All Share"
+        elif any(x in exchange_str for x in ["NZE", "NEW ZEALAND"]):
+            index_ticker, index_name = "^NZ50",     "NZX 50"
+        elif any(x in exchange_str for x in ["TAI", "TWO", "TAIWAN", "TWSE"]):
+            index_ticker, index_name = "^TWII",     "Taiwan Weighted"
+        elif any(x in exchange_str for x in ["TLV", "TEL AVIV"]):
+            index_ticker, index_name = "^TA125.TA", "Tel Aviv 125"
+        elif any(x in exchange_str for x in ["SAU", "TADAWUL", "SAUDI"]):
+            index_ticker, index_name = "^TASI.SR",  "Tadawul All Share"
+        elif any(x in exchange_str for x in ["DFM", "ADX", "DUBAI", "ABU DHABI"]):
+            index_ticker, index_name = "^DFMGI",    "DFM General"
+        else:
+            index_ticker, index_name = "^GSPC",     "S&P 500"
+
+        index_obj  = yf.Ticker(index_ticker)
+        index_hist = await asyncio.to_thread(lambda: index_obj.history(period=period))
+
+        def normalise(series):
+            if series is None or series.empty:
+                return []
+            base = series.iloc[0]
+            if base == 0:
+                return []
+            return [round(((v - base) / base) * 100, 4) for v in series]
+
+        dates = [d.strftime("%Y-%m-%d") for d in hist.index]
+
+        return {
+            "ticker":               ticker,
+            "index_ticker":         index_ticker,
+            "index_name":           index_name,
+            "period":               period,
+            "dates":                dates,
+            "stock_returns":        normalise(hist["Close"]),
+            "index_returns":        normalise(index_hist["Close"]),
+            "stock_prices":         [round(float(v), 4) for v in hist["Close"]],
+            "index_prices":         [round(float(v), 4) for v in index_hist["Close"]],
+            "period_return_stock":  round(float(((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100), 2) if not hist.empty else None,
+            "period_return_index":  round(float(((index_hist["Close"].iloc[-1] - index_hist["Close"].iloc[0]) / index_hist["Close"].iloc[0]) * 100), 2) if not index_hist.empty else None,
+        }
+
+    except Exception as exc:
+        logger.error("get_price_history failed for %s: %s", ticker, exc)
         return {}
 
 

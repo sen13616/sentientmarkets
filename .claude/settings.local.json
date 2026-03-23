@@ -24,7 +24,9 @@
       "Bash(screencapture -x /tmp/stock_aapl2.png)",
       "Bash(xargs kill:*)",
       "Bash(open:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(ls \"/Users/aayudhyindahoodie/Documents/Primary/My Projects/TheMarketMood.ai/\"*.html)"
     ]
   }
 }

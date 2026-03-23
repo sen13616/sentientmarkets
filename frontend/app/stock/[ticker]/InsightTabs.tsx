@@ -11,11 +11,20 @@ interface InsightTabsProps {
 }
 
 const TABS = [
-  { key: 'summary',    label: 'Summary' },
-  { key: 'bull',       label: 'Bull case' },
-  { key: 'bear',       label: 'Bear case' },
-  { key: 'watch',      label: 'What to watch' },
+  { key: 'summary', label: 'Summary'      },
+  { key: 'bull',    label: 'Bull case'    },
+  { key: 'bear',    label: 'Bear case'    },
+  { key: 'watch',   label: 'What to watch'},
 ] as const;
+
+function parseBold(text: string): React.ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i}>{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+}
 
 export default function InsightTabs({ summary, bullCase, bearCase, whatToWatch }: InsightTabsProps) {
   const [active, setActive] = useState<'summary' | 'bull' | 'bear' | 'watch'>('summary');
@@ -42,7 +51,7 @@ export default function InsightTabs({ summary, bullCase, bearCase, whatToWatch }
       </div>
       <div className={styles.insightBody}>
         <p className={styles.insightText}>
-          {content[active] || '—'}
+          {content[active] ? parseBold(content[active]!) : '—'}
         </p>
       </div>
     </>

@@ -57,27 +57,21 @@ async def get_alpha_vantage_data(ticker: str) -> dict:
     14-period daily RSI from Alpha Vantage for *ticker*. Both requests run
     concurrently. Each section fails independently.
     """
-    try:
-        news_raw = await asyncio.to_thread(_get, {
+    news_raw, rsi_raw = await asyncio.gather(
+        asyncio.to_thread(_get, {
             "function": "NEWS_SENTIMENT",
             "tickers":  ticker,
             "limit":    50,
-        })
-    except Exception as exc:
-        news_raw = exc
-
-    await asyncio.sleep(1.2)
-
-    try:
-        rsi_raw = await asyncio.to_thread(_get, {
+        }),
+        asyncio.to_thread(_get, {
             "function":    "RSI",
             "symbol":      ticker,
             "interval":    "daily",
             "time_period": 14,
             "series_type": "close",
-        })
-    except Exception as exc:
-        rsi_raw = exc
+        }),
+        return_exceptions=True,
+    )
 
     # ── Section 1: News sentiment ─────────────────────────────────────────────
     news_sentiment = {}

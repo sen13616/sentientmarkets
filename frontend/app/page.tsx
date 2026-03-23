@@ -117,7 +117,45 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* ── 3. FEAR & GREED ──────────────────────────────────────── */}
+        {/* ── 3. MARKET INDICES ────────────────────────────────────── */}
+        <div className={styles.section}>
+          <div className={styles.secLabel}>
+            <span className={styles.livePip} />
+            Market indices
+          </div>
+          <div className={styles.indicesGrid}>
+            {indexDefs.map(({ key, label }) => {
+              const idx = (indices as any)[key] ?? {};
+              const isPos = (idx.change_percent ?? 0) >= 0;
+              const isVix = key === 'vix';
+              let tagLabel: string, tagClass: string;
+              if (isVix) {
+                if (idx.price < 15)      { tagLabel = 'Calm';     tagClass = styles.tBull; }
+                else if (idx.price < 25) { tagLabel = 'Elevated'; tagClass = styles.tNeu;  }
+                else                     { tagLabel = 'High';     tagClass = styles.tBear; }
+              } else {
+                tagLabel = isPos ? 'Bullish' : 'Bearish';
+                tagClass = isPos ? styles.tBull : styles.tBear;
+              }
+              const absChange = idx.change ?? 0;
+              return (
+                <div key={key} className={styles.idxCard}>
+                  <div className={styles.idxName}>{label}</div>
+                  <div className={styles.idxPrice}>{fmtPrice(idx.price)}</div>
+                  <div className={`${styles.idxChange} ${isPos ? styles.pos : styles.neg}`}>
+                    {fmtPct(idx.change_percent)}
+                    <span className={styles.idxChangeAbs}>
+                      {isPos ? '+' : ''}{absChange.toFixed(2)}
+                    </span>
+                  </div>
+                  <span className={`${styles.tag} ${tagClass}`}>{tagLabel}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── 4. FEAR & GREED ──────────────────────────────────────── */}
         <div className={styles.fgDashboard}>
 
           {/* Left: main score */}
@@ -178,44 +216,6 @@ export default async function HomePage() {
                     <div className={styles.siBarFill} style={{ width: `${s}%`, background: col }} />
                   </div>
                   <span className={styles.siVal} style={{ color: col }}>{s}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ── 4. MARKET INDICES ────────────────────────────────────── */}
-        <div className={styles.section}>
-          <div className={styles.secLabel}>
-            <span className={styles.livePip} />
-            Market indices
-          </div>
-          <div className={styles.indicesGrid}>
-            {indexDefs.map(({ key, label }) => {
-              const idx = (indices as any)[key] ?? {};
-              const isPos = (idx.change_percent ?? 0) >= 0;
-              const isVix = key === 'vix';
-              let tagLabel: string, tagClass: string;
-              if (isVix) {
-                if (idx.price < 15)      { tagLabel = 'Calm';     tagClass = styles.tBull; }
-                else if (idx.price < 25) { tagLabel = 'Elevated'; tagClass = styles.tNeu;  }
-                else                     { tagLabel = 'High';     tagClass = styles.tBear; }
-              } else {
-                tagLabel = isPos ? 'Bullish' : 'Bearish';
-                tagClass = isPos ? styles.tBull : styles.tBear;
-              }
-              const absChange = idx.change ?? 0;
-              return (
-                <div key={key} className={styles.idxCard}>
-                  <div className={styles.idxName}>{label}</div>
-                  <div className={styles.idxPrice}>{fmtPrice(idx.price)}</div>
-                  <div className={`${styles.idxChange} ${isPos ? styles.pos : styles.neg}`}>
-                    {fmtPct(idx.change_percent)}
-                    <span className={styles.idxChangeAbs}>
-                      {isPos ? '+' : ''}{absChange.toFixed(2)}
-                    </span>
-                  </div>
-                  <span className={`${styles.tag} ${tagClass}`}>{tagLabel}</span>
                 </div>
               );
             })}
