@@ -31,6 +31,75 @@ def _safe_sub(a, b) -> float | None:
         return None
 
 
+def detect_asset_type(info: dict) -> dict:
+    """Detect asset type from yfinance info and return type + metadata."""
+    quote_type = (info.get('quoteType') or '').upper()
+    ticker_symbol = (info.get('symbol') or '').upper()
+
+    # Map yfinance quoteType to our clean type system
+    type_map = {
+        'EQUITY': 'stock',
+        'ETF': 'etf',
+        'INDEX': 'index',
+        'CRYPTOCURRENCY': 'crypto',
+        'FUTURE': 'commodity',
+        'CURRENCY': 'forex',
+        'MUTUALFUND': 'etf',  # treat mutual funds like ETFs
+    }
+
+    asset_type = type_map.get(quote_type, 'stock')  # default to stock
+
+    # Build metadata based on asset type
+    meta = {
+        'quote_type_raw': quote_type,
+        'is_24h': asset_type in ('crypto', 'forex'),
+        'has_fundamentals': asset_type == 'stock',
+        'has_analyst': asset_type in ('stock', 'etf'),
+        'has_institutional': asset_type in ('stock', 'etf'),
+        'has_insider': asset_type == 'stock',
+        'has_earnings': asset_type == 'stock',
+        'has_reddit': asset_type in ('stock', 'etf', 'crypto'),
+        'has_fear_greed': asset_type in ('stock', 'etf', 'index'),
+        'has_index_comparison': asset_type in ('stock', 'etf'),
+    }
+
+    # Forex-specific metadata
+    if asset_type == 'forex':
+        # Parse EURUSD=X → base=EUR, quote=USD
+        clean = ticker_symbol.replace('=X', '').replace('=', '')
+        if len(clean) >= 6:
+            meta['base_currency'] = clean[:3]
+            meta['quote_currency'] = clean[3:6]
+            meta['display_name'] = f"{clean[:3]} / {clean[3:6]}"
+        else:
+            meta['base_currency'] = clean
+            meta['quote_currency'] = 'USD'
+            meta['display_name'] = clean
+
+        # Determine decimal precision
+        # JPY pairs use 2 decimals, most others use 4
+        quote_ccy = meta.get('quote_currency', '')
+        meta['price_decimals'] = 2 if quote_ccy in ('JPY', 'KRW', 'CLP', 'HUF', 'IDR') else 4
+        meta['pip_value'] = 0.01 if quote_ccy in ('JPY', 'KRW', 'CLP', 'HUF', 'IDR') else 0.0001
+
+    # Crypto-specific metadata
+    if asset_type == 'crypto':
+        # BTC-USD → base=BTC, quote=USD
+        parts = ticker_symbol.replace('-', '/').split('/')
+        meta['base_currency'] = parts[0] if parts else ticker_symbol
+        meta['quote_currency'] = parts[1] if len(parts) > 1 else 'USD'
+        meta['display_name'] = f"{meta['base_currency']} / {meta['quote_currency']}"
+
+    # Index-specific metadata
+    if asset_type == 'index':
+        meta['display_name'] = info.get('shortName') or info.get('longName') or ticker_symbol
+
+    return {
+        'asset_type': asset_type,
+        'asset_meta': meta
+    }
+
+
 async def get_yfinance_data(ticker: str) -> dict:
     """Fetch price, fundamentals, analyst, technical, and institutional data
     from yfinance for *ticker*.  Returns an empty dict on any unhandled error.
@@ -39,6 +108,9 @@ async def get_yfinance_data(ticker: str) -> dict:
         # Offload the blocking .info fetch to a thread
         t = yf.Ticker(ticker)
         info = await asyncio.to_thread(lambda: t.info)
+
+        # Detect asset type
+        asset_info = detect_asset_type(info)
 
         # ── price_data ────────────────────────────────────────────────────────
         current_price   = info.get("currentPrice")
@@ -215,6 +287,8 @@ async def get_yfinance_data(ticker: str) -> dict:
         }
 
         return {
+            "asset_type":          asset_info['asset_type'],
+            "asset_meta":          asset_info['asset_meta'],
             "company_name":        info.get("longName"),
             "price_data":          price_data,
             "fundamentals":        fundamentals,

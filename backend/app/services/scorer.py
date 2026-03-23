@@ -50,6 +50,19 @@ async def score_sentiment(ticker: str, signals: dict) -> dict:
     try:
         logger.info("Scoring sentiment for %s via OpenAI", ticker)
 
+        # ── Asset type context ────────────────────────────────────────────────
+        asset_type = signals.get('asset_type', 'stock')
+
+        _asset_context = {
+            'stock':     "You are analysing an individual equity (stock). Consider fundamentals, analyst consensus, insider activity, and all sentiment signals.",
+            'etf':       "You are analysing an ETF (Exchange Traded Fund). Focus on the underlying index/sector exposure, flow signals, and macro sentiment. Ignore individual company fundamentals.",
+            'index':     "You are analysing a market index. Focus entirely on macro signals, market breadth, momentum, and Fear & Greed. There are no company-specific signals.",
+            'crypto':    "You are analysing a cryptocurrency. Focus on momentum, social sentiment, news narrative, and macro risk-on/risk-off signals. Ignore Fear & Greed and traditional market signals.",
+            'commodity': "You are analysing a commodity or futures contract. Focus on macro environment, trend signals, technical indicators, and news narrative. Ignore equity-specific signals.",
+            'forex':     "You are analysing a currency pair. Focus on relative macro strength, technical momentum, and news narrative. Ignore equity and crypto signals entirely.",
+        }
+        context_line = _asset_context.get(asset_type, _asset_context['stock'])
+
         # ── Extract signals ───────────────────────────────────────────────────
         yf = signals.get("yfinance", {})
         fg = signals.get("fear_greed", {})
@@ -102,8 +115,42 @@ async def score_sentiment(ticker: str, signals: dict) -> dict:
             "recent_earnings_surprises":     earnings[:3],
         }
 
+        # ── Filter irrelevant signals from claude_context ────────────────────
+        if asset_type != 'stock':
+            for key in ['insider_mspr', 'insider_signal', 'insider_month']:
+                claude_context.pop(key, None)
+
+        if asset_type not in ('stock', 'etf'):
+            for key in ['analyst_consensus', 'analyst_mean_score', 'analyst_count',
+                        'price_target_upside_percent', 'recent_earnings_surprises']:
+                claude_context.pop(key, None)
+
+        if asset_type in ('crypto', 'commodity', 'forex'):
+            for key in ['fear_greed_score', 'fear_greed_label', 'fear_greed_trend',
+                        'fear_greed_1w_ago', 'fear_greed_1m_ago']:
+                claude_context.pop(key, None)
+
+        if asset_type == 'forex':
+            for key in ['reddit_rank', 'reddit_rank_change', 'reddit_rank_direction',
+                        'reddit_momentum_signal', 'reddit_mention_change_percent',
+                        'google_trends_current', 'google_trends_change_percent',
+                        'google_trends_direction']:
+                claude_context.pop(key, None)
+
+        # ── Asset-type-specific scoring rules ─────────────────────────────────
+        _asset_rules = {
+            'etf': "\nETF-SPECIFIC RULES:\n- Weight macro signals and sector momentum heavily\n- Analyst and insider signals are less relevant for ETFs\n- Consider the ETF's underlying index direction",
+            'index': "\nINDEX-SPECIFIC RULES:\n- Only macro signals apply — Fear & Greed, market momentum, breadth\n- Ignore any company-specific signals\n- Score reflects broad market sentiment only",
+            'crypto': "\nCRYPTO-SPECIFIC RULES:\n- Weight momentum and social signals heavily\n- News sentiment is critical for crypto\n- No Fear & Greed or equity signals apply\n- Crypto is highly volatile — confidence should be lower unless signals strongly align",
+            'commodity': "\nCOMMODITY-SPECIFIC RULES:\n- Focus on technical momentum and news narrative\n- Macro environment and trend direction are primary signals\n- Ignore equity-specific signals entirely",
+            'forex': "\nFOREX-SPECIFIC RULES:\n- Focus on relative macro strength and technical momentum\n- News narrative about the base and quote currency economies matters\n- No equity, crypto, or market sentiment signals apply\n- RSI and MA signals are the most reliable indicators here",
+        }
+        extra_rules = _asset_rules.get(asset_type, '')
+
         # ── Build prompt ──────────────────────────────────────────────────────
-        prompt = f"""You are TheMarketMood.ai sentiment analyst. Analyze the following signals for {ticker} and return a structured sentiment assessment.
+        prompt = f"""{context_line}
+
+You are TheMarketMood.ai sentiment analyst. Analyze the following signals for {ticker} and return a structured sentiment assessment.
 
 SCORING RULES:
 - Score 0-100 where: 0-20=Bearish, 21-35=Somewhat Bearish, 36-49=Leaning Bearish, 50=Neutral, 51-64=Leaning Bullish, 65-79=Somewhat Bullish, 80-100=Bullish
@@ -112,7 +159,7 @@ SCORING RULES:
 - Never score below 30 based on news sentiment alone — require at least two confirming signals
 - Weight recency: today's signals matter more than last week's
 - If fewer than 3 high-relevance news articles are available keep score closer to 50 and set confidence to low
-- The score reflects sentiment only — not a buy/sell recommendation
+- The score reflects sentiment only — not a buy/sell recommendation{extra_rules}
 
 SIGNALS:
 {json.dumps(claude_context, indent=2, default=str)}
@@ -151,6 +198,8 @@ Return ONLY valid JSON with no markdown, no code blocks, no explanation:
         now = datetime.now(timezone.utc).isoformat()
 
         response = {
+            "asset_type":   asset_type,
+            "asset_meta":   signals.get("asset_meta", {}),
             "ticker":       ticker,
             "company_name": yf.get("company_name"),
             "generated_at": now,
