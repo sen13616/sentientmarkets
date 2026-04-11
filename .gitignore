@@ -8,13 +8,23 @@ frontend/.env.local
 __pycache__/
 *.pyc
 .venv/
+backend/.venv/
 *.egg-info/
 
 # Node
 node_modules/
 frontend/.next/
 frontend/out/
+frontend/tsconfig.tsbuildinfo
 
 # Mac
 .DS_Store
-backend/.env
+
+# Redis
+dump.rdb
+
+# Windows
+Thumbs.db
+
+# Claude Code machine-specific settings (contains absolute paths per device)
+.claude/settings.local.json

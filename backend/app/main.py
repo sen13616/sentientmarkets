@@ -9,6 +9,7 @@ from app.api.routes.deep_analysis import router as deep_analysis_router
 from app.api.routes.price_history import router as price_history_router
 from app.api.routes.mood import router as mood_router
 from app.services.mood import refresh_mood
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ app = FastAPI(title="TheMarketMood.ai API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=settings.get_cors_origins(),
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
 )
