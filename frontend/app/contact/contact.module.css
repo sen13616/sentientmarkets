@@ -1,0 +1,487 @@
+/* ============================================================
+   NAV
+   ============================================================ */
+.navOuter {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(7, 9, 13, 0.96);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--line);
+  width: 100%;
+}
+
+.navInner {
+  max-width: 1620px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  height: 56px;
+}
+
+.logo {
+  display: flex;
+  align-items: baseline;
+  text-decoration: none;
+  margin-right: 32px;
+  flex-shrink: 0;
+}
+
+.logoWord {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--tx1);
+  letter-spacing: -0.4px;
+}
+
+.logoTld {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--blue);
+}
+
+.navLinks {
+  display: flex;
+  margin-right: auto;
+}
+
+.navLink {
+  font-size: 13px;
+  color: var(--tx3);
+  text-decoration: none;
+  letter-spacing: -0.1px;
+  padding: 0 16px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--line);
+  transition: color 0.15s;
+}
+
+.navLink:first-child {
+  border-left: 1px solid var(--line);
+}
+
+.navLink:hover {
+  color: var(--tx1);
+}
+
+.navLink.active {
+  color: var(--tx1);
+}
+
+.btnPro {
+  background: var(--tx1);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  flex-shrink: 0;
+  padding: 7px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  margin-left: 16px;
+}
+
+.btnPro:hover  { opacity: 0.88; }
+.btnPro:active { transform: scale(0.97); }
+
+/* ============================================================
+   PAGE WRAPPER
+   ============================================================ */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 1620px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.contactHero {
+  padding: 88px 32px 72px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(90, 156, 248, 0.05) 0%, transparent 55%);
+}
+
+.contactHero::after {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(29, 204, 154, 0.04) 0%, transparent 70%);
+  top: -200px;
+  right: -100px;
+  pointer-events: none;
+  animation: blobDrift 8s ease-in-out infinite alternate;
+}
+
+@keyframes blobDrift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(20px, -20px); }
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--tx3);
+  margin-bottom: 32px;
+}
+
+.pip {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: pip 2.5s ease-in-out infinite;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+@keyframes pip {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.contactHero h1 {
+  font-family: var(--serif);
+  font-size: clamp(42px, 5.5vw, 68px);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -2.5px;
+  color: var(--tx1);
+  max-width: 680px;
+  margin-bottom: 22px;
+}
+
+.contactHero h1 em {
+  font-style: italic;
+  color: var(--green);
+}
+
+.heroSub {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--tx2);
+  line-height: 1.7;
+  max-width: 480px;
+}
+
+/* ============================================================
+   FADE ANIMATIONS
+   ============================================================ */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.fade0 { animation: heroFadeUp 0.5s ease both; }
+.fade1 { animation: heroFadeUp 0.5s ease both; animation-delay: 80ms; }
+.fade2 { animation: heroFadeUp 0.5s ease both; animation-delay: 160ms; }
+
+/* ============================================================
+   SECTION
+   ============================================================ */
+.section {
+  padding: 40px 32px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sectionNoBorder {
+  border-bottom: none;
+}
+
+.secLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--tx3);
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.secLabel::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line-soft);
+  transform-origin: left;
+  animation: lineExtend 0.6s ease 0.3s both;
+}
+
+@keyframes lineExtend {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ============================================================
+   CONTACT CARDS
+   ============================================================ */
+.contactGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.contactCard {
+  padding: 28px 28px 24px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  transition: background 0.15s;
+}
+
+.contactCard:hover {
+  background: var(--surface-hov);
+}
+
+.contactCard.primary {
+  border-color: var(--green-br);
+  background: var(--green-bg);
+}
+
+.contactCard.primary:hover {
+  background: rgba(29, 204, 154, 0.13);
+}
+
+.ccLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--tx3);
+  margin-bottom: 14px;
+}
+
+.contactCard.primary .ccLabel {
+  color: var(--green);
+  opacity: 0.7;
+}
+
+.ccTitle {
+  font-family: var(--serif);
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  color: var(--tx1);
+  margin-bottom: 8px;
+}
+
+.ccDesc {
+  font-size: 13px;
+  color: var(--tx2);
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+
+.ccAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--tx2);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 14px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.ccAction:hover {
+  color: var(--tx1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.contactCard.primary .ccAction {
+  color: var(--green);
+  border-color: var(--green-br);
+}
+
+.contactCard.primary .ccAction:hover {
+  border-color: var(--green);
+}
+
+/* ============================================================
+   RESPONSE TIME
+   ============================================================ */
+.responseRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.responsePip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 5px var(--green);
+  animation: pip 2.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.responseText {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--tx3);
+}
+
+.responseText strong {
+  color: var(--tx2);
+  font-weight: 400;
+}
+
+/* ============================================================
+   FAQ NUDGE
+   ============================================================ */
+.faqNudge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 32px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.nudgeTitle {
+  font-family: var(--serif);
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  color: var(--tx1);
+  margin-bottom: 6px;
+}
+
+.nudgeDesc {
+  font-size: 14px;
+  color: var(--tx2);
+}
+
+.nudgeBtn {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--tx2);
+  padding: 10px 24px;
+  border-radius: 7px;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.nudgeBtn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--tx1);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+}
+
+.footerLogo {
+  display: flex;
+  align-items: baseline;
+}
+
+.footerLogoWord {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tx2);
+}
+
+.footerLogoTld {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--blue);
+}
+
+.footerLinks {
+  display: flex;
+  gap: 22px;
+}
+
+.footerLinks a {
+  font-size: 12px;
+  color: var(--tx3);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.footerLinks a:hover {
+  color: var(--tx2);
+}
+
+.footerCopy {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--tx3);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .contactGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .faqNudge {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .contactHero {
+    padding: 52px 20px;
+  }
+
+  .section {
+    padding: 28px 20px;
+  }
+
+  .navInner {
+    padding: 0 20px;
+  }
+
+  .footer {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+}

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import styles from './faq.module.css';
-import FaqAccordion from './FaqAccordion';
+import FaqAccordion from './FaqAccordion'
 
 export const metadata = {
   title: 'FAQ — TheMarketMood.ai',
