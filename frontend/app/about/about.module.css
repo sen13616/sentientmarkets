@@ -353,8 +353,6 @@
   color: var(--green);
 }
 
-.scoreRight {}
-
 .scoreRightLabel {
   font-family: var(--mono);
   font-size: 10px;
