@@ -49,7 +49,6 @@ export default function TechnologyPage() {
               <span>Source</span>
               <span>What we use it for</span>
               <span>Signals</span>
-              <span>Cost</span>
             </div>
             <div className={styles.sourceRow}>
               <div className={styles.srcName}>yfinance</div>
@@ -59,7 +58,6 @@ export default function TechnologyPage() {
                 <span className={styles.srcSignal}>MAs</span>
                 <span className={styles.srcSignal}>Analysts</span>
               </div>
-              <div className={`${styles.srcCost} ${styles.free}`}>Free</div>
             </div>
             <div className={styles.sourceRow}>
               <div className={styles.srcName}>Alpha Vantage</div>
@@ -68,7 +66,6 @@ export default function TechnologyPage() {
                 <span className={styles.srcSignal}>RSI</span>
                 <span className={styles.srcSignal}>News</span>
               </div>
-              <div className={`${styles.srcCost} ${styles.free}`}>Free tier</div>
             </div>
             <div className={styles.sourceRow}>
               <div className={styles.srcName}>CNN Fear &amp; Greed</div>
@@ -77,7 +74,6 @@ export default function TechnologyPage() {
                 <span className={styles.srcSignal}>Macro</span>
                 <span className={styles.srcSignal}>Fear</span>
               </div>
-              <div className={`${styles.srcCost} ${styles.free}`}>Free</div>
             </div>
             <div className={styles.sourceRow}>
               <div className={styles.srcName}>Finnhub</div>
@@ -86,7 +82,6 @@ export default function TechnologyPage() {
                 <span className={styles.srcSignal}>Insider</span>
                 <span className={styles.srcSignal}>Earnings</span>
               </div>
-              <div className={`${styles.srcCost} ${styles.free}`}>Free tier</div>
             </div>
             <div className={styles.sourceRow}>
               <div className={styles.srcName}>ApeWisdom</div>
@@ -95,7 +90,6 @@ export default function TechnologyPage() {
                 <span className={styles.srcSignal}>Reddit</span>
                 <span className={styles.srcSignal}>Social</span>
               </div>
-              <div className={`${styles.srcCost} ${styles.free}`}>Free</div>
             </div>
             <div className={styles.sourceRow}>
               <div className={styles.srcName}>Google Trends</div>
@@ -104,7 +98,6 @@ export default function TechnologyPage() {
                 <span className={styles.srcSignal}>Search</span>
                 <span className={styles.srcSignal}>Attention</span>
               </div>
-              <div className={`${styles.srcCost} ${styles.free}`}>Free</div>
             </div>
             <div className={styles.sourceRow}>
               <div className={styles.srcName}>NewsAPI</div>
@@ -112,7 +105,6 @@ export default function TechnologyPage() {
               <div className={styles.srcSignals}>
                 <span className={styles.srcSignal}>Headlines</span>
               </div>
-              <div className={`${styles.srcCost} ${styles.free}`}>Free tier</div>
             </div>
           </div>
         </section>
