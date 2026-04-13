@@ -1,0 +1,530 @@
+/* ============================================================
+   NAV
+   ============================================================ */
+.navOuter {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(7, 9, 13, 0.96);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--line);
+  width: 100%;
+}
+
+.navInner {
+  max-width: 1620px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  height: 56px;
+}
+
+.logo {
+  display: flex;
+  align-items: baseline;
+  text-decoration: none;
+  margin-right: 32px;
+  flex-shrink: 0;
+}
+
+.logoWord {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--tx1);
+  letter-spacing: -0.4px;
+}
+
+.logoTld {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--blue);
+}
+
+.navLinks {
+  display: flex;
+  margin-right: auto;
+}
+
+.navLink {
+  font-size: 13px;
+  color: var(--tx3);
+  text-decoration: none;
+  letter-spacing: -0.1px;
+  padding: 0 16px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--line);
+  transition: color 0.15s;
+}
+
+.navLink:first-child {
+  border-left: 1px solid var(--line);
+}
+
+.navLink:hover {
+  color: var(--tx1);
+}
+
+.navLink.active {
+  color: var(--tx1);
+}
+
+.btnPro {
+  background: var(--tx1);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  flex-shrink: 0;
+  padding: 7px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  margin-left: 16px;
+}
+
+.btnPro:hover  { opacity: 0.88; }
+.btnPro:active { transform: scale(0.97); }
+
+/* ============================================================
+   PAGE WRAPPER
+   ============================================================ */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 1620px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.faqHero {
+  padding: 88px 32px 72px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(90, 156, 248, 0.05) 0%, transparent 55%);
+}
+
+.faqHero::after {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(29, 204, 154, 0.04) 0%, transparent 70%);
+  top: -200px;
+  right: -100px;
+  pointer-events: none;
+  animation: blobDrift 8s ease-in-out infinite alternate;
+}
+
+@keyframes blobDrift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(20px, -20px); }
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--tx3);
+  margin-bottom: 32px;
+}
+
+.pip {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: pip 2.5s ease-in-out infinite;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+@keyframes pip {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.faqHero h1 {
+  font-family: var(--serif);
+  font-size: clamp(42px, 5.5vw, 68px);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -2.5px;
+  color: var(--tx1);
+  max-width: 680px;
+  margin-bottom: 22px;
+}
+
+.faqHero h1 em {
+  font-style: italic;
+  color: var(--green);
+}
+
+.heroSub {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--tx2);
+  line-height: 1.7;
+  max-width: 480px;
+}
+
+/* ============================================================
+   FADE ANIMATIONS
+   ============================================================ */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.fade0 { animation: heroFadeUp 0.5s ease both; }
+.fade1 { animation: heroFadeUp 0.5s ease both; animation-delay: 80ms; }
+.fade2 { animation: heroFadeUp 0.5s ease both; animation-delay: 160ms; }
+
+/* ============================================================
+   SECTION
+   ============================================================ */
+.section {
+  padding: 40px 32px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* ============================================================
+   FAQ LAYOUT
+   ============================================================ */
+.faqWrap {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0;
+  align-items: start;
+}
+
+.faqNav {
+  position: sticky;
+  top: 72px;
+  padding-right: 32px;
+  border-right: 1px solid var(--line);
+}
+
+.faqNavLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--tx3);
+  margin-bottom: 14px;
+}
+
+.faqNavLink {
+  display: block;
+  font-size: 13px;
+  color: var(--tx3);
+  text-decoration: none;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line-soft);
+  transition: color 0.15s;
+  cursor: pointer;
+}
+
+.faqNavLink:last-child {
+  border-bottom: none;
+}
+
+.faqNavLink:hover {
+  color: var(--tx2);
+}
+
+.faqNavLink.active {
+  color: var(--tx1);
+}
+
+.faqContent {
+  padding-left: 48px;
+}
+
+/* ============================================================
+   ACCORDION
+   ============================================================ */
+.faqGroup {
+  margin-bottom: 40px;
+}
+
+.faqGroupLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--tx3);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.faqGroupLabel::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line-soft);
+}
+
+.faqList {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.faqItem {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.faqItem:last-child {
+  border-bottom: none;
+}
+
+.faqQ {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  cursor: pointer;
+  transition: background 0.12s;
+  user-select: none;
+}
+
+.faqQ:hover {
+  background: var(--surface-hov);
+}
+
+.faqQText {
+  font-size: 14px;
+  color: var(--tx1);
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.faqIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.faqIcon::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 1.5px;
+  background: var(--tx3);
+  border-radius: 1px;
+}
+
+.faqIcon::after {
+  content: '';
+  position: absolute;
+  width: 1.5px;
+  height: 8px;
+  background: var(--tx3);
+  border-radius: 1px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.faqItem.open .faqIcon::after {
+  transform: rotate(90deg);
+  opacity: 0;
+}
+
+.faqItem.open .faqQ {
+  background: var(--surface-hov);
+}
+
+.faqA {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.faqItem.open .faqA {
+  max-height: 400px;
+}
+
+.faqAInner {
+  padding: 4px 22px 20px;
+  font-size: 14px;
+  color: var(--tx2);
+  line-height: 1.75;
+}
+
+.faqAInner a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.faqAInner a:hover {
+  text-decoration: underline;
+}
+
+.faqAInner strong {
+  color: var(--tx1);
+  font-weight: 500;
+}
+
+/* ============================================================
+   CONTACT NUDGE
+   ============================================================ */
+.contactNudge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 32px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  gap: 24px;
+}
+
+.nudgeLeft {}
+
+.nudgeTitle {
+  font-family: var(--serif);
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  color: var(--tx1);
+  margin-bottom: 6px;
+}
+
+.nudgeDesc {
+  font-size: 14px;
+  color: var(--tx2);
+}
+
+.nudgeBtn {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--tx2);
+  padding: 10px 24px;
+  border-radius: 7px;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.nudgeBtn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--tx1);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+}
+
+.footerLogo {
+  display: flex;
+  align-items: baseline;
+}
+
+.footerLogoWord {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tx2);
+}
+
+.footerLogoTld {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--blue);
+}
+
+.footerLinks {
+  display: flex;
+  gap: 22px;
+}
+
+.footerLinks a {
+  font-size: 12px;
+  color: var(--tx3);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.footerLinks a:hover {
+  color: var(--tx2);
+}
+
+.footerCopy {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--tx3);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .faqWrap {
+    grid-template-columns: 1fr;
+  }
+
+  .faqNav {
+    display: none;
+  }
+
+  .faqContent {
+    padding-left: 0;
+  }
+
+  .contactNudge {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .faqHero {
+    padding: 52px 20px;
+  }
+
+  .section {
+    padding: 28px 20px;
+  }
+
+  .navInner {
+    padding: 0 20px;
+  }
+
+  .footer {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+}

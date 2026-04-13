@@ -89,6 +89,10 @@ export default async function HomePage() {
           </Link>
           <div className={styles.navLinks}>
             <Link href="/" className={styles.navLink}>Markets</Link>
+            <Link href="/about" className={styles.navLink}>About</Link>
+            <Link href="/technology" className={styles.navLink}>Technology</Link>
+            <Link href="/faq" className={styles.navLink}>FAQ</Link>
+            <Link href="/contact" className={styles.navLink}>Contact</Link>
           </div>
           <button className={styles.btnPro}>Get Pro</button>
         </div>
