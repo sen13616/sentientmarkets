@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import styles from './page.module.css';
 
 interface InsightTabsProps {
@@ -124,12 +125,21 @@ export default function InsightTabs({
       </div>
 
       <div className={styles.insightBody}>
-        <p className={styles.insightText}>
-          {content[active] ? parseBold(content[active]!) : '—'}
-        </p>
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={active}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className={styles.insightText}
+          >
+            {content[active] ? parseBold(content[active]!) : '—'}
+          </motion.p>
+        </AnimatePresence>
 
         {/* Divider */}
-        <div style={{ height: 1, background: 'var(--line)', margin: '20px 0' }} />
+        <div style={{ height: 1, background: 'var(--line)', margin: '28px 0 20px' }} />
 
         {/* Deep content if loaded */}
         {deepContent[active] && (
@@ -159,7 +169,7 @@ export default function InsightTabs({
               onClick={() => handleDeepAnalysis(active)}
               style={{
                 background: 'none', border: '1px solid var(--blue-br)', borderRadius: 6,
-                color: 'var(--blue)', fontFamily: 'var(--mono)', fontSize: 11,
+                color: 'var(--blue)', fontFamily: 'var(--mono)', fontSize: 13,
                 padding: '6px 14px', cursor: 'pointer', letterSpacing: '0.3px',
                 transition: 'all .15s',
               }}

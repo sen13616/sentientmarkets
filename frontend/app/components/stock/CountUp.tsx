@@ -5,10 +5,12 @@ export default function CountUp({
   value,
   prefix = '',
   decimals = 2,
+  duration = 700,
 }: {
   value: number | null | undefined;
   prefix?: string;
   decimals?: number;
+  duration?: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
 
@@ -17,7 +19,6 @@ export default function CountUp({
     if (!el || value == null) return;
 
     const end = value;
-    const duration = 700;
     const t0 = performance.now();
 
     const tick = (now: number) => {

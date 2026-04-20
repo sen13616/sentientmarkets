@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import HeroSearch from './HeroSearch';
@@ -76,26 +77,30 @@ export default function Home() {
             Daily Market Intelligence
           </p>
 
-          {/* H1 */}
-          <h1 className={`text-[3.5rem] md:text-[4.5rem] font-semibold text-white mb-12 leading-[1.1] tracking-[-0.03em] ${styles.heroFade1}`}>
-            Decode the noise.<br />
-            <span className="opacity-80">Discover the mood.</span>
+          {/* H1 — two lines stagger independently */}
+          <h1 className="text-[3.5rem] md:text-[4.5rem] font-semibold text-white mb-12 leading-[1.1] tracking-[-0.03em]">
+            <span className={`block ${styles.heroFade1}`}>Decode the noise.</span>
+            <span className={`block text-[#A1A1AA] ${styles.heroFade2}`}>Discover the mood.</span>
           </h1>
 
-          {/* Search — HeroSearch is self-contained (own state + useRouter) */}
-          <div className="w-full max-w-3xl mb-8">
+          {/* Search */}
+          <div className={`w-full max-w-3xl mb-12 ${styles.heroFade3}`}>
             <HeroSearch />
           </div>
 
           {/* Trending tickers */}
           {trending.length > 0 && (
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-[10px] font-bold text-[#F4F4F5]/40 uppercase tracking-widest">
+            <div className={`flex flex-wrap items-center gap-3 ${styles.heroFade4}`}>
+              <span className="text-[11px] font-bold text-[#F4F4F5]/40 uppercase tracking-widest">
                 Trending:
               </span>
-              {trending.map((ticker) => (
-                <button
+              {trending.map((ticker, i) => (
+                <motion.button
                   key={ticker.name}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.65 + i * 0.05, ease: 'easeOut' }}
+                  whileHover={{ scale: 1.03 }}
                   onClick={() => navigateToStock(ticker.name)}
                   className="bg-[#18181B] border border-[#27272A] px-4 py-2 rounded-lg text-sm font-medium text-[#D4D4D8] hover:border-[#3F3F46] transition-colors"
                 >
@@ -105,7 +110,7 @@ export default function Home() {
                       {ticker.change}
                     </span>
                   )}
-                </button>
+                </motion.button>
               ))}
             </div>
           )}

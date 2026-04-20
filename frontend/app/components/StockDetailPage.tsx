@@ -6,6 +6,7 @@ import { ChevronLeft, Zap } from 'lucide-react';
 import { getSentiment } from '@/lib/api';
 import PriceChart from '@/app/components/stock/PriceChart';
 import InsightTabs from '@/app/components/stock/InsightTabs';
+import CountUp from '@/app/components/stock/CountUp';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -54,7 +55,7 @@ function clamp(v: number, lo = 0, hi = 100) { return Math.min(hi, Math.max(lo, v
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#A1A1AA] opacity-40 mb-6">
+    <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#A1A1AA] opacity-60 mb-6">
       {children}
     </p>
   );
@@ -103,10 +104,14 @@ function IndicatorBar({
   return (
     <div className="flex items-center gap-3">
       <span className="text-[11px] text-[#A1A1AA] w-28 shrink-0 font-medium">{label}</span>
-      <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${clamp(score)}%`, background: color }}
+      <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full rounded-full"
+          initial={{ width: '0%' }}
+          whileInView={{ width: `${clamp(score)}%` }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          style={{ background: color }}
         />
       </div>
       {value && (
@@ -142,11 +147,15 @@ function RangeIndicator({
           {label}
         </div>
       )}
-      <div className="relative h-1.5 w-full bg-white/5 rounded-full my-3">
+      <div className="relative h-2 w-full bg-white/5 rounded-full my-3">
         {pct != null && (
-          <div
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white border-2 border-[#111112]"
-            style={{ left: `${pct}%`, transform: 'translate(-50%,-50%)' }}
+          <motion.div
+            className="absolute top-1/2 w-2.5 h-2.5 rounded-full bg-white border-2 border-[#111112]"
+            initial={{ left: '0%' }}
+            whileInView={{ left: `${pct}%` }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            style={{ transform: 'translate(-50%,-50%)' }}
           />
         )}
       </div>
@@ -226,6 +235,9 @@ export default function StockDetailPage({ ticker, onBack }: Props) {
   const ph        = data.price_history          ?? {};
 
   const score     = data.market_mood_score      ?? 50;
+  const holders   = (inst.top_holders ?? []) as any[];
+  const hasHolderPercent = holders.some((h: any) => h.percent != null);
+  const hasHolderChange  = holders.some((h: any) => h.change  != null);
   const accentCol = scoreAccent(score);
   const articles  = (news.articles ?? []).slice(0, 8);
 
@@ -269,7 +281,7 @@ export default function StockDetailPage({ ticker, onBack }: Props) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="space-y-8"
+      className="space-y-12"
     >
 
       {/* ── 1. Back button ── */}
@@ -282,15 +294,15 @@ export default function StockDetailPage({ ticker, onBack }: Props) {
       </button>
 
       {/* ── 2. Top grid ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6">
 
         {/* Left — Ticker + Score */}
-        <div className="lg:col-span-1 bg-[#111112] border border-white/5 rounded-[2rem] p-8 flex flex-col gap-6">
+        <div className="bg-[#111112] border border-white/5 rounded-[2rem] p-8 flex flex-col gap-8">
           {/* Top row: ticker + price */}
           <div className="flex items-start justify-between">
             <div>
               <div className="text-2xl font-bold text-white tracking-tight">{tk}</div>
-              <div className="text-[11px] text-[#A1A1AA] opacity-50 mt-0.5 uppercase tracking-wider">
+              <div className="text-sm text-[#A1A1AA] opacity-70 mt-1">
                 {data.company_name ?? ''}
               </div>
             </div>
@@ -313,25 +325,28 @@ export default function StockDetailPage({ ticker, onBack }: Props) {
               Mood score
             </div>
             <div className="text-5xl font-bold font-mono" style={{ color: accentCol }}>
-              {Math.round(score)}
+              <CountUp value={Math.round(score)} decimals={0} duration={800} />
             </div>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="mt-1">
               <span className="text-lg font-semibold" style={{ color: accentCol }}>
                 {data.market_mood_label ?? 'Neutral'}
               </span>
-              <span className="text-[11px] text-[#A1A1AA] opacity-40">
-                · {data.market_mood_confidence ?? 'medium'} confidence
-              </span>
+            </div>
+            <div className="text-xs text-[#A1A1AA] opacity-60 mt-0.5">
+              {data.market_mood_confidence ?? 'medium'} confidence
             </div>
           </div>
 
           {/* Spectrum bar */}
           <div>
-            <div className="relative h-1.5 w-full rounded-full overflow-hidden"
+            <div className="relative h-2 w-full rounded-full overflow-hidden"
               style={{ background: 'linear-gradient(to right, var(--red) 0%, var(--amber) 50%, var(--green) 100%)' }}>
-              <div
-                className="absolute top-1/2 w-3 h-3 rounded-full bg-white border-2 border-[#111112]"
-                style={{ left: `${score}%`, transform: 'translate(-50%,-50%)' }}
+              <motion.div
+                className="absolute top-1/2 w-2.5 h-2.5 rounded-full bg-white border-2 border-[#111112]"
+                initial={{ left: '0%' }}
+                animate={{ left: `${score}%` }}
+                transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                style={{ transform: 'translate(-50%,-50%)' }}
               />
             </div>
             <div className="flex justify-between mt-2 text-[9px] font-bold text-[#A1A1AA] uppercase tracking-wider opacity-30">
@@ -355,7 +370,7 @@ export default function StockDetailPage({ ticker, onBack }: Props) {
         </div>
 
         {/* Right — Price Chart */}
-        <div className="lg:col-span-2 bg-[#111112] border border-white/5 rounded-[2rem] p-8">
+        <div className="bg-[#111112] border border-white/5 rounded-[2rem] p-8">
           {ph.dates?.length > 0 && ph.stock_prices?.length > 0 ? (
             <PriceChart
               ticker={tk}
@@ -542,18 +557,20 @@ export default function StockDetailPage({ ticker, onBack }: Props) {
                   </span>
                 )}
               </div>
-              <div className="border-t border-white/5 pt-4">
-                <div className="text-[10px] text-[#A1A1AA] opacity-50 uppercase tracking-wider mb-2">Insider MSPR</div>
-                <IndicatorBar
-                  label=""
-                  score={insider.latest_mspr != null ? clamp((insider.latest_mspr + 1) / 2 * 100) : 50}
-                  color={insider.latest_mspr != null && insider.latest_mspr > 0 ? 'var(--green)' : 'var(--red)'}
-                  value={insider.latest_mspr != null ? fmt(insider.latest_mspr, 3) : '—'}
-                />
-                {insider.signal && (
-                  <div className="text-[11px] text-[#A1A1AA] opacity-50 mt-1.5">{insider.signal}</div>
-                )}
-              </div>
+              {insider.latest_mspr != null && (
+                <div className="border-t border-white/5 pt-4">
+                  <div className="text-[10px] text-[#A1A1AA] opacity-50 uppercase tracking-wider mb-2">Insider MSPR</div>
+                  <IndicatorBar
+                    label=""
+                    score={clamp((insider.latest_mspr + 1) / 2 * 100)}
+                    color={insider.latest_mspr > 0 ? 'var(--green)' : 'var(--red)'}
+                    value={fmt(insider.latest_mspr, 3)}
+                  />
+                  {insider.signal && (
+                    <div className="text-[11px] text-[#A1A1AA] opacity-50 mt-1.5">{insider.signal}</div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -569,17 +586,21 @@ export default function StockDetailPage({ ticker, onBack }: Props) {
             <div className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-widest opacity-60 mb-4">
               RSI (14)
             </div>
-            <div className="text-5xl font-bold font-mono mb-2"
+            <div className="text-4xl font-bold font-mono mb-2"
               style={{ color: tech.rsi_14 >= 70 ? 'var(--red)' : tech.rsi_14 <= 30 ? 'var(--green)' : 'var(--amber)' }}>
               {tech.rsi_14 != null ? fmt(tech.rsi_14, 1) : '—'}
             </div>
             <div className="text-sm text-[#A1A1AA] opacity-50 mb-5">
               {tech.rsi_14 == null ? 'No data' : tech.rsi_14 >= 70 ? 'Overbought' : tech.rsi_14 <= 30 ? 'Oversold' : 'Neutral zone'}
             </div>
-            <div className="relative h-1.5 w-full bg-white/5 rounded-full">
-              <div
-                className="absolute top-1/2 w-3 h-3 rounded-full border-2 border-[#111112] bg-white"
-                style={{ left: `${tech.rsi_14 ?? 50}%`, transform: 'translate(-50%,-50%)' }}
+            <div className="relative h-2 w-full bg-white/5 rounded-full">
+              <motion.div
+                className="absolute top-1/2 w-2.5 h-2.5 rounded-full border-2 border-[#111112] bg-white"
+                initial={{ left: '0%' }}
+                whileInView={{ left: `${tech.rsi_14 ?? 50}%` }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                style={{ transform: 'translate(-50%,-50%)' }}
               />
             </div>
             <div className="flex justify-between mt-2 text-[9px] font-bold text-[#A1A1AA] opacity-30 uppercase tracking-wider">
@@ -672,28 +693,36 @@ export default function StockDetailPage({ ticker, onBack }: Props) {
         </div>
 
         {/* Holders table */}
-        {(inst.top_holders ?? []).length > 0 && (
-          <div className="bg-[#111112] border border-white/5 rounded-2xl overflow-hidden">
-            <div className="grid grid-cols-[1fr_auto_auto_auto] bg-white/[0.01] border-b border-white/5 px-6 py-4 gap-4">
-              {['Holder', 'Shares', '% Owned', 'Change'].map(h => (
-                <span key={h} className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-widest">{h}</span>
-              ))}
+        {holders.length > 0 && (() => {
+          const cols = hasHolderPercent && hasHolderChange
+            ? 'grid-cols-[1fr_auto_auto_auto]'
+            : hasHolderPercent || hasHolderChange
+              ? 'grid-cols-[1fr_auto_auto]'
+              : 'grid-cols-[1fr_auto]';
+          const headers = ['Holder', 'Shares',
+            ...(hasHolderPercent ? ['% Owned'] : []),
+            ...(hasHolderChange  ? ['Change']  : []),
+          ];
+          return (
+            <div className="bg-[#111112] border border-white/5 rounded-2xl overflow-hidden">
+              <div className={`grid ${cols} bg-white/[0.01] border-b border-white/5 px-6 py-4 gap-4`}>
+                {headers.map(h => (
+                  <span key={h} className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-widest">{h}</span>
+                ))}
+              </div>
+              <div className="divide-y divide-white/5">
+                {holders.map((h: any, i: number) => (
+                  <div key={i} className={`grid ${cols} px-6 py-4 gap-4 items-center`}>
+                    <span className="text-sm text-white font-medium">{h.holder ?? h.name ?? '—'}</span>
+                    <span className="text-sm font-mono text-[#A1A1AA]">{h.shares != null ? (h.shares >= 1e6 ? `${(h.shares / 1e6).toFixed(1)}M` : h.shares.toLocaleString()) : '—'}</span>
+                    {hasHolderPercent && <span className="text-sm font-mono text-[#A1A1AA]">{h.percent != null ? `${fmt(h.percent, 2)}%` : '—'}</span>}
+                    {hasHolderChange  && <span className="text-sm font-mono" style={{ color: h.change == null ? 'var(--tx3)' : h.change >= 0 ? 'var(--green)' : 'var(--red)' }}>{h.change != null ? (h.change >= 0 ? '+' : '') + h.change.toLocaleString() : '—'}</span>}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="divide-y divide-white/5">
-              {(inst.top_holders as any[]).map((h: any, i: number) => (
-                <div key={i} className="grid grid-cols-[1fr_auto_auto_auto] px-6 py-4 gap-4 items-center">
-                  <span className="text-sm text-white font-medium">{h.holder ?? h.name ?? '—'}</span>
-                  <span className="text-sm font-mono text-[#A1A1AA]">{h.shares != null ? (h.shares >= 1e6 ? `${(h.shares / 1e6).toFixed(1)}M` : h.shares.toLocaleString()) : '—'}</span>
-                  <span className="text-sm font-mono text-[#A1A1AA]">{h.percent != null ? `${fmt(h.percent, 2)}%` : '—'}</span>
-                  <span className="text-sm font-mono"
-                    style={{ color: h.change == null ? 'var(--tx3)' : h.change >= 0 ? 'var(--green)' : 'var(--red)' }}>
-                    {h.change != null ? (h.change >= 0 ? '+' : '') + h.change.toLocaleString() : '—'}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
 
       {/* ── 7. Market Context ── */}
@@ -753,13 +782,15 @@ export default function StockDetailPage({ ticker, onBack }: Props) {
             </div>
           </div>
 
-          {/* VIX gauge */}
-          <StockStatCard
-            label="VIX"
-            value={fmt(fg.vix ?? null, 1)}
-            subValue={fg.vix == null ? undefined : fg.vix < 15 ? 'Low volatility' : fg.vix < 25 ? 'Elevated' : 'High volatility'}
-            trend={fg.vix != null && fg.vix > 25 ? 'down' : fg.vix != null && fg.vix < 15 ? 'up' : null}
-          />
+          {/* VIX gauge — only render when data is available */}
+          {fg.vix != null && (
+            <StockStatCard
+              label="VIX"
+              value={fmt(fg.vix, 1)}
+              subValue={fg.vix < 15 ? 'Low volatility' : fg.vix < 25 ? 'Elevated' : 'High volatility'}
+              trend={fg.vix > 25 ? 'down' : fg.vix < 15 ? 'up' : null}
+            />
+          )}
 
           {/* Short Float gauge */}
           <div className="bg-[#111112] border border-white/5 rounded-2xl p-6">
@@ -791,18 +822,18 @@ export default function StockDetailPage({ ticker, onBack }: Props) {
                 rel="noopener noreferrer"
                 className="block p-6 bg-[#111112] hover:bg-white/[0.04] border border-white/5 rounded-2xl transition-all group"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-[9px] font-bold text-[#A1A1AA] uppercase tracking-widest opacity-60 border-l border-blue-500 pl-2">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-widest opacity-60 border-l border-blue-500 pl-2 max-w-[120px] truncate">
                     {a.source}
                   </span>
-                  <span className="text-[9px] font-bold text-[#A1A1AA] opacity-20 uppercase tracking-widest px-2 py-0.5 bg-white/5 rounded">
+                  <span className="text-[9px] font-bold text-[#A1A1AA] opacity-40 uppercase tracking-widest px-2 py-0.5 bg-white/5 rounded shrink-0">
                     {fmtTime(a.published_at)}
                   </span>
                 </div>
-                <p className="font-serif font-medium leading-snug text-[#F4F4F5] group-hover:text-blue-400 transition-colors mb-4">
+                <p className="font-serif font-medium leading-snug text-[#F4F4F5] group-hover:text-blue-400 transition-colors mb-3">
                   {a.title}
                 </p>
-                <span className="text-[10px] font-bold text-blue-400 group-hover:underline uppercase tracking-widest">
+                <span className="text-xs font-bold text-blue-400 group-hover:underline uppercase tracking-widest">
                   Read →
                 </span>
               </a>

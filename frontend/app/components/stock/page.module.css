@@ -40,7 +40,7 @@
 /* ── InsightTabs ── */
 .insightTabs { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--line); overflow-x: auto; }
 .insightTab {
-  font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+  font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
   padding: 12px 16px; color: var(--tx3); cursor: pointer; transition: all .15s;
   border-bottom: 2px solid transparent; margin-bottom: -1px;
   background: none; border-top: none; border-left: none; border-right: none;
@@ -61,7 +61,7 @@
   .rangeTabs       { gap: 2px; }
   .rangeTab        { padding: 4px 9px; font-size: 10px; }
   .chartLegend     { gap: 5px; }
-  .insightTab      { padding: 10px 12px; font-size: 10px; }
+  .insightTab      { padding: 10px 12px; font-size: 11px; }
   .insightBody     { padding: 16px; }
   .insightText     { font-size: 14px; }
 }

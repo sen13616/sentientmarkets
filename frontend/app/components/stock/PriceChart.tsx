@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import styles from './page.module.css';
 
 interface PriceChartProps {
@@ -295,9 +296,21 @@ export default function PriceChart({
       {/* Canvas */}
       <div
         className={styles.chartCanvasWrap}
-        style={{ overflow: 'hidden', maxWidth: '100%', minWidth: 0, opacity: loading ? 0.4 : 1, transition: 'opacity 0.2s' }}
+        style={{ overflow: 'hidden', maxWidth: '100%', minWidth: 0, position: 'relative', opacity: loading ? 0.4 : 1, transition: 'opacity 0.2s' }}
       >
         <canvas ref={canvasRef} style={{ width: '100%', maxWidth: '100%' }} />
+        <motion.div
+          key={activePeriod}
+          initial={{ scaleX: 1 }}
+          animate={{ scaleX: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            position: 'absolute', inset: 0,
+            background: '#111112',
+            transformOrigin: 'right',
+            pointerEvents: 'none',
+          }}
+        />
       </div>
 
       {/* Footer */}

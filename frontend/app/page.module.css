@@ -128,10 +128,12 @@
 ───────────────────────────────────────── */
 
 @keyframes heroFadeUp {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: none; }
 }
 
-.heroFade0 { animation: heroFadeUp 0.5s ease both; }
-.heroFade1 { animation: heroFadeUp 0.5s ease both; animation-delay: 100ms; }
-.heroFade2 { animation: heroFadeUp 0.5s ease both; animation-delay: 200ms; }
+.heroFade0 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 0ms; }
+.heroFade1 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 150ms; }
+.heroFade2 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 300ms; }
+.heroFade3 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 450ms; }
+.heroFade4 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 600ms; }

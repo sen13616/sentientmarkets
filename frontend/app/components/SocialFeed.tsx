@@ -47,7 +47,7 @@ export default function SocialFeed({
     getHomeData()
       .then((data) => {
         setTrending((data.trending_tickers ?? []).slice(0, 10));
-        setArticles((data.macro_news?.articles ?? []).slice(0, 6));
+        setArticles((data.macro_news?.articles ?? []).slice(0, 5));
       })
       .catch(() => {})
       .finally(() => setLoaded(true));
@@ -64,7 +64,7 @@ export default function SocialFeed({
 
       {/* ── Reddit Trending ── */}
       <div className="lg:col-span-2">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#A1A1AA] opacity-40 mb-6">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#A1A1AA] opacity-60 mb-6">
           Reddit Trending
         </p>
 
@@ -73,7 +73,7 @@ export default function SocialFeed({
           {/* Table header */}
           <div className="grid grid-cols-[3rem_1fr_auto_auto] gap-4 items-center bg-white/[0.01] border-b border-white/5 px-8 py-6">
             {['Rank', 'Ticker', 'Mentions', 'Momentum'].map((h) => (
-              <span key={h} className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-widest">
+              <span key={h} className="text-xs font-bold text-[#A1A1AA] uppercase tracking-widest">
                 {h}
               </span>
             ))}
@@ -104,23 +104,27 @@ export default function SocialFeed({
                   Unavailable
                 </div>
               ) : (
-                trending.map((stock) => {
+                trending.map((stock, rowIdx) => {
                   const signal = stock.momentum_signal ?? 'Stable';
                   return (
-                    <div
+                    <motion.div
                       key={stock.ticker}
+                      initial={{ opacity: 0, x: -16 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: Math.min(rowIdx, 7) * 0.04, ease: 'easeOut' }}
                       onClick={() => onNavigate(stock.ticker)}
                       className="group grid grid-cols-[3rem_1fr_auto_auto] gap-4 items-center px-8 py-6 hover:bg-white/[0.02] cursor-pointer transition-colors"
                     >
                       {/* Rank */}
-                      <span className="text-sm font-bold opacity-30">{stock.rank}</span>
+                      <span className="text-sm font-bold opacity-60">{stock.rank}</span>
 
                       {/* Ticker + name */}
                       <div>
-                        <div className="text-sm font-bold text-white uppercase group-hover:text-blue-500 transition-colors">
+                        <div className="text-sm font-bold text-white uppercase group-hover:text-blue-500 group-hover:translate-x-1 transition-all">
                           {stock.ticker}
                         </div>
-                        <div className="text-[10px] text-[#A1A1AA] opacity-40 font-medium uppercase tracking-wider mt-0.5">
+                        <div className="text-[10px] text-[#A1A1AA] opacity-60 font-medium uppercase tracking-wider mt-0.5">
                           {stock.name}
                         </div>
                       </div>
@@ -135,11 +139,11 @@ export default function SocialFeed({
 
                       {/* Momentum */}
                       <div className="text-right">
-                        <span className={`px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider ${momentumClass(signal)}`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${momentumClass(signal)}`}>
                           {signal}
                         </span>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })
               )}
@@ -150,7 +154,7 @@ export default function SocialFeed({
 
       {/* ── Mood Insights ── */}
       <div className="col-span-1">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#A1A1AA] opacity-40 mb-6">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#A1A1AA] opacity-60 mb-6">
           Mood Insights
         </p>
 
@@ -173,34 +177,38 @@ export default function SocialFeed({
             <p className="text-sm text-[#A1A1AA] opacity-40">Unavailable</p>
           )}
           {loaded &&
-            articles.map((article, i) => (
-              <a
+            articles.slice(0, 5).map((article, i) => (
+              <motion.a
                 key={i}
                 href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block p-6 bg-[#111112] hover:bg-white/[0.04] border border-white/5 rounded-2xl transition-all cursor-pointer group"
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.06, ease: 'easeOut' }}
+                className="block p-6 bg-[#111112] hover:bg-white/[0.04] border border-white/5 hover:border-white/10 rounded-2xl transition-all cursor-pointer group"
               >
                 {/* Source + time */}
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-[9px] font-bold text-[#A1A1AA] uppercase tracking-widest opacity-60 border-l border-blue-500 pl-2">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-widest opacity-60 border-l border-blue-500 pl-2 max-w-[120px] truncate">
                     {article.source}
                   </span>
-                  <span className="text-[9px] font-bold text-[#A1A1AA] opacity-20 uppercase tracking-widest px-2 py-0.5 bg-white/5 rounded">
+                  <span className="text-[9px] font-bold text-[#A1A1AA] opacity-40 uppercase tracking-widest px-2 py-0.5 bg-white/5 rounded shrink-0">
                     {fmtTime(article.published_at)}
                   </span>
                 </div>
 
                 {/* Headline */}
-                <p className="font-serif font-medium leading-snug text-[#F4F4F5] group-hover:text-blue-400 transition-colors mb-4">
+                <p className="font-serif font-medium leading-snug text-[#F4F4F5] group-hover:text-blue-400 transition-colors mb-3">
                   {article.title}
                 </p>
 
                 {/* Read link */}
-                <span className="text-[10px] font-bold text-blue-400 group-hover:underline uppercase tracking-widest">
-                  Read Mood →
+                <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">
+                  Read Mood <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
                 </span>
-              </a>
+              </motion.a>
             ))}
         </div>
       </div>

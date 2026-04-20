@@ -69,7 +69,7 @@ export default function MoodCard() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
+      initial={{ opacity: 0, y: 30, scale: 0.98, filter: 'blur(10px)' }}
       whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       viewport={{ once: true, margin: '-100px' }}
       transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
@@ -79,10 +79,22 @@ export default function MoodCard() {
         {/* Header row */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#A1A1AA] opacity-50">
+            <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#A1A1AA] opacity-70">
               Market Mood
             </span>
-            <div className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
+            <div className="relative flex items-center justify-center">
+              <motion.div
+                initial={{ scale: 1, opacity: 0.7 }}
+                animate={{ scale: 2.5, opacity: 0 }}
+                transition={{ duration: 0.9, ease: 'easeOut', delay: 0.6 }}
+                className={`absolute w-2 h-2 rounded-full ${dotColor}`}
+              />
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                className={`w-2 h-2 rounded-full ${dotColor}`}
+              />
+            </div>
           </div>
           <div className="flex items-center gap-2 bg-white/[0.03] border border-white/5 px-4 py-2 rounded-full">
             <Globe size={10} className="text-[#A1A1AA]" />
@@ -103,8 +115,12 @@ export default function MoodCard() {
         <div className="flex items-center gap-3 mb-10">
           <div className="flex items-center gap-1.5">
             {Array.from({ length: 10 }, (_, i) => (
-              <div
+              <motion.div
                 key={i}
+                initial={{ opacity: 0, scale: 0.3 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: i * 0.08, ease: 'easeOut' }}
                 className={`h-3 w-3 rounded-full ${i < score ? accentBg : 'bg-neutral-800'}`}
               />
             ))}
@@ -135,7 +151,7 @@ export default function MoodCard() {
                   <span className="text-[11px] text-[#A1A1AA] uppercase tracking-wider opacity-60 font-bold">
                     {label}
                   </span>
-                  <span className="text-[11px] font-bold text-white uppercase tracking-tight">
+                  <span className="text-sm font-bold text-white uppercase tracking-tight">
                     {value}
                   </span>
                 </div>
@@ -149,22 +165,20 @@ export default function MoodCard() {
           <div className="border-t border-white/5 pt-16 mt-8">
             <div className="flex items-end justify-between flex-wrap gap-6">
               <div>
-                <p className="text-[12px] font-bold text-[#A1A1AA] uppercase tracking-[0.2em] opacity-50 mb-6">
+                <p className="text-[12px] font-bold text-[#A1A1AA] uppercase tracking-[0.2em] opacity-60 mb-6">
                   5-day mood history
                 </p>
-                <div className="flex items-end gap-4">
+                <div className="flex items-center gap-6">
                   {history.map((h, i) => {
                     const isToday = i === history.length - 1;
                     const neg = isNegative(h.emotion);
-                    const bg  = neg ? 'bg-red-500' : 'bg-green-500';
-                    const glow = neg ? 'rgba(239,68,68,0.2)' : 'rgba(34,197,94,0.2)';
+                    const textColor = neg ? 'text-red-500' : 'text-green-500';
                     return (
-                      <div key={i} className="flex flex-col items-center gap-2">
-                        <div
-                          className={`h-1.5 w-16 md:w-20 rounded-full ${bg} ${!isToday ? 'opacity-20' : ''}`}
-                          style={isToday ? { boxShadow: `0 0 20px ${glow}` } : undefined}
-                        />
-                        <span className="text-[11px] font-bold text-[#A1A1AA] uppercase tracking-widest opacity-40">
+                      <div key={i} className="flex flex-col gap-1">
+                        <span className={`text-sm font-bold capitalize ${isToday ? textColor : 'text-[#A1A1AA] opacity-40'}`}>
+                          {h.emotion}
+                        </span>
+                        <span className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-widest opacity-60">
                           {DAYS[i]}
                         </span>
                       </div>

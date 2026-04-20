@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import CountUp from '@/app/components/stock/CountUp';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { getHomeData } from '@/lib/api';
 
@@ -113,12 +114,12 @@ export default function MarketSnapshot() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
-      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      initial={{ opacity: 0, x: -20, filter: 'blur(10px)' }}
+      whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
       viewport={{ once: true, margin: '-100px' }}
       transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
     >
-      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#A1A1AA] opacity-40 px-2 mb-6">
+      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#A1A1AA] opacity-60 px-2 mb-6">
         Market Snapshot
       </p>
 
@@ -133,10 +134,10 @@ export default function MarketSnapshot() {
               Fear &amp; Greed Index
             </p>
             <div className="flex items-end gap-2 mb-3">
-              <span className={`text-8xl font-bold font-mono tracking-tighter ${fgTextColor(fgScore)}`}>
-                {fgScore}
+              <span className={`text-6xl font-bold font-mono tracking-tighter ${fgTextColor(fgScore)}`}>
+                <CountUp value={fgScore} decimals={0} duration={800} />
               </span>
-              <span className="text-xl font-bold text-[#A1A1AA] opacity-40 mb-4">/100</span>
+              <span className="text-2xl font-bold text-[#A1A1AA] opacity-60 mb-2">/100</span>
             </div>
             <div className={`text-2xl font-bold ${fgTextColor(fgScore)}`}>
               {fgLabel(fgScore)}
@@ -146,16 +147,19 @@ export default function MarketSnapshot() {
           {/* Gradient bar */}
           <div>
             <div className="h-1.5 w-full bg-neutral-800 rounded-full relative overflow-hidden">
-              <div
-                className={`absolute left-0 top-0 h-full rounded-full transition-all duration-500 ${fgFillColor(fgScore)}`}
-                style={{ width: `${fgScore}%` }}
+              <motion.div
+                className={`absolute left-0 top-0 h-full rounded-full ${fgFillColor(fgScore)}`}
+                initial={{ width: '0%' }}
+                whileInView={{ width: `${fgScore}%` }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
               />
             </div>
             <div className="flex justify-between mt-2">
-              <span className="text-[9px] font-bold text-[#A1A1AA] uppercase tracking-[0.1em] opacity-30">
+              <span className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-[0.1em] opacity-50">
                 Extreme Fear
               </span>
-              <span className="text-[9px] font-bold text-[#A1A1AA] uppercase tracking-[0.1em] opacity-30">
+              <span className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-[0.1em] opacity-50">
                 Extreme Greed
               </span>
             </div>
@@ -171,14 +175,14 @@ export default function MarketSnapshot() {
                 <button
                   key={h.label}
                   onClick={() => setActiveHistorical(i)}
-                  className={`px-4 py-2 rounded-xl text-[10px] font-bold font-mono flex items-center gap-2 transition-all ${
+                  className={`px-4 py-2 rounded-xl font-mono flex items-center gap-2 transition-all ${
                     i === activeHistorical
                       ? 'bg-blue-500/10 border border-blue-500/30 text-blue-400'
                       : 'bg-white/[0.03] border border-white/5 text-[#A1A1AA]'
                   }`}
                 >
-                  <span>{h.label}</span>
-                  <span>{h.value > 0 ? h.value : '—'}</span>
+                  <span className="text-[10px] opacity-60">{h.label}</span>
+                  <span className="text-sm font-bold">{h.value > 0 ? h.value : '—'}</span>
                 </button>
               ))}
             </div>
@@ -187,7 +191,7 @@ export default function MarketSnapshot() {
 
         {/* ── Indices grid ── */}
         <div className="flex-[1.2] grid grid-cols-1 md:grid-cols-2 gap-6">
-          {INDEX_DEFS.map(({ key, label }) => {
+          {INDEX_DEFS.map(({ key, label }, i) => {
             const idx  = indices[key] ?? {};
             const isVix = key === 'vix';
             const isPos = (idx.change_percent ?? 0) >= 0;
@@ -196,8 +200,12 @@ export default function MarketSnapshot() {
             const absChange   = idx.change ?? 0;
 
             return (
-              <div
+              <motion.div
                 key={key}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
                 className="bg-[#111112] border border-white/5 rounded-[2rem] p-8 flex flex-col justify-between"
               >
                 {/* Top row */}
@@ -226,7 +234,7 @@ export default function MarketSnapshot() {
                     {isPos ? '+' : ''}{absChange.toFixed(2)}
                   </span>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
