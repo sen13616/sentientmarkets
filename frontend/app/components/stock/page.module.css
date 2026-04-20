@@ -1,0 +1,67 @@
+/* ─────────────────────────────────────────
+   CSS Module for PriceChart.tsx + InsightTabs.tsx
+   Uses CSS vars defined in globals.css
+───────────────────────────────────────── */
+
+.pos { color: var(--green); }
+.neg { color: var(--red);   }
+.neu { color: var(--amber); }
+
+/* ── PriceChart toolbar ── */
+.chartToolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+.chartLabel   { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--tx3); }
+.rangeTabs    { display: flex; gap: 4px; }
+.rangeTab {
+  font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 5px 12px; border-radius: 6px; cursor: pointer;
+  color: var(--tx3); background: none; border: 1px solid transparent; transition: all .15s;
+}
+.rangeTab:hover  { color: var(--tx2); border-color: var(--line); }
+.rangeTabActive  { color: var(--tx1); background: var(--surface-2); border-color: var(--line) !important; }
+
+/* ── Chart legend ── */
+.chartLegend       { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.legendChip        { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); border-radius: 5px; padding: 4px 10px; color: var(--tx2); transition: all .15s; }
+.legendChipDot     { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.legendChipDashed  { width: 14px; height: 2px; flex-shrink: 0; background: repeating-linear-gradient(to right, var(--blue) 0, var(--blue) 4px, transparent 4px, transparent 7px); }
+.vsChip            { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; border: 1px solid; border-radius: 5px; padding: 4px 10px; }
+
+/* ── Canvas wrapper ── */
+.chartCanvasWrap { position: relative; height: 200px; width: 100%; overflow: hidden; }
+
+/* ── Chart footer ── */
+.chartFooter       { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; flex-wrap: wrap; gap: 4px; }
+.chartFooterLegend { display: flex; align-items: center; gap: 16px; }
+.chartFooterMeta   { font-family: var(--mono); font-size: 10px; color: var(--tx3); }
+.cflItem  { display: flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; color: var(--tx2); }
+.cflLine  { width: 16px; height: 2px; border-radius: 1px; }
+.cflDashed { background: repeating-linear-gradient(to right, var(--blue) 0, var(--blue) 4px, transparent 4px, transparent 7px) !important; }
+
+/* ── InsightTabs ── */
+.insightTabs { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.insightTab {
+  font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 12px 16px; color: var(--tx3); cursor: pointer; transition: all .15s;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  background: none; border-top: none; border-left: none; border-right: none;
+  white-space: nowrap;
+}
+.insightTabActive { color: var(--tx1); border-bottom-color: var(--blue) !important; }
+.insightTab:hover:not(.insightTabActive) { color: var(--tx2); }
+
+.insightBody { padding: 24px 24px 28px; }
+.insightText { font-size: 15px; font-weight: 300; color: var(--tx2); line-height: 1.75; letter-spacing: -0.1px; }
+.insightText strong { color: var(--tx1); font-weight: 500; }
+
+/* ── Keyframe used by InsightTabs cursor blink ── */
+@keyframes pip { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+@media (max-width: 640px) {
+  .chartToolbar    { gap: 6px; margin-bottom: 12px; }
+  .rangeTabs       { gap: 2px; }
+  .rangeTab        { padding: 4px 9px; font-size: 10px; }
+  .chartLegend     { gap: 5px; }
+  .insightTab      { padding: 10px 12px; font-size: 10px; }
+  .insightBody     { padding: 16px; }
+  .insightText     { font-size: 14px; }
+}

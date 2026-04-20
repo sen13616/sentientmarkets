@@ -1,10 +1,10 @@
 # Feature Spec: [Feature Name]
 
 ## Intent
-One sentence — what does this feature do and why does it exist for TheMarketMood.ai users?
+One sentence — what does this feature do and why does it exist for SentientMarkets users?
 
 ## User Story
-As a retail investor using TheMarketMood.ai, I want to [action] so that [outcome related to market sentiment or investment decisions].
+As a retail investor using SentientMarkets, I want to [action] so that [outcome related to market sentiment or investment decisions].
 
 ## Wireframe Description
 
@@ -52,7 +52,7 @@ List every new or modified component with its file path. Reference paths from th
 
 ## Data Sources
 
-Specify which of TheMarketMood.ai's data sources this feature requires:
+Specify which of SentientMarkets' data sources this feature requires:
 
 | Source | What it provides | FastAPI endpoint |
 |--------|-----------------|------------------|
@@ -82,9 +82,9 @@ Every component must account for all four states:
 | **Error / Fallback** | Display "Unavailable" label in `--tx3` colour. Never show a blank space, raw error, or broken layout. Follow `DESIGN_SYSTEM.md §9.2`. |
 | **Empty** | Data returned but set is empty (e.g. no news articles). Show contextual empty message (e.g. "No recent news for TICKER"). |
 
-## MarketMood Score Display (if applicable)
+## SentientMarkets Score Display (if applicable)
 
-If this feature displays a MarketMood Score, it must use the correct classification and colour:
+If this feature displays a SentientMarkets Score, it must use the correct classification and colour:
 
 | Score Range | Label | Colour Token |
 |-------------|-------|--------------|

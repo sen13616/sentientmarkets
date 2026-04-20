@@ -1,4 +1,4 @@
-# TheMarketMood.ai — Design System
+# SentientMarkets — Design System
 
 > **Version:** 1.0.0 · **Locked:** 2026-04-11
 > **Source of truth** for all frontend styling. Do not deviate without updating this document.

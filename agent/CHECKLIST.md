@@ -1,4 +1,4 @@
-# TheMarketMood.ai — Agent Pre-Completion Checklist
+# SentientMarkets — Agent Pre-Completion Checklist
 
 Before marking any feature done, verify every item below.
 
@@ -45,7 +45,7 @@ Before marking any feature done, verify every item below.
 - [ ] **Code-style labels** (tags, badges, section headers) use `Geist Mono` (`font-family: var(--mono)`)
 - [ ] Font sizes and weights match the type scale in `DESIGN_SYSTEM.md §2`
 
-## MarketMood Score Display
+## SentientMarkets Score Display
 - [ ] Score uses the correct classification label:
   - 0–20 → Bearish | 21–35 → Somewhat Bearish | 36–49 → Leaning Bearish
   - 50 → Neutral

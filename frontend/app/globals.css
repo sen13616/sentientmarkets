@@ -3,6 +3,48 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Surface & background */
+    --bg:           #0A0A0B;
+    --surface:      #111112;
+    --surface-2:    #18181B;
+    --surface-hov:  rgba(255,255,255,0.03);
+
+    /* Borders */
+    --line:         rgba(255,255,255,0.07);
+    --line-soft:    rgba(255,255,255,0.04);
+
+    /* Text */
+    --tx1: #F4F4F5;
+    --tx2: #A1A1AA;
+    --tx3: #71717A;
+
+    /* Fonts */
+    --sans:  var(--font-geist-sans);
+    --mono:  var(--font-geist-mono);
+    --serif: Georgia, 'Times New Roman', serif;
+
+    /* Accent colours */
+    --green: #22C55E;
+    --red:   #EF4444;
+    --amber: #F59E0B;
+    --blue:  #3B82F6;
+
+    /* Colour backgrounds + borders */
+    --green-bg:  rgba(34,197,94,0.1);
+    --green-br:  rgba(34,197,94,0.18);
+    --red-bg:    rgba(239,68,68,0.1);
+    --red-br:    rgba(239,68,68,0.18);
+    --amber-bg:  rgba(245,158,11,0.1);
+    --amber-br:  rgba(245,158,11,0.18);
+    --blue-bg:   rgba(59,130,246,0.1);
+    --blue-br:   rgba(59,130,246,0.18);
+
+    /* Button helpers */
+    --btn-primary:   var(--green);
+    --btn-secondary: var(--blue);
+  }
+
   html { background-color: #0A0A0B; }
   body {
     background-color: #0A0A0B;
