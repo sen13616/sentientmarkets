@@ -17,9 +17,16 @@ app = FastAPI(title="TheMarketMood.ai API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.get_cors_origins(),
-    allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://sentientmarkets2.vercel.app",
+        "https://sentientmarkets.vercel.app",
+        "https://themarketmood.ai",
+        "https://sentientmarkets.ai",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(health.router)
