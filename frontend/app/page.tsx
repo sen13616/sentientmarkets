@@ -74,12 +74,12 @@ export default function Home() {
 
       <main>
         {/* ── Hero ── */}
-        <section className="relative h-screen min-h-[700px] overflow-hidden">
+        <section className="relative h-screen min-h-[700px] overflow-hidden -mt-20 flex items-center">
           {/* ECG canvas + veils — sits behind all hero content */}
           <EcgCanvas />
 
-          {/* Hero content — above canvas (z-[2]), padded so content clears the sticky nav */}
-          <div className="relative z-[2] px-6 md:px-20 pt-36 pb-24 w-full max-w-[520px] lg:w-fit lg:max-w-none">
+          {/* Hero content — vertically centred by flex, above canvas (z-[2]) */}
+          <div className="relative z-[2] px-6 md:px-20 w-full max-w-[520px] lg:w-fit lg:max-w-none">
 
             {/* Eyebrow */}
             <p className={`font-serif italic text-xl text-[#A1A1AA] mb-8 ${styles.heroFade0}`}>

@@ -6,7 +6,7 @@ export default function ScrollCue() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 1200);
+    const t = setTimeout(() => setVisible(true), 300);
     return () => clearTimeout(t);
   }, []);
 
