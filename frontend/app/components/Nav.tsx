@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Nav({ onNavigate }: { onNavigate: (page: string) => void }) {
   const [scrolled, setScrolled] = useState(false);
@@ -32,20 +33,25 @@ export default function Nav({ onNavigate }: { onNavigate: (page: string) => void
 
       {/* Center nav links */}
       <div className="hidden md:flex items-center gap-8">
+        <button
+          onClick={() => onNavigate('home')}
+          className="text-xs font-bold text-[#A1A1AA] hover:text-white transition-colors uppercase tracking-wide opacity-70 hover:opacity-100"
+        >
+          Markets
+        </button>
         {[
-          { label: 'Markets', action: () => onNavigate('home') },
-          { label: 'About', action: undefined },
-          { label: 'Technology', action: undefined },
-          { label: 'FAQ', action: undefined },
-          { label: 'Contact', action: undefined },
-        ].map(({ label, action }) => (
-          <button
+          ['/about', 'About'],
+          ['/technology', 'Technology'],
+          ['/faq', 'FAQ'],
+          ['/contact', 'Contact'],
+        ].map(([href, label]) => (
+          <Link
             key={label}
-            onClick={action}
+            href={href}
             className="text-xs font-bold text-[#A1A1AA] hover:text-white transition-colors uppercase tracking-wide opacity-70 hover:opacity-100"
           >
             {label}
-          </button>
+          </Link>
         ))}
       </div>
 
