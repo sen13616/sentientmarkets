@@ -74,12 +74,12 @@ export default function Home() {
 
       <main>
         {/* ── Hero ── */}
-        <section className="relative min-h-screen flex items-center overflow-hidden">
+        <section className="relative h-screen min-h-[700px] flex items-center overflow-hidden">
           {/* ECG canvas + veils — sits behind all hero content */}
           <EcgCanvas />
 
-          {/* Hero content — above canvas (z-[2]) */}
-          <div className="relative z-[2] px-6 md:px-20 pt-24 pb-32 max-w-[600px]">
+          {/* Hero content — above canvas (z-[2]), padded so content clears the sticky nav */}
+          <div className="relative z-[2] px-6 md:px-20 pt-28 pb-24 max-w-[600px]">
 
             {/* Eyebrow */}
             <p className={`font-serif italic text-xl text-[#A1A1AA] mb-4 ${styles.heroFade0}`}>
@@ -133,7 +133,7 @@ export default function Home() {
         <TickerTape />
 
         {/* ── Market Mood ── */}
-        <section className="px-6 md:px-20 pb-20">
+        <section className="px-6 md:px-20 pt-20 pb-20">
           <MoodCard />
         </section>
 
