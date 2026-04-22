@@ -8,6 +8,14 @@ export async function getSentiment(ticker: string) {
   return res.json();
 }
 
+export async function getHome() {
+  const res = await fetch(`${API_URL}/api/home`, {
+    next: { revalidate: 60 },
+  });
+  if (!res.ok) throw new Error('Failed to fetch home data');
+  return res.json();
+}
+
 export async function getHomeData() {
   const res = await fetch(`${API_URL}/api/home`, {
     next: { revalidate: 900 },
