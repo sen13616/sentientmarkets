@@ -79,27 +79,27 @@ export default function Home() {
           <EcgCanvas />
 
           {/* Hero content — above canvas (z-[2]), padded so content clears the sticky nav */}
-          <div className="relative z-[2] px-6 md:px-20 pt-28 pb-24 max-w-[600px]">
+          <div className="relative z-[2] px-6 md:px-20 pt-36 pb-32 max-w-[600px]">
 
             {/* Eyebrow */}
-            <p className={`font-serif italic text-xl text-[#A1A1AA] mb-4 ${styles.heroFade0}`}>
+            <p className={`font-serif italic text-xl text-[#A1A1AA] mb-8 ${styles.heroFade0}`}>
               Daily Market Intelligence
             </p>
 
             {/* H1 — two lines stagger independently */}
-            <h1 className="text-[3.5rem] md:text-[4.5rem] font-semibold text-white mb-12 leading-[1.1] tracking-[-0.03em]">
+            <h1 className="text-[3.5rem] md:text-[4.5rem] font-semibold text-white mb-16 leading-[1.1] tracking-[-0.03em]">
               <span className={`block ${styles.heroFade1}`}>Decode the noise.</span>
               <span className={`block text-[#A1A1AA] ${styles.heroFade2}`}>Discover the mood.</span>
             </h1>
 
             {/* Search */}
-            <div className={`w-full max-w-xl mb-12 ${styles.heroFade3}`}>
+            <div className={`w-full max-w-xl mb-16 ${styles.heroFade3}`}>
               <HeroSearch />
             </div>
 
             {/* Trending tickers */}
             {trending.length > 0 && (
-              <div className={`flex flex-wrap items-center gap-3 ${styles.heroFade4}`}>
+              <div className={`flex flex-wrap items-center gap-3 mb-8 ${styles.heroFade4}`}>
                 <span className="text-[11px] font-bold text-[#F4F4F5]/40 uppercase tracking-widest">
                   Trending:
                 </span>
