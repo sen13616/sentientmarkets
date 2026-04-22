@@ -19,10 +19,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
+        "https://sentientmarkets-ai.vercel.app",
         "https://sentientmarkets2.vercel.app",
         "https://sentientmarkets.vercel.app",
         "https://themarketmood.ai",
-        "https://sentientmarkets.ai",
     ],
     allow_credentials=True,
     allow_methods=["*"],
