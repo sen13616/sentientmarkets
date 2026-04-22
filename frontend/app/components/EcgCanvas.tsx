@@ -74,6 +74,7 @@ export default function EcgCanvas() {
     }));
 
     function resize() {
+      if (!canvas) return;
       W = canvas.width  = canvas.offsetWidth;
       H = canvas.height = canvas.offsetHeight;
     }
@@ -111,6 +112,7 @@ export default function EcgCanvas() {
       color: [number, number, number], lw: number, alpha: number, beats: number,
       inf: number, cPhase: number,
     ) {
+      if (!ctx) return;
       ctx.beginPath();
       ctx.lineWidth  = lw;
       ctx.lineCap    = 'round';
@@ -144,6 +146,7 @@ export default function EcgCanvas() {
     }
 
     function frame(ts: number) {
+      if (!ctx) return;
       const dt = Math.min((ts - lastTs) / 1000, .1);
       lastTs = ts;
       time   = ts * .001;
