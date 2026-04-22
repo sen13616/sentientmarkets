@@ -74,12 +74,12 @@ export default function Home() {
 
       <main>
         {/* ── Hero ── */}
-        <section className="relative h-screen min-h-[700px] flex items-center overflow-hidden">
+        <section className="relative h-screen min-h-[700px] overflow-hidden">
           {/* ECG canvas + veils — sits behind all hero content */}
           <EcgCanvas />
 
           {/* Hero content — above canvas (z-[2]), padded so content clears the sticky nav */}
-          <div className="relative z-[2] px-6 md:px-20 pt-36 pb-32 max-w-[600px]">
+          <div className="relative z-[2] px-6 md:px-20 pt-36 pb-24 w-full max-w-[520px] lg:w-fit lg:max-w-none">
 
             {/* Eyebrow */}
             <p className={`font-serif italic text-xl text-[#A1A1AA] mb-8 ${styles.heroFade0}`}>
@@ -88,12 +88,12 @@ export default function Home() {
 
             {/* H1 — two lines stagger independently */}
             <h1 className="text-[3.5rem] md:text-[4.5rem] font-semibold text-white mb-16 leading-[1.1] tracking-[-0.03em]">
-              <span className={`block ${styles.heroFade1}`}>Decode the noise.</span>
-              <span className={`block text-[#A1A1AA] ${styles.heroFade2}`}>Discover the mood.</span>
+              <span className={`block lg:whitespace-nowrap ${styles.heroFade1}`}>Decode the noise.</span>
+              <span className={`block lg:whitespace-nowrap text-[#A1A1AA] ${styles.heroFade2}`}>Discover the mood.</span>
             </h1>
 
             {/* Search */}
-            <div className={`w-full max-w-xl mb-16 ${styles.heroFade3}`}>
+            <div className={`w-full mb-16 ${styles.heroFade3}`}>
               <HeroSearch />
             </div>
 
