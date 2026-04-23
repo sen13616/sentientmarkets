@@ -240,6 +240,7 @@ async def get_yfinance_data(ticker: str) -> dict:
         twenty_day_ma = None
         price_vs_5d_ma_percent = None
         price_vs_20d_ma_percent = None
+        one_month_return = None
 
         try:
             current = info.get('regularMarketPrice') or info.get('currentPrice')
@@ -251,8 +252,13 @@ async def get_yfinance_data(ticker: str) -> dict:
                 twenty_day_ma = round(float(hist['Close'].tail(20).mean()), 4)
                 if current and twenty_day_ma:
                     price_vs_20d_ma_percent = round(((current - twenty_day_ma) / twenty_day_ma) * 100, 6)
+            if not hist.empty and len(hist) >= 2:
+                first = float(hist['Close'].iloc[0])
+                last  = float(hist['Close'].iloc[-1])
+                if first > 0:
+                    one_month_return = round((last - first) / first * 100, 4)
         except Exception as e:
-            logger.warning(f"Short-term MA calculation failed: {e}")
+            logger.warning(f"Short-term MA / 1M return calculation failed: {e}")
 
         technical_indicators = {
             # TODO: rsi_14 / rsi_signal — sourced from Alpha Vantage
@@ -266,6 +272,7 @@ async def get_yfinance_data(ticker: str) -> dict:
             "price_vs_20d_ma_percent":   price_vs_20d_ma_percent,
             "price_vs_50d_ma_percent":   _safe_pct(_safe_sub(current_price, fifty_day_ma), fifty_day_ma),
             "price_vs_200d_ma_percent":  _safe_pct(_safe_sub(current_price, two_hundred_day_ma), two_hundred_day_ma),
+            "one_month_return":          one_month_return,
             # TODO: macd / macd_signal / macd_histogram — sourced from Alpha Vantage
             "macd":           None,
             "macd_signal":    None,

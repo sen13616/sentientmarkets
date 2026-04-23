@@ -195,24 +195,52 @@ interface Props {
 
 export default function StockDetailPage({ ticker, onBack }: Props) {
   const [data, setData] = useState<any>(null);
-  const [failed, setFailed]   = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
 
   useEffect(() => {
     if (!ticker) return;
     setData(null);
     setFailed(false);
+    setErrorCode(null);
     getSentiment(ticker)
       .then(setData)
-      .catch(() => setFailed(true));
+      .catch((err: any) => {
+        setFailed(true);
+        setErrorCode(err.code ?? null);
+      });
   }, [ticker]);
 
   if (!ticker) return null;
 
   if (failed) {
+    const isInvalidTicker = errorCode === 'invalid_ticker';
     return (
-      <div className="py-20 text-center">
-        <p className="text-[#A1A1AA] text-sm mb-4">Could not load data for {ticker.toUpperCase()}</p>
-        <button onClick={onBack} className="text-blue-400 text-sm hover:underline">← Back</button>
+      <div className="py-20 flex flex-col items-center gap-4 text-center">
+        {isInvalidTicker ? (
+          <>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#A1A1AA] opacity-50">
+              Ticker not found
+            </p>
+            <p className="text-3xl font-bold font-mono text-white tracking-tight">
+              {ticker.toUpperCase()}
+            </p>
+            <p className="text-sm text-[#A1A1AA] opacity-60 max-w-xs leading-relaxed">
+              We couldn&apos;t find any market data for this ticker. It may be invalid, misspelled, or delisted.
+            </p>
+            <button
+              onClick={onBack}
+              className="mt-2 text-[13px] text-blue-400 hover:underline"
+            >
+              ← Search again
+            </button>
+          </>
+        ) : (
+          <>
+            <p className="text-[#A1A1AA] text-sm">Could not load data for {ticker.toUpperCase()}</p>
+            <button onClick={onBack} className="text-blue-400 text-sm hover:underline">← Back</button>
+          </>
+        )}
       </div>
     );
   }

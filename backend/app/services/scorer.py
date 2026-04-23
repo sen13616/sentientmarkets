@@ -1,7 +1,12 @@
 """
-Takes the raw signals dict from the aggregator, sends a structured context
-to OpenAI GPT-4o-mini, and assembles the final SentimentResponse dict that
-matches the schema defined in app/models/sentiment.py.
+Deterministic weighted scoring pipeline.
+
+Step 1 — compute a 0-100 sub-score for each of the 7 signals.
+Step 2 — redistribute weight from null signals proportionally across available ones.
+Step 3 — calculate raw weighted score.
+Step 4 — apply CNN Fear & Greed as a soft nudge (max ±4 pts), clamp to 0-100.
+Step 5 — label the score (5-tier scale).
+Step 6 — call GPT-4o-mini for narrative text ONLY; the number is never touched by GPT.
 """
 import json
 import logging
@@ -13,195 +18,298 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
+# ── Weights ───────────────────────────────────────────────────────────────────
+
+BASE_WEIGHTS: dict[str, float] = {
+    "news_sentiment":    0.25,
+    "reddit_momentum":   0.20,
+    "analyst_consensus": 0.15,
+    "price_momentum":    0.15,
+    "rsi":               0.10,
+    "google_trends":     0.10,
+    "volume_anomaly":    0.05,
+}
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+def _clamp(v: float, lo: float = 0.0, hi: float = 100.0) -> float:
+    return max(lo, min(hi, v))
+
+
+def _label(score: float) -> str:
+    if score >= 75: return "Bullish"
+    if score >= 60: return "Leaning Bullish"
+    if score >= 45: return "Neutral"
+    if score >= 30: return "Leaning Bearish"
+    return "Bearish"
+
+
+def _confidence(n_available: int) -> str:
+    if n_available >= 6: return "high"
+    if n_available >= 4: return "medium"
+    return "low"
+
+
+# ── Per-signal sub-scorers (each returns 0-100 or None) ───────────────────────
+
+def _score_news_sentiment(av: dict) -> float | None:
+    """Alpha Vantage average_sentiment_score (-1..+1) → 0-100."""
+    score = (av.get("news_sentiment") or {}).get("average_sentiment_score")
+    if score is None:
+        return None
+    return _clamp((score + 1) / 2 * 100)
+
+
+def _score_reddit_momentum(aw: dict) -> float | None:
+    """Mention % change vs 24h ago → 0-100 (0% change = 50)."""
+    if not aw:
+        return None
+    change = aw.get("mention_change_percent")
+    if change is None:
+        return None
+    return _clamp(50 + change / 2)
+
+
+def _score_analyst_consensus(yf: dict) -> float | None:
+    """yfinance recommendationKey → Strong Buy=90, Buy=70, Hold=50, Sell=30, Strong Sell=10."""
+    consensus = (yf.get("analyst_data") or {}).get("consensus")
+    if not consensus:
+        return None
+    mapping = {
+        "strongbuy":    90,
+        "buy":          70,
+        "hold":         50,
+        "underperform": 35,
+        "sell":         30,
+        "strongsell":   10,
+    }
+    key = consensus.lower().replace(" ", "").replace("-", "").replace("_", "")
+    return mapping.get(key)
+
+
+def _score_price_momentum(yf: dict) -> float | None:
+    """1-month return: -20% → 0, 0% → 50, +20% → 100."""
+    ret = (yf.get("technical_indicators") or {}).get("one_month_return")
+    if ret is None:
+        return None
+    return _clamp(50 + ret * 2.5)
+
+
+def _score_rsi(av: dict) -> float | None:
+    """RSI-14 is already 0-100; use directly."""
+    rsi = (av.get("technical_indicators") or {}).get("rsi_14")
+    if rsi is None:
+        return None
+    return _clamp(float(rsi))
+
+
+def _score_google_trends(gt: dict) -> float | None:
+    """7-day interest % change → 0-100 (0% change = 50)."""
+    if not gt:
+        return None
+    change = gt.get("interest_change_percent")
+    if change is None:
+        return None
+    return _clamp(50 + change / 2)
+
+
+def _score_volume_anomaly(yf: dict) -> float | None:
+    """Volume / avg_volume ratio: 0.5x → 0, 1x → 50, 2x → 100."""
+    price   = yf.get("price_data") or {}
+    volume  = price.get("volume")
+    avg_vol = price.get("average_volume")
+    if volume is None or avg_vol is None or avg_vol == 0:
+        return None
+    ratio = volume / avg_vol
+    return _clamp((ratio - 0.5) / 1.5 * 100)
+
+
+# ── Weighted formula ──────────────────────────────────────────────────────────
+
+def _weighted_score(raw: dict[str, float | None]) -> tuple[float, dict[str, float]]:
+    """
+    Redistribute weight from null signals proportionally across available ones.
+    Returns (raw_score, effective_normalized_weights).
+    """
+    available = {k: v for k, v in raw.items() if v is not None}
+    if not available:
+        return 50.0, {}
+    total_w = sum(BASE_WEIGHTS[k] for k in available)
+    norm_w  = {k: BASE_WEIGHTS[k] / total_w for k in available}
+    score   = sum(norm_w[k] * available[k] for k in available)
+    return score, norm_w
+
+
+def _apply_fg(raw_score: float, fg: dict) -> float:
+    """Fear & Greed nudge: max ±4 points, no hard caps."""
+    fg_score = fg.get("score")
+    if fg_score is None:
+        return raw_score
+    modifier = (float(fg_score) - 50) * 0.08
+    return _clamp(raw_score + modifier)
+
+
+def _build_sub_scores(
+    raw: dict[str, float | None],
+    norm_w: dict[str, float],
+) -> dict:
+    result = {}
+    for key in BASE_WEIGHTS:
+        v = raw.get(key)
+        result[key] = {
+            "score":     round(v, 1) if v is not None else None,
+            "weight":    round(norm_w.get(key, 0.0), 4),
+            "available": v is not None,
+        }
+    return result
+
+
+# ── GPT narrative prompt ──────────────────────────────────────────────────────
+
+_ASSET_CONTEXT = {
+    "stock":     "You are analysing an individual equity (stock).",
+    "etf":       "You are analysing an ETF (Exchange Traded Fund).",
+    "index":     "You are analysing a market index.",
+    "crypto":    "You are analysing a cryptocurrency.",
+    "commodity": "You are analysing a commodity or futures contract.",
+    "forex":     "You are analysing a currency pair.",
+}
+
 _FALLBACK_INSIGHTS = {
-    "summary": "Sentiment analysis temporarily unavailable.",
-    "bull_case": None,
-    "bear_case": None,
+    "summary":      "Narrative temporarily unavailable.",
+    "bull_case":    None,
+    "bear_case":    None,
     "what_to_watch": None,
 }
 
-_FALLBACK_RESULT = {
-    "market_mood_score": 50,
-    "market_mood_label": "Neutral",
-    "market_mood_confidence": "low",
-    "ai_insights": _FALLBACK_INSIGHTS,
-}
 
+def _build_narrative_prompt(
+    ticker: str,
+    asset_type: str,
+    final_score: float,
+    label: str,
+    sub_scores: dict,
+    signals: dict,
+) -> str:
+    context_line = _ASSET_CONTEXT.get(asset_type, _ASSET_CONTEXT["stock"])
+    av  = signals.get("alpha_vantage", {})
+    fh  = signals.get("finnhub", {})
+    fg  = signals.get("fear_greed", {})
+    yf  = signals.get("yfinance", {})
 
-def _calc_52w_position(price: dict) -> str | None:
-    """Calculate where current price sits in the 52-week range as a percentage string."""
-    try:
-        current = price.get("current_price")
-        low     = price.get("week_52_low")
-        high    = price.get("week_52_high")
-        if None in (current, low, high) or high == low:
-            return None
-        position = ((current - low) / (high - low)) * 100
-        return f"{position:.1f}% above 52w low"
-    except Exception:
-        return None
+    narrative_ctx = {
+        "ticker":            ticker,
+        "final_score":       round(final_score, 1),
+        "label":             label,
+        "sub_scores":        {k: v["score"] for k, v in sub_scores.items()},
+        "signals_available": sum(1 for v in sub_scores.values() if v["available"]),
+        "top_headlines":     [a.get("title") for a in ((av.get("news_sentiment") or {}).get("articles") or [])[:3]],
+        "fear_greed_score":  fg.get("score"),
+        "fear_greed_label":  fg.get("label"),
+        "analyst_consensus": (yf.get("analyst_data") or {}).get("consensus"),
+        "rsi_signal":        (av.get("technical_indicators") or {}).get("rsi_signal"),
+        "insider_signal":    (fh.get("insider_sentiment") or {}).get("signal"),
+        "insider_mspr":      (fh.get("insider_sentiment") or {}).get("latest_mspr"),
+        "recent_earnings":   (fh.get("earnings_surprises") or [])[:3],
+    }
 
+    return f"""{context_line}
 
-async def score_sentiment(ticker: str, signals: dict) -> dict:
-    """Send aggregated signals for *ticker* to OpenAI GPT-4o-mini, parse the
-    scored JSON response, then assemble and return the full SentimentResponse dict.
-    Falls back to a neutral score on any OpenAI error without raising.
-    """
-    try:
-        logger.info("Scoring sentiment for %s via OpenAI", ticker)
+You are TheMarketMood.ai narrative writer. A quantitative model has already scored {ticker} at {round(final_score, 1)}/100 ({label}). Do not generate or adjust the score.
 
-        # ── Asset type context ────────────────────────────────────────────────
-        asset_type = signals.get('asset_type', 'stock')
+Your task is to write a concise, data-grounded narrative explaining why the score landed where it did.
 
-        _asset_context = {
-            'stock':     "You are analysing an individual equity (stock). Consider fundamentals, analyst consensus, insider activity, and all sentiment signals.",
-            'etf':       "You are analysing an ETF (Exchange Traded Fund). Focus on the underlying index/sector exposure, flow signals, and macro sentiment. Ignore individual company fundamentals.",
-            'index':     "You are analysing a market index. Focus entirely on macro signals, market breadth, momentum, and Fear & Greed. There are no company-specific signals.",
-            'crypto':    "You are analysing a cryptocurrency. Focus on momentum, social sentiment, news narrative, and macro risk-on/risk-off signals. Ignore Fear & Greed and traditional market signals.",
-            'commodity': "You are analysing a commodity or futures contract. Focus on macro environment, trend signals, technical indicators, and news narrative. Ignore equity-specific signals.",
-            'forex':     "You are analysing a currency pair. Focus on relative macro strength, technical momentum, and news narrative. Ignore equity and crypto signals entirely.",
-        }
-        context_line = _asset_context.get(asset_type, _asset_context['stock'])
+COMPUTED SCORE AND SIGNAL DATA:
+{json.dumps(narrative_ctx, indent=2, default=str)}
 
-        # ── Extract signals ───────────────────────────────────────────────────
-        yf = signals.get("yfinance", {})
-        fg = signals.get("fear_greed", {})
-        aw = signals.get("apewisdom", {})
-        fh = signals.get("finnhub", {})
-        av = signals.get("alpha_vantage", {})
-        gt = signals.get("google_trends", {})
-
-        price    = yf.get("price_data", {})
-        analyst  = yf.get("analyst_data", {})
-        technical = yf.get("technical_indicators", {})
-        news     = av.get("news_sentiment", {})
-        insider  = fh.get("insider_sentiment", {})
-        earnings = fh.get("earnings_surprises", [])
-
-        claude_context = {
-            "ticker":                        ticker,
-            "price_change_percent_today":    price.get("change_percent"),
-            "week_52_position":              _calc_52w_position(price),
-            "rsi_14":                        (av.get("technical_indicators") or {}).get("rsi_14"),
-            "rsi_signal":                    (av.get("technical_indicators") or {}).get("rsi_signal"),
-            "price_vs_50d_ma_percent":       technical.get("price_vs_50d_ma_percent"),
-            "price_vs_200d_ma_percent":      technical.get("price_vs_200d_ma_percent"),
-            "analyst_consensus":             analyst.get("consensus"),
-            "analyst_mean_score":            analyst.get("mean_score"),
-            "analyst_count":                 analyst.get("number_of_analysts"),
-            "price_target_upside_percent":   analyst.get("upside_to_target_percent"),
-            "news_avg_sentiment_score":      news.get("average_sentiment_score"),
-            "news_avg_sentiment_label":      news.get("average_sentiment_label"),
-            "news_bullish_count":            news.get("bullish_count"),
-            "news_bearish_count":            news.get("bearish_count"),
-            "news_articles_analyzed":        news.get("articles_analyzed"),
-            "top_headlines":                 [a.get("title") for a in (news.get("articles") or [])[:3]],
-            "reddit_rank":                   aw.get("current_rank"),
-            "reddit_rank_change":            aw.get("rank_change"),
-            "reddit_rank_direction":         aw.get("rank_change_direction"),
-            "reddit_momentum_signal":        aw.get("momentum_signal"),
-            "reddit_mention_change_percent": aw.get("mention_change_percent"),
-            "google_trends_current":         gt.get("current_interest"),
-            "google_trends_change_percent":  gt.get("interest_change_percent"),
-            "google_trends_direction":       gt.get("trend_direction"),
-            "insider_mspr":                  insider.get("latest_mspr"),
-            "insider_signal":                insider.get("signal"),
-            "insider_month":                 insider.get("latest_month"),
-            "fear_greed_score":              fg.get("score"),
-            "fear_greed_label":              fg.get("label"),
-            "fear_greed_trend":              fg.get("trend"),
-            "fear_greed_1w_ago":             fg.get("one_week_ago"),
-            "fear_greed_1m_ago":             fg.get("one_month_ago"),
-            "recent_earnings_surprises":     earnings[:3],
-        }
-
-        # ── Filter irrelevant signals from claude_context ────────────────────
-        if asset_type != 'stock':
-            for key in ['insider_mspr', 'insider_signal', 'insider_month']:
-                claude_context.pop(key, None)
-
-        if asset_type not in ('stock', 'etf'):
-            for key in ['analyst_consensus', 'analyst_mean_score', 'analyst_count',
-                        'price_target_upside_percent', 'recent_earnings_surprises']:
-                claude_context.pop(key, None)
-
-        if asset_type in ('crypto', 'commodity', 'forex'):
-            for key in ['fear_greed_score', 'fear_greed_label', 'fear_greed_trend',
-                        'fear_greed_1w_ago', 'fear_greed_1m_ago']:
-                claude_context.pop(key, None)
-
-        if asset_type == 'forex':
-            for key in ['reddit_rank', 'reddit_rank_change', 'reddit_rank_direction',
-                        'reddit_momentum_signal', 'reddit_mention_change_percent',
-                        'google_trends_current', 'google_trends_change_percent',
-                        'google_trends_direction']:
-                claude_context.pop(key, None)
-
-        # ── Asset-type-specific scoring rules ─────────────────────────────────
-        _asset_rules = {
-            'etf': "\nETF-SPECIFIC RULES:\n- Weight macro signals and sector momentum heavily\n- Analyst and insider signals are less relevant for ETFs\n- Consider the ETF's underlying index direction",
-            'index': "\nINDEX-SPECIFIC RULES:\n- Only macro signals apply — Fear & Greed, market momentum, breadth\n- Ignore any company-specific signals\n- Score reflects broad market sentiment only",
-            'crypto': "\nCRYPTO-SPECIFIC RULES:\n- Weight momentum and social signals heavily\n- News sentiment is critical for crypto\n- No Fear & Greed or equity signals apply\n- Crypto is highly volatile — confidence should be lower unless signals strongly align",
-            'commodity': "\nCOMMODITY-SPECIFIC RULES:\n- Focus on technical momentum and news narrative\n- Macro environment and trend direction are primary signals\n- Ignore equity-specific signals entirely",
-            'forex': "\nFOREX-SPECIFIC RULES:\n- Focus on relative macro strength and technical momentum\n- News narrative about the base and quote currency economies matters\n- No equity, crypto, or market sentiment signals apply\n- RSI and MA signals are the most reliable indicators here",
-        }
-        extra_rules = _asset_rules.get(asset_type, '')
-
-        # ── Build prompt ──────────────────────────────────────────────────────
-        prompt = f"""{context_line}
-
-You are TheMarketMood.ai sentiment analyst. Analyze the following signals for {ticker} and return a structured sentiment assessment.
-
-SCORING RULES:
-- Score 0-100 where: 0-20=Bearish, 21-35=Somewhat Bearish, 36-49=Leaning Bearish, 50=Neutral, 51-64=Leaning Bullish, 65-79=Somewhat Bullish, 80-100=Bullish
-- Never score above 75 during Extreme Fear market conditions unless the stock has exceptional isolated catalysts
-- Never score above 60 if insider MSPR is below -50
-- Never score below 30 based on news sentiment alone — require at least two confirming signals
-- Weight recency: today's signals matter more than last week's
-- If fewer than 3 high-relevance news articles are available keep score closer to 50 and set confidence to low
-- The score reflects sentiment only — not a buy/sell recommendation{extra_rules}
-
-SIGNALS:
-{json.dumps(claude_context, indent=2, default=str)}
+Write exactly:
+- Summary: 2 sentences explaining the overall score and what is driving it most
+- Bull case: 3 specific points on the strongest positive signals — reference actual values from the data above
+- Bear case: 3 specific points on the strongest negative signals — reference actual values
+- What to watch: 1 actionable insight on key upcoming catalysts, price levels, or signals to monitor
 
 Return ONLY valid JSON with no markdown, no code blocks, no explanation:
 {{
-  "market_mood_score": <integer 0-100>,
-  "market_mood_label": <"Bearish"|"Somewhat Bearish"|"Leaning Bearish"|"Neutral"|"Leaning Bullish"|"Somewhat Bullish"|"Bullish">,
-  "market_mood_confidence": <"low"|"medium"|"high">,
-  "ai_insights": {{
-    "summary": "<4-6 sentence plain English explanation of the score, covering the key signals that drove it, the market context, and what it means for the stock>",
-    "bull_case": "<3-4 sentences on the strongest positive signals — be specific, reference actual data points from the signals provided>",
-    "bear_case": "<3-4 sentences on the strongest negative signals — be specific, reference actual data points>",
-    "what_to_watch": "<3-4 sentences on key upcoming catalysts, price levels, or signals to monitor — be specific and actionable>"
-  }}
+  "summary": "<2 sentences>",
+  "bull_case": "<3 specific points as prose sentences>",
+  "bear_case": "<3 specific points as prose sentences>",
+  "what_to_watch": "<1 actionable insight>"
 }}"""
 
-        # ── Call OpenAI ───────────────────────────────────────────────────────
+
+# ── Main entry point ──────────────────────────────────────────────────────────
+
+async def score_sentiment(ticker: str, signals: dict) -> dict:
+    """
+    Deterministic weighted score → GPT narrative → assemble full response.
+    Never raises; falls back gracefully on any error.
+    """
+    try:
+        logger.info("Scoring sentiment for %s (deterministic)", ticker)
+
+        asset_type = signals.get("asset_type", "stock")
+        yf  = signals.get("yfinance", {})
+        fg  = signals.get("fear_greed", {})
+        aw  = signals.get("apewisdom", {})
+        fh  = signals.get("finnhub", {})
+        av  = signals.get("alpha_vantage", {})
+        gt  = signals.get("google_trends", {})
+
+        # ── Step 1: raw sub-scores ────────────────────────────────────────────
+        raw: dict[str, float | None] = {
+            "news_sentiment":    _score_news_sentiment(av),
+            "reddit_momentum":   _score_reddit_momentum(aw),
+            "analyst_consensus": _score_analyst_consensus(yf),
+            "price_momentum":    _score_price_momentum(yf),
+            "rsi":               _score_rsi(av),
+            "google_trends":     _score_google_trends(gt),
+            "volume_anomaly":    _score_volume_anomaly(yf),
+        }
+
+        # ── Step 2-3: weighted score with null redistribution ─────────────────
+        raw_score, norm_w = _weighted_score(raw)
+
+        # ── Step 4: Fear & Greed soft modifier ────────────────────────────────
+        final_score = _apply_fg(raw_score, fg)
+
+        # ── Step 5: label + confidence ────────────────────────────────────────
+        label      = _label(final_score)
+        n_avail    = sum(1 for v in raw.values() if v is not None)
+        confidence = _confidence(n_avail)
+
+        # ── Step 6: sub_scores object ─────────────────────────────────────────
+        sub_scores = _build_sub_scores(raw, norm_w)
+
+        logger.info(
+            "Score for %s: %.1f (%s) | %d/7 signals | raw=%.1f fg_adj=%.1f",
+            ticker, final_score, label, n_avail, raw_score,
+            final_score - raw_score,
+        )
+
+        # ── Step 7: GPT narrative (score is NOT modified) ─────────────────────
+        ai_insights = _FALLBACK_INSIGHTS.copy()
         try:
+            prompt  = _build_narrative_prompt(ticker, asset_type, final_score, label, sub_scores, signals)
             client  = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
             message = await client.chat.completions.create(
                 model="gpt-4o-mini",
-                max_tokens=2000,
+                max_tokens=800,
                 messages=[{"role": "user", "content": prompt}],
             )
-            raw_json   = message.choices[0].message.content.strip()
-            gpt_result = json.loads(raw_json)
+            raw_json    = message.choices[0].message.content.strip()
+            ai_insights = json.loads(raw_json)
         except Exception as exc:
-            logger.error("OpenAI call failed for %s: %s", ticker, exc)
-            gpt_result = _FALLBACK_RESULT.copy()
-            gpt_result["ai_insights"] = _FALLBACK_INSIGHTS.copy()
+            logger.error("GPT narrative failed for %s: %s", ticker, exc)
 
-        logger.info("Score for %s: %s", ticker, gpt_result.get("market_mood_score"))
-
-        # ── Assemble full response ────────────────────────────────────────────
+        # ── Assemble response ─────────────────────────────────────────────────
         now = datetime.now(timezone.utc).isoformat()
 
-        response = {
+        return {
             "asset_type":   asset_type,
             "asset_meta":   signals.get("asset_meta", {}),
             "ticker":       ticker,
             "company_name": yf.get("company_name"),
+            "exchange":     (yf.get("price_data") or {}).get("exchange"),
             "generated_at": now,
             "data_freshness": {
                 "price":      now,
@@ -210,12 +318,18 @@ Return ONLY valid JSON with no markdown, no code blocks, no explanation:
                 "insider":    now,
                 "fear_greed": now,
             },
-            "market_mood_score":      gpt_result.get("market_mood_score"),
-            "market_mood_label":      gpt_result.get("market_mood_label"),
-            "market_mood_confidence": gpt_result.get("market_mood_confidence"),
-            "ai_insights":            gpt_result.get("ai_insights"),
-            "price_data":             yf.get("price_data"),
-            "fundamentals":           yf.get("fundamentals"),
+            # ── Score ──────────────────────────────────────────────────────────
+            "market_mood_score":      round(final_score, 1),
+            "market_mood_label":      label,
+            "market_mood_confidence": confidence,
+            "sub_scores":             sub_scores,
+            "signals_available":      n_avail,
+            "signals_total":          7,
+            # ── Narrative ──────────────────────────────────────────────────────
+            "ai_insights": ai_insights,
+            # ── Data sections ──────────────────────────────────────────────────
+            "price_data":   yf.get("price_data"),
+            "fundamentals": yf.get("fundamentals"),
             "analyst_data": {
                 **(yf.get("analyst_data") or {}),
                 "earnings_surprises": fh.get("earnings_surprises", []),
@@ -242,8 +356,6 @@ Return ONLY valid JSON with no markdown, no code blocks, no explanation:
             "fear_and_greed":     fg if fg else None,
         }
 
-        return response
-
     except Exception as exc:
         logger.error("score_sentiment failed for %s: %s", ticker, exc)
         return {
@@ -251,5 +363,8 @@ Return ONLY valid JSON with no markdown, no code blocks, no explanation:
             "market_mood_score":      50,
             "market_mood_label":      "Neutral",
             "market_mood_confidence": "low",
+            "sub_scores":             {},
+            "signals_available":      0,
+            "signals_total":          7,
             "ai_insights":            _FALLBACK_INSIGHTS.copy(),
         }

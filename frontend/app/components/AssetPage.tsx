@@ -122,13 +122,63 @@ function fmtMillions(n: number | null | undefined): string {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+function InvalidTickerPage({ ticker }: { ticker: string }) {
+  return (
+    <div className={styles.page}>
+      <nav className={styles.navOuter}>
+        <div className={styles.navInner}>
+          <Link href="/" className={styles.logo}>
+            <span className={styles.logoWord}>SentientMarkets</span>
+            <span className={styles.logoTld}>.ai</span>
+          </Link>
+          <NavSearch />
+        </div>
+      </nav>
+      <div style={{
+        maxWidth: 480, margin: '120px auto 0', padding: '0 32px',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12,
+        textAlign: 'center', fontFamily: "'Geist Mono', monospace",
+      }}>
+        <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.6px', color: '#4a5568' }}>
+          Ticker not found
+        </div>
+        <div style={{ fontSize: 32, fontWeight: 700, color: '#f0f4ff', letterSpacing: '-0.5px' }}>
+          {ticker}
+        </div>
+        <div style={{ fontSize: 13, color: '#4a5568', lineHeight: 1.6, maxWidth: 340 }}>
+          We couldn&apos;t find any market data for this ticker. It may be invalid, misspelled, or delisted.
+        </div>
+        <Link
+          href="/"
+          style={{
+            marginTop: 12, padding: '10px 24px',
+            border: '1px solid rgba(255,255,255,0.10)', borderRadius: 8,
+            color: '#8c9ab5', textDecoration: 'none',
+            fontSize: 13, fontFamily: "'Geist', system-ui, sans-serif",
+          }}
+        >
+          ← Search again
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 interface AssetPageProps {
   ticker: string
   assetTypeHint?: string
 }
 
 export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: AssetPageProps) {
-  const data = await getSentiment(tickerParam);
+  let data: any;
+  try {
+    data = await getSentiment(tickerParam);
+  } catch (err: any) {
+    if (err.status === 404 && err.code === 'invalid_ticker') {
+      return <InvalidTickerPage ticker={tickerParam.toUpperCase()} />;
+    }
+    throw err;
+  }
 
   const ticker     = (tickerParam || '').toUpperCase();
   const price      = data.price_data       ?? {};
@@ -312,7 +362,144 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
         </div>
       </div>
 
-      {/* ── 3. AI INSIGHTS ─────────────────────────────────────── */}
+      {/* ── 3. SCORE BREAKDOWN ──────────────────────────────────── */}
+      {(() => {
+        const subScores  = (data as any).sub_scores        ?? {};
+        const nAvail     = (data as any).signals_available ?? 0;
+        const nTotal     = (data as any).signals_total     ?? 7;
+
+        const SIGNAL_ORDER = [
+          'news_sentiment',
+          'reddit_momentum',
+          'analyst_consensus',
+          'price_momentum',
+          'rsi',
+          'google_trends',
+          'volume_anomaly',
+        ] as const;
+
+        const SIGNAL_LABELS: Record<string, string> = {
+          news_sentiment:    'News Sentiment',
+          reddit_momentum:   'Reddit Momentum',
+          analyst_consensus: 'Analyst Consensus',
+          price_momentum:    'Price Momentum (1M)',
+          rsi:               'RSI Position',
+          google_trends:     'Google Trends',
+          volume_anomaly:    'Volume Anomaly',
+        };
+
+        const SIGNAL_WEIGHTS: Record<string, string> = {
+          news_sentiment:    '25%',
+          reddit_momentum:   '20%',
+          analyst_consensus: '15%',
+          price_momentum:    '15%',
+          rsi:               '10%',
+          google_trends:     '10%',
+          volume_anomaly:     '5%',
+        };
+
+        function barColor(s: number): string {
+          if (s >= 60) return 'var(--green)';
+          if (s >= 40) return 'var(--amber)';
+          return 'var(--red)';
+        }
+
+        return (
+          <FadeIn delay={30}>
+          <div className={styles.section}>
+            <div className={styles.secLabel}>Score breakdown</div>
+            <div className={styles.pillar}>
+
+              {/* Header row */}
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '16px 20px', borderBottom: '1px solid var(--line)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+                  <span style={{ fontFamily: 'var(--mono)', fontSize: 28, fontWeight: 700, color: scoreCol, lineHeight: 1 }}>
+                    {Math.round(score)}
+                  </span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: scoreCol }}>
+                    {data.market_mood_label ?? 'Neutral'}
+                  </span>
+                </div>
+                <span style={{ fontSize: 11, color: 'var(--tx3)', fontFamily: 'var(--mono)' }}>
+                  {nAvail} / {nTotal} signals available
+                </span>
+              </div>
+
+              {/* Signal rows */}
+              <div>
+                {SIGNAL_ORDER.map((key, i) => {
+                  const sig       = subScores[key] ?? { score: null, weight: 0, available: false };
+                  const available = sig.available as boolean;
+                  const subScore  = sig.score as number | null;
+                  const effWeight = sig.weight > 0
+                    ? `${Math.round(sig.weight * 100)}%`
+                    : SIGNAL_WEIGHTS[key];
+
+                  return (
+                    <div
+                      key={key}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '160px 1fr 48px 36px',
+                        alignItems: 'center',
+                        gap: 14,
+                        padding: '11px 20px',
+                        borderBottom: i < SIGNAL_ORDER.length - 1 ? '1px solid var(--line)' : 'none',
+                        opacity: available ? 1 : 0.38,
+                      }}
+                    >
+                      {/* Name */}
+                      <span style={{ fontSize: 12, color: 'var(--tx2)', fontWeight: 500 }}>
+                        {SIGNAL_LABELS[key]}
+                      </span>
+
+                      {/* Bar */}
+                      <div style={{
+                        height: 4, background: 'rgba(255,255,255,0.06)',
+                        borderRadius: 2, overflow: 'hidden',
+                      }}>
+                        {available && subScore != null ? (
+                          <div style={{
+                            height: '100%',
+                            width: `${subScore}%`,
+                            borderRadius: 2,
+                            background: barColor(subScore),
+                            transition: 'width 0.6s cubic-bezier(0.16,1,0.3,1)',
+                          }} />
+                        ) : null}
+                      </div>
+
+                      {/* Score */}
+                      <span style={{
+                        fontSize: 12, fontFamily: 'var(--mono)',
+                        color: available && subScore != null ? 'var(--tx1)' : 'var(--tx3)',
+                        textAlign: 'right',
+                      }}>
+                        {available && subScore != null ? Math.round(subScore) : '—'}
+                      </span>
+
+                      {/* Weight */}
+                      <span style={{
+                        fontSize: 11, color: 'var(--tx3)',
+                        textAlign: 'right', fontFamily: 'var(--mono)',
+                      }}>
+                        {effWeight}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+            </div>
+          </div>
+          </FadeIn>
+        );
+      })()}
+
+      {/* ── 4. AI INSIGHTS ─────────────────────────────────────── */}
       <FadeIn>
       <div className={styles.aiCard}>
         <div className={styles.aiHeader}>
@@ -333,7 +520,7 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
       </div>
       </FadeIn>
 
-      {/* ── 4. SIGNAL BREAKDOWN ─────────────────────────────────── */}
+      {/* ── 5. SIGNAL BREAKDOWN ─────────────────────────────────── */}
       <FadeIn delay={60}>
       <div className={`${styles.section} ${styles.signalGridSection}`}>
         <div className={styles.secLabel}>Signal breakdown</div>

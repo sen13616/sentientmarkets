@@ -4,7 +4,14 @@ export async function getSentiment(ticker: string) {
   const res = await fetch(`${API_URL}/api/sentiment/${ticker.toUpperCase()}`, {
     next: { revalidate: 60 },
   });
-  if (!res.ok) throw new Error(`Failed to fetch sentiment for ${ticker}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    const detail = body?.detail ?? {};
+    const err = new Error(detail?.message ?? `Failed to fetch sentiment for ${ticker}`) as any;
+    err.code = detail?.error ?? 'unknown_error';
+    err.status = res.status;
+    throw err;
+  }
   return res.json();
 }
 
