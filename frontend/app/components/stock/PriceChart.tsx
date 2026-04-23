@@ -16,13 +16,6 @@ interface PriceChartProps {
 const PERIODS = ['1M', '3M', '6M', '1Y'] as const;
 type Period = typeof PERIODS[number];
 
-const periodMap: Record<string, string> = {
-  '1M': '1mo',
-  '3M': '3mo',
-  '6M': '6mo',
-  '1Y': '1y',
-};
-
 const PERIOD_LABEL: Record<Period, string> = {
   '1M': '1 month',
   '3M': '3 months',
@@ -220,7 +213,7 @@ export default function PriceChart({
     setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/price-history/${ticker}?period=${periodMap[period] ?? period}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/price-history/${ticker}?period=${period}`
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
