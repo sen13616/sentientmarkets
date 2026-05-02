@@ -132,8 +132,240 @@
   to   { opacity: 1; transform: none; }
 }
 
-.heroFade0 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 0ms; }
-.heroFade1 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 150ms; }
-.heroFade2 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 300ms; }
-.heroFade3 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 450ms; }
-.heroFade4 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 600ms; }
+.heroFade0 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: 0ms; }
+.heroFade1 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: 150ms; }
+.heroFade2 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: 300ms; }
+.heroFade3 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: 450ms; }
+.heroFade4 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: 600ms; }
+
+/* ─────────────────────────────────────────
+   HeroSearch — focus-mode redesign additions
+   (additive only; original classes above untouched)
+───────────────────────────────────────── */
+
+/* Stack the search above the vignette (both inside the hero content
+   stacking context, which page.tsx lifts to z-[45] when focused). */
+.searchOuter { z-index: 2; }
+.searchBar   { position: relative; }
+
+/* Radial dim that darkens the periphery while the search is focused.
+   Sits below .searchOuter (z:1 vs z:2) and below the Nav (root z:50). */
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(10, 10, 11, 0.92) 100%
+  );
+}
+.vignetteVisible { opacity: 1; }
+
+/* Cross-fade the input/icon/button group out when the hover preview
+   overlay takes over the search-bar interior. */
+.searchBarContent {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  transition: opacity 0.2s ease;
+}
+.searchBarContentHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Icon slot: magnifier (default) and loading spinner stacked, cross-fade
+   driven by inline opacity. Overrides the original `.searchBar svg` rule
+   for the two SVGs that live inside this wrapper. */
+.searchIconWrap {
+  position: relative;
+  width: 15px;
+  height: 15px;
+  margin-left: 20px;
+  flex-shrink: 0;
+}
+.searchIconWrap svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loadingSpinner {
+  color: var(--tx2);
+  animation: spin 0.8s linear infinite;
+}
+
+/* Dropdown sectioning (Recent / Suggestions on empty query). */
+.dropdownSection      { border-bottom: 1px solid var(--line-soft); }
+.dropdownSection:last-child { border-bottom: none; }
+.dropdownSectionHeader {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tx3);
+  padding: 12px 18px 6px;
+}
+
+/* Substring-match highlight inside .diTicker / .diName.
+   `font: inherit` keeps mono in tickers and sans in names; no baseline shift. */
+.matchMark {
+  background: var(--blue-bg);
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 2px;
+  font: inherit;
+}
+
+/* No-results empty state inside the dropdown panel. */
+.dropdownEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 36px 0;
+}
+.dropdownEmptyIcon {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 32px;
+  color: var(--tx3);
+  line-height: 1;
+}
+.dropdownEmptyLine {
+  font-size: 0.875rem;
+  color: var(--tx2);
+  margin-top: 10px;
+}
+.dropdownEmptySubline {
+  font-size: 0.75rem;
+  color: var(--tx3);
+  margin-top: 4px;
+}
+
+/* Hover preview overlay — fills the search bar interior on hover/keyboard
+   focus of a dropdown row. Solid surface-2 background, no gradient. */
+.previewOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  background: var(--surface-2);
+  border-radius: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.previewVisible { opacity: 1; }
+.previewTicker {
+  font-family: var(--mono);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--tx1);
+}
+.previewDivider {
+  display: inline-block;
+  width: 1px;
+  height: 28px;
+  background: var(--line);
+}
+.previewMood {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 26px;
+  /* color set inline from moodColor() */
+}
+.previewScore {
+  font-family: var(--mono);
+  font-size: 34px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+  /* color set inline from moodColor() */
+}
+.previewHint {
+  font-size: 0.75rem;
+  color: var(--tx3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-left: 16px;
+}
+
+/* ─────────────────────────────────────────
+   Trending section (top of empty-input dropdown)
+   — fades in when /api/home + /api/sentiment merge resolves
+───────────────────────────────────────── */
+
+@keyframes trendingFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.dropdownSectionTrending {
+  animation: trendingFadeIn 0.2s ease backwards;
+}
+
+/* Trending row modifier — denser than .dropdownItem default, with a leading
+   rank column and three right-side cells (mood / score / mention Δ%).
+   The asset-type tag is intentionally omitted on these rows. */
+.dropdownItemTrending {
+  padding: 10px 18px;
+}
+.dropdownItemTrending .diLeft {
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+.dropdownItemTrending .diRight {
+  gap: 12px;
+}
+.dropdownItemTrending .diName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1;
+}
+
+/* Trending row cells */
+.diRank {
+  font-family: var(--mono);
+  font-size: 0.6875rem;        /* 11px */
+  color: var(--tx3);
+  min-width: 16px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.diMood {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.8125rem;        /* 13px */
+  white-space: nowrap;
+  /* color set inline from moodColor() */
+}
+.diScore {
+  font-family: var(--mono);
+  font-size: 0.8125rem;        /* 13px */
+  font-variant-numeric: tabular-nums;
+  min-width: 28px;
+  text-align: right;
+  /* color set inline from moodColor() */
+}
+.diMention {
+  font-family: var(--mono);
+  font-size: 0.75rem;          /* 12px */
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 56px;
+  text-align: right;
+  /* color set inline from positivity */
+}

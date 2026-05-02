@@ -22,6 +22,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState<'home' | 'stock'>('home');
   const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
   const [trending, setTrending] = useState<TrendingTicker[]>([]);
+  const [searchFocused, setSearchFocused] = useState<boolean>(false);
 
   useEffect(() => {
     getHomeData()
@@ -78,8 +79,11 @@ export default function Home() {
           {/* ECG canvas + veils — sits behind all hero content */}
           <EcgCanvas />
 
-          {/* Hero content — vertically centred by flex, above canvas (z-[2]) */}
-          <div className="relative z-[2] px-6 md:px-20 w-full max-w-[520px] lg:w-fit lg:max-w-none">
+          {/* Hero content — vertically centred by flex, above canvas (z-[2]).
+              Lifts to z-[45] when the search is focused so it sits above the
+              .vignette (z:1 inside the same stacking context) and stays below
+              the Nav (root z-50). */}
+          <div className={`relative px-6 md:px-20 w-full max-w-[520px] lg:w-fit lg:max-w-none ${searchFocused ? 'z-[45]' : 'z-[2]'}`}>
 
             {/* Eyebrow */}
             <p className={`font-serif italic text-xl text-[#A1A1AA] mb-8 ${styles.heroFade0}`}>
@@ -94,12 +98,12 @@ export default function Home() {
 
             {/* Search */}
             <div className={`w-full mb-16 ${styles.heroFade3}`}>
-              <HeroSearch />
+              <HeroSearch onFocusModeChange={setSearchFocused} />
             </div>
 
             {/* Trending tickers */}
             {trending.length > 0 && (
-              <div className={`flex flex-wrap items-center gap-3 mb-8 ${styles.heroFade4}`}>
+              <div className={`flex flex-wrap items-center gap-3 mb-8 transition-all duration-300 ease-out ${styles.heroFade4} ${searchFocused ? 'opacity-30 pointer-events-none' : ''}`}>
                 <span className="text-[11px] font-bold text-[#F4F4F5]/40 uppercase tracking-widest">
                   Trending:
                 </span>
