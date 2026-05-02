@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import CountUp from '@/app/components/stock/CountUp';
 import { TrendingUp, TrendingDown } from 'lucide-react';
@@ -24,11 +25,11 @@ type HomeData = {
   market_indices?: Record<string, IndexData>;
 };
 
-const INDEX_DEFS = [
-  { key: 'sp500',  label: 'S&P 500'   },
-  { key: 'nasdaq', label: 'NASDAQ'    },
-  { key: 'dow',    label: 'Dow Jones' },
-  { key: 'vix',    label: 'VIX'       },
+const INDEX_DEFS: { key: string; label: string; route?: string }[] = [
+  { key: 'sp500',  label: 'S&P 500',   route: '/index/%5EGSPC' },
+  { key: 'nasdaq', label: 'NASDAQ',    route: '/index/%5ENDX'  },
+  { key: 'dow',    label: 'Dow Jones', route: '/index/%5EDJI'  },
+  { key: 'vix',    label: 'VIX'                                },
 ];
 
 function fmtPrice(n: number | null | undefined): string {
@@ -191,7 +192,7 @@ export default function MarketSnapshot() {
 
         {/* ── Indices grid ── */}
         <div className="flex-[1.2] grid grid-cols-1 md:grid-cols-2 gap-6">
-          {INDEX_DEFS.map(({ key, label }, i) => {
+          {INDEX_DEFS.map(({ key, label, route }, i) => {
             const idx  = indices[key] ?? {};
             const isVix = key === 'vix';
             const isPos = (idx.change_percent ?? 0) >= 0;
@@ -199,14 +200,13 @@ export default function MarketSnapshot() {
             const changeColor = isPos ? 'text-green-500' : 'text-red-500';
             const absChange   = idx.change ?? 0;
 
-            return (
+            const tile = (
               <motion.div
-                key={key}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className="bg-[#111112] border border-white/5 rounded-[2rem] p-8 flex flex-col justify-between"
+                className={`bg-[#111112] border border-white/5 rounded-[2rem] p-8 flex flex-col justify-between h-full ${route ? 'hover:border-white/10 transition-colors duration-200' : ''}`}
               >
                 {/* Top row */}
                 <div className="flex items-center justify-between mb-6">
@@ -235,6 +235,12 @@ export default function MarketSnapshot() {
                   </span>
                 </div>
               </motion.div>
+            );
+
+            return route ? (
+              <Link key={key} href={route} className="contents">{tile}</Link>
+            ) : (
+              <div key={key} className="contents">{tile}</div>
             );
           })}
         </div>

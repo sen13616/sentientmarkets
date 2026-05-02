@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { getSentiment } from '@/lib/api';
 import styles from '@/app/components/AssetPage.module.css';
 import Link from 'next/link';
@@ -6,6 +7,7 @@ import InsightTabs from '@/app/components/stock/InsightTabs';
 import PriceChart from '@/app/components/stock/PriceChart';
 import FadeIn from '@/app/FadeIn';
 import CountUp from '@/app/components/stock/CountUp';
+import IndexConstituents, { IndexConstituentsSkeleton } from '@/app/components/IndexConstituents';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -46,7 +48,7 @@ function fmtTime(iso: string | null | undefined): string {
   return `${Math.floor(diff / 86400)}d ago`;
 }
 
-function scoreColor(score: number | null | undefined): string {
+export function scoreColor(score: number | null | undefined): string {
   if (score == null) return 'var(--amber)';
   if (score >= 65) return 'var(--green)';
   if (score >= 50) return 'var(--amber)';
@@ -101,7 +103,7 @@ function truncateTag(label: string | null | undefined): string {
   return label;
 }
 
-function formatSentimentLabel(label: string | null | undefined): string {
+export function formatSentimentLabel(label: string | null | undefined): string {
   if (!label) return 'Neutral';
   const l = label.toLowerCase();
   if (l.includes('somewhat-bull') || l.includes('somewhat bull')) return 'Bullish';
@@ -519,6 +521,14 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
         />
       </div>
       </FadeIn>
+
+      {isIndex && (
+        <FadeIn delay={60}>
+          <Suspense fallback={<IndexConstituentsSkeleton />}>
+            <IndexConstituents ticker={ticker} />
+          </Suspense>
+        </FadeIn>
+      )}
 
       {/* ── 5. SIGNAL BREAKDOWN ─────────────────────────────────── */}
       <FadeIn delay={60}>
