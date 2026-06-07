@@ -6,13 +6,13 @@ Step 2 — redistribute weight from null signals proportionally across available
 Step 3 — calculate raw weighted score.
 Step 4 — apply CNN Fear & Greed as a soft nudge (max ±4 pts), clamp to 0-100.
 Step 5 — label the score (5-tier scale).
-Step 6 — call GPT-4o-mini for narrative text ONLY; the number is never touched by GPT.
+Step 6 — call Claude for narrative text ONLY; the number is never touched by the LLM.
 """
 import json
 import logging
 from datetime import datetime, timezone
 
-from openai import AsyncOpenAI
+from anthropic import AsyncAnthropic
 
 from app.config import settings
 
@@ -182,6 +182,19 @@ _FALLBACK_INSIGHTS = {
     "what_to_watch": None,
 }
 
+# Structured-outputs schema — keys must match what the frontend consumes.
+_INSIGHTS_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "summary":       {"type": "string"},
+        "bull_case":     {"type": "string"},
+        "bear_case":     {"type": "string"},
+        "what_to_watch": {"type": "string"},
+    },
+    "required": ["summary", "bull_case", "bear_case", "what_to_watch"],
+    "additionalProperties": False,
+}
+
 
 def _build_narrative_prompt(
     ticker: str,
@@ -286,20 +299,21 @@ async def score_sentiment(ticker: str, signals: dict) -> dict:
             final_score - raw_score,
         )
 
-        # ── Step 7: GPT narrative (score is NOT modified) ─────────────────────
+        # ── Step 7: Claude narrative (score is NOT modified) ──────────────────
         ai_insights = _FALLBACK_INSIGHTS.copy()
         try:
             prompt  = _build_narrative_prompt(ticker, asset_type, final_score, label, sub_scores, signals)
-            client  = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-            message = await client.chat.completions.create(
-                model="gpt-4o-mini",
+            client  = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+            message = await client.messages.create(
+                model="claude-haiku-4-5",
                 max_tokens=800,
                 messages=[{"role": "user", "content": prompt}],
+                output_config={"format": {"type": "json_schema", "schema": _INSIGHTS_SCHEMA}},
             )
-            raw_json    = message.choices[0].message.content.strip()
+            raw_json    = next(b.text for b in message.content if b.type == "text").strip()
             ai_insights = json.loads(raw_json)
         except Exception as exc:
-            logger.error("GPT narrative failed for %s: %s", ticker, exc)
+            logger.error("Claude narrative failed for %s: %s", ticker, exc)
 
         # ── Assemble response ─────────────────────────────────────────────────
         now = datetime.now(timezone.utc).isoformat()

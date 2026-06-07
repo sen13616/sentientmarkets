@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     NEWSAPI_KEY: str = ""
     FINNHUB_API_KEY: str = ""
     OPENAI_API_KEY: str = ""
+    ANTHROPIC_API_KEY: str = ""
     REDIS_URL: str = "redis://localhost:6379"
     ENVIRONMENT: str = "development"
     # Comma-separated list of allowed CORS origins, e.g.:
