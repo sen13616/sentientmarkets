@@ -3,7 +3,7 @@ import logging
 
 from fastapi import APIRouter
 from pydantic import BaseModel
-from openai import AsyncOpenAI
+from anthropic import AsyncAnthropic
 
 from app.config import settings
 
@@ -59,13 +59,13 @@ async def deep_analysis(req: DeepAnalysisRequest):
             + "\n\nReturn only the analysis text — no headers, no bullet points, no markdown."
         )
 
-        client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-        message = await client.chat.completions.create(
-            model="gpt-4o-mini",
+        client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+        message = await client.messages.create(
+            model="claude-haiku-4-5",
             max_tokens=2000,
             messages=[{"role": "user", "content": prompt}],
         )
-        content = message.choices[0].message.content.strip()
+        content = next(b.text for b in message.content if b.type == "text").strip()
         return {"tab": req.tab, "content": content}
 
     except Exception as exc:

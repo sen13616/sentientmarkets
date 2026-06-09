@@ -1,6 +1,6 @@
 """
 Market Mood Service
-Fetches macro signals every 15 minutes and uses GPT to generate
+Fetches macro signals every 15 minutes and uses Claude to generate
 a single emotional state word describing the overall market mood.
 """
 import asyncio
@@ -8,7 +8,7 @@ import json
 import logging
 from datetime import datetime, timezone
 
-from openai import AsyncOpenAI
+from anthropic import AsyncAnthropic
 
 from app.config import settings
 from app.services.cache import get_cached, set_cached
@@ -26,6 +26,42 @@ _FALLBACK_MOOD = {
     "key_signals": [],
     "accent_color": "gray",
     "timestamp": None,
+}
+
+# Emotion → accent color mapping. Derived server-side; the LLM no longer
+# outputs accent_color. Keys double as the permitted emotion vocabulary.
+_EMOTION_COLOR: dict[str, str] = {
+    # Extreme fear
+    "Panicked": "red", "Desperate": "red", "Paralysed": "red",
+    # Nuanced fear
+    "Anxious": "amber", "Nervous": "amber", "Uneasy": "amber", "Wary": "amber",
+    # Caution / uncertainty
+    "Cautious": "amber", "Uncertain": "amber", "Indecisive": "amber", "Hesitant": "amber",
+    # Flat / disengaged
+    "Numb": "gray", "Exhausted": "amber", "Complacent": "gray", "Denial": "gray",
+    # Behavioural / impulsive
+    "FOMO": "amber", "Impulsive": "amber", "Defiant": "gray",
+    # Recovery / stabilisation
+    "Relieved": "blue", "Recovering": "blue", "Stabilising": "blue", "Rebounding": "blue",
+    # Positive / bullish
+    "Hopeful": "green", "Optimistic": "green", "Confident": "green", "Buoyant": "green",
+    # Extreme greed
+    "Exuberant": "teal", "Euphoric": "teal",
+}
+
+_PERMITTED_EMOTIONS = list(_EMOTION_COLOR)
+
+# Structured-outputs schema — guarantees valid JSON with a permitted emotion word.
+_MOOD_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "emotion": {"type": "string", "enum": _PERMITTED_EMOTIONS},
+        "rationale": {"type": "string"},
+        "intensity": {"type": "integer"},
+        "key_signals": {"type": "array", "items": {"type": "string"}},
+    },
+    "required": ["emotion", "rationale", "intensity", "key_signals"],
+    "additionalProperties": False,
 }
 
 _SYSTEM_PROMPT = """You are a market sentiment analyst. You will be given a snapshot of macro market signals and must output a single emotional word that best describes the current market mood.
@@ -56,29 +92,18 @@ Hopeful, Optimistic, Confident, Buoyant
 # Extreme greed
 Exuberant, Euphoric
 
-Accent color mapping (pick ONE based on emotion):
-- "red"   → Panicked, Desperate, Paralysed
-- "amber" → Anxious, Nervous, Uneasy, Wary, Cautious, Uncertain, Indecisive, Hesitant, FOMO, Exhausted, Impulsive
-- "gray"  → Numb, Complacent, Denial, Defiant
-- "blue"  → Relieved, Recovering, Rebounding, Stabilising
-- "green" → Hopeful, Optimistic, Confident, Buoyant
-- "teal"  → Exuberant, Euphoric
-
 Rules:
 1. Choose the single most accurate emotion word from the permitted list only
 2. Write a rationale of exactly 2 sentences explaining the market's emotional state
 3. Rate intensity 1-10 (1=barely present, 10=extreme)
 4. List 3-5 key signals that drove your choice as short strings
-5. Pick the accent color from the mapping above
 
-IMPORTANT: Respond ONLY with valid JSON. No preamble, no markdown.
-Schema:
+Respond with JSON:
 {
   "emotion": string,
   "rationale": string,
   "intensity": integer,
-  "key_signals": array of 3-5 strings,
-  "accent_color": string
+  "key_signals": array of 3-5 strings
 }"""
 
 
@@ -147,7 +172,7 @@ async def fetch_mood_signals() -> dict:
 
 
 async def generate_mood(snapshot: dict) -> dict:
-    """Call GPT-4o-mini with the macro snapshot and return a structured mood object."""
+    """Call Claude with the macro snapshot and return a structured mood object."""
     try:
         spy_change = snapshot.get('spy_change_percent') or 0
         spy_50d    = snapshot.get('spy_vs_50d_ma') or 0
@@ -177,18 +202,18 @@ TOP HEADLINES:
   {chr(10).join(f'- {h}' for h in snapshot.get('top_headlines', []) if h)}
 """
 
-        client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
-        response = await client.chat.completions.create(
-            model="gpt-4o-mini",
+        client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+        response = await client.messages.create(
+            model="claude-haiku-4-5",
             max_tokens=400,
-            messages=[
-                {"role": "system", "content": _SYSTEM_PROMPT},
-                {"role": "user",   "content": user_prompt},
-            ],
+            system=_SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": user_prompt}],
+            output_config={"format": {"type": "json_schema", "schema": _MOOD_SCHEMA}},
         )
 
-        raw  = response.choices[0].message.content.strip()
+        raw  = next(b.text for b in response.content if b.type == "text").strip()
         mood = json.loads(raw)
+        mood["accent_color"] = _EMOTION_COLOR.get(mood.get("emotion"), "gray")
         mood["timestamp"] = snapshot.get("timestamp")
         mood["snapshot"]  = snapshot
         return mood
@@ -209,6 +234,15 @@ async def refresh_mood() -> dict:
         return {}
 
     mood = await generate_mood(snapshot)
+
+    # Don't poison the cache with the fallback — keep the previous good mood
+    # in mood:latest/mood:history and let the next cycle self-heal.
+    if (
+        mood.get("emotion") == _FALLBACK_MOOD["emotion"]
+        and mood.get("rationale") == _FALLBACK_MOOD["rationale"]
+    ):
+        logger.warning("Mood generation fell back — not caching fallback mood")
+        return mood
 
     # Store latest (20 min TTL — longer than 15 min refresh interval)
     await set_cached("mood:latest", mood, ttl=1200)
