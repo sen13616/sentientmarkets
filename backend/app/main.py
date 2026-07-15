@@ -19,11 +19,13 @@ app = FastAPI(title="TheMarketMood.ai API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.get_cors_origins(),
-    # Vercel preview deploys get a fresh random hash per deploy
-    # (sentientmarkets-{hash}-sen13616-projects.vercel.app), so no static
-    # origin list can contain them. Starlette matches this with
+    # Vercel preview deploys are https://sentientmarkets-{hash}-{team-slug}
+    # .vercel.app where BOTH the deploy hash and the team slug are variable —
+    # the hash changes per deploy, and the slug is Vercel-controlled (e.g.
+    # "sen13616s-projects" today; changes on rename or personal→team
+    # migration), so neither may be hardcoded. Starlette matches this with
     # re.fullmatch, so suffixed lookalike domains cannot sneak through.
-    allow_origin_regex=r"https://sentientmarkets-[a-z0-9]+-sen13616-projects\.vercel\.app",
+    allow_origin_regex=r"https://sentientmarkets-[a-z0-9]+-[a-z0-9-]+\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

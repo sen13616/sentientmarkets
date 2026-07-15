@@ -28,9 +28,9 @@ class Settings(BaseSettings):
     def get_cors_origins(self) -> list[str]:
         """Static allowed origins (env override or the deployed defaults).
 
-        Covers production domains and localhost only. Per-deploy Vercel
-        preview URLs (random hash per deploy) are handled separately by the
-        allow_origin_regex on the CORSMiddleware in main.py.
+        Covers production domains and localhost only. Vercel preview URLs
+        (variable deploy hash AND variable team slug) are handled separately
+        by the allow_origin_regex on the CORSMiddleware in main.py.
         """
         if self.CORS_ORIGINS:
             return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
