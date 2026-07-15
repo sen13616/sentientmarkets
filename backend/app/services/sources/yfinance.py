@@ -6,6 +6,7 @@ to avoid blocking the event loop.
 """
 import asyncio
 import logging
+import math
 
 import yfinance as yf
 
@@ -410,15 +411,35 @@ async def get_price_history(ticker: str, period: str = "3mo") -> dict:
         index_obj  = yf.Ticker(index_ticker)
         index_hist = await asyncio.to_thread(lambda: index_obj.history(period=period))
 
-        def normalise(series):
-            if series is None or series.empty:
-                return []
-            base = series.iloc[0]
-            if base == 0:
-                return []
-            return [round(((v - base) / base) * 100, 4) for v in series]
+        # yfinance can return NaN Close rows (partial/off-hours bars) — a
+        # single NaN here used to poison the JSON response with non-compliant
+        # float values. Drop them before deriving anything.
+        def clean_close(df):
+            if df is None or df.empty or "Close" not in df:
+                return None
+            return df["Close"].dropna()
 
-        dates = [d.strftime("%Y-%m-%d") for d in hist.index]
+        stock_close = clean_close(hist)
+        index_close = clean_close(index_hist)
+
+        def normalise(series):
+            if series is None or len(series) == 0:
+                return []
+            base = float(series.iloc[0])
+            if base == 0 or math.isnan(base) or math.isinf(base):
+                return []
+            return [round(((float(v) - base) / base) * 100, 4) for v in series]
+
+        def period_return(series):
+            if series is None or len(series) == 0:
+                return None
+            first, last = float(series.iloc[0]), float(series.iloc[-1])
+            if first == 0:
+                return None
+            return round(((last - first) / first) * 100, 2)
+
+        # Dates track the surviving stock rows so they stay aligned.
+        dates = [d.strftime("%Y-%m-%d") for d in stock_close.index] if stock_close is not None else []
 
         return {
             "ticker":               ticker,
@@ -426,12 +447,12 @@ async def get_price_history(ticker: str, period: str = "3mo") -> dict:
             "index_name":           index_name,
             "period":               period,
             "dates":                dates,
-            "stock_returns":        normalise(hist["Close"]),
-            "index_returns":        normalise(index_hist["Close"]),
-            "stock_prices":         [round(float(v), 4) for v in hist["Close"]],
-            "index_prices":         [round(float(v), 4) for v in index_hist["Close"]],
-            "period_return_stock":  round(float(((hist["Close"].iloc[-1] - hist["Close"].iloc[0]) / hist["Close"].iloc[0]) * 100), 2) if not hist.empty else None,
-            "period_return_index":  round(float(((index_hist["Close"].iloc[-1] - index_hist["Close"].iloc[0]) / index_hist["Close"].iloc[0]) * 100), 2) if not index_hist.empty else None,
+            "stock_returns":        normalise(stock_close),
+            "index_returns":        normalise(index_close),
+            "stock_prices":         [round(float(v), 4) for v in stock_close] if stock_close is not None else [],
+            "index_prices":         [round(float(v), 4) for v in index_close] if index_close is not None else [],
+            "period_return_stock":  period_return(stock_close),
+            "period_return_index":  period_return(index_close),
         }
 
     except Exception as exc:

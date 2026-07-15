@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.services.cache import get_cached, set_cached
 from app.services.aggregator import gather_signals
+from app.services.sanitize import clean_json_floats
 from app.services.scorer import score_sentiment
 from app.services.sources.yfinance import get_price_history
 
@@ -18,7 +19,9 @@ async def get_sentiment(ticker: str):
         cached = await get_cached(cache_key)
         if cached is not None:
             cached["cached"] = True
-            return cached
+            # Sanitize on read too — heals entries cached before the NaN fix
+            # (json.dumps allowed NaN into Redis; the response encoder doesn't).
+            return clean_json_floats(cached)
 
         signals = await gather_signals(ticker)
 
@@ -36,6 +39,10 @@ async def get_sentiment(ticker: str):
 
         price_history = await get_price_history(ticker)
         result["price_history"] = price_history
+
+        # Sanitize BEFORE caching so non-finite floats can neither 500 the
+        # response nor poison the cache for the full TTL.
+        result = clean_json_floats(result)
 
         await set_cached(cache_key, result, CACHE_TTL)
         return result

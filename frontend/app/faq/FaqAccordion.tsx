@@ -62,7 +62,7 @@ const groups: FaqGroup[] = [
     items: [
       {
         q: 'What do I get with Pro?',
-        a: <>Pro unlocks the AI narrative layer — a GPT-4o-mini generated analysis for every stock you look up. This includes a <strong>Summary</strong>, a <strong>Bull case</strong>, a <strong>Bear case</strong>, and a <strong>What to watch</strong> section — all grounded in the actual scored data rather than generic commentary. Free users still get the full MarketMood Score and all three signal pillars.</>,
+        a: <>Pro unlocks the AI narrative layer — a Claude (Haiku 4.5) generated analysis for every stock you look up. This includes a <strong>Summary</strong>, a <strong>Bull case</strong>, a <strong>Bear case</strong>, and a <strong>What to watch</strong> section — all grounded in the actual scored data rather than generic commentary. Free users still get the full MarketMood Score and all three signal pillars.</>,
       },
       {
         q: 'How much does Pro cost?',

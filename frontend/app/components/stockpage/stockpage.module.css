@@ -1,0 +1,403 @@
+/* Stock page — faithful port of docs/stock-page-mockup.html.
+   Tokens are the mockup's own (close cousins of DESIGN.md); fonts come from
+   the CSS vars layout.tsx already exposes. This module never touches
+   globals — the white body comes from the shared `home-light` marker. */
+
+.page {
+  --blue: #0052ff;
+  --green: #05b169;
+  --red: #cf202f;
+  --ink: #0a0b0d;
+  --muted: #5b616e;
+  --faint: #8a919e;
+  --line: #eceef1;
+  --line-strong: #dfe2e7;
+  --wash: #f7f8fa;
+  --ch-market: #0052ff;
+  --ch-narrative: #5e8bff;
+  --ch-influencer: #a8c0ff;
+  --ch-macro: #d9dee8;
+
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.mono {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---------- pills / badges ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-size: 12.5px;
+  color: var(--muted);
+  background: #fff;
+}
+.pillOn {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.newTag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: rgba(0, 82, 255, 0.08);
+  color: var(--blue);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  margin-left: 8px;
+  vertical-align: 2px;
+}
+.deltaBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.deltaUp {
+  background: rgba(5, 177, 105, 0.1);
+  color: var(--green);
+}
+.deltaDown {
+  background: rgba(207, 32, 47, 0.1);
+  color: var(--red);
+}
+.deltaNone {
+  background: var(--wash);
+  color: var(--faint);
+}
+.stability {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  display: inline-block;
+}
+.dotGray {
+  background: var(--faint);
+}
+.dotAmber {
+  background: #f4b000;
+}
+.dotRed {
+  background: var(--red);
+}
+
+/* ---------- header ---------- */
+.header {
+  padding: 36px 0 26px;
+}
+.crumb {
+  font-size: 13px;
+  color: var(--faint);
+  margin-bottom: 14px;
+}
+.crumb a {
+  color: var(--faint);
+  text-decoration: none;
+}
+.crumb a:hover {
+  color: var(--ink);
+}
+.headRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.ident h1 {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+.identName {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 15px;
+  margin-top: 2px;
+}
+.identPills {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.scoreBlock {
+  text-align: right;
+}
+.scoreLabel {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 2px;
+}
+.scoreLine {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  justify-content: flex-end;
+}
+.scoreNum {
+  font-size: 52px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.scoreMeta {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 10px;
+  align-items: center;
+}
+.freshness {
+  font-size: 12px;
+  color: var(--faint);
+  margin-top: 9px;
+}
+
+/* ---------- context strip ---------- */
+.contextStrip {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.ctxCell {
+  padding: 16px 20px;
+  border-right: 1px solid var(--line);
+}
+.ctxCell:last-child {
+  border-right: none;
+}
+.ctxLabel {
+  font-size: 11.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 5px;
+}
+.ctxValue {
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.ctxValue small {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 400;
+  margin-left: 2px;
+}
+.ctxSub {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* ---------- cards ---------- */
+.card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 22px 24px 20px;
+  margin-bottom: 22px;
+  background: #fff;
+}
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.cardTitle {
+  font-size: 15.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.cardSub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 14px;
+  max-width: 640px;
+}
+.rangePills {
+  display: flex;
+  gap: 6px;
+}
+.rangePills .pill {
+  padding: 3px 10px;
+  cursor: pointer;
+}
+.chartLoading {
+  opacity: 0.45;
+  transition: opacity 0.2s ease;
+}
+
+.page svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.legend {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.legendKey {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: -1px;
+}
+.legendLineKey {
+  display: inline-block;
+  width: 16px;
+  height: 0;
+  border-top: 2px solid;
+  margin-right: 6px;
+  vertical-align: 3px;
+}
+.legendDashed {
+  border-top-style: dashed;
+}
+
+.gapNote {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--muted);
+  border: 1px dashed var(--line-strong);
+  border-radius: 8px;
+  padding: 5px 10px;
+  margin-top: 12px;
+}
+.gapSwatch {
+  width: 14px;
+  height: 11px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(-45deg, #f1f3f6 0 3px, #e4e8ee 3px 6px);
+}
+
+/* pressure / attribution footer stats */
+.pressFoot {
+  display: flex;
+  gap: 36px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.pfItem .ctxLabel {
+  margin-bottom: 2px;
+}
+.pfItem .mono {
+  font-size: 16px;
+}
+.pfText {
+  font-size: 14px;
+}
+.pfGreen {
+  color: var(--green);
+}
+.pfRed {
+  color: var(--red);
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-bottom: 22px;
+}
+.twoCol .card {
+  margin-bottom: 0;
+}
+
+/* empty / pending state */
+.pending {
+  border: 1px dashed var(--line-strong);
+  border-radius: 12px;
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 22px;
+}
+
+.footNote {
+  border-top: 1px solid var(--line);
+  margin-top: 44px;
+  padding: 22px 0 40px;
+  font-size: 12.5px;
+  color: var(--faint);
+}
+
+@media (max-width: 920px) {
+  .contextStrip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .ctxCell:nth-child(2) {
+    border-right: none;
+  }
+  .ctxCell:nth-child(1),
+  .ctxCell:nth-child(2) {
+    border-bottom: 1px solid var(--line);
+  }
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+  .scoreBlock {
+    text-align: left;
+  }
+  .scoreLine,
+  .scoreMeta {
+    justify-content: flex-start;
+  }
+}

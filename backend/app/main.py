@@ -8,6 +8,7 @@ from app.api.routes import health, sentiment, home, search, trending
 from app.api.routes.deep_analysis import router as deep_analysis_router
 from app.api.routes.price_history import router as price_history_router
 from app.api.routes.mood import router as mood_router
+from app.api.routes.stock_v2 import router as stock_v2_router
 from app.services.mood import refresh_mood
 from app.config import settings
 
@@ -17,15 +18,7 @@ app = FastAPI(title="TheMarketMood.ai API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://sentientmarkets-ai.vercel.app",
-        "https://sentientmarkets2.vercel.app",
-        "https://sentientmarkets.vercel.app",
-        "https://sentientmarkets-git-main-sen13616.vercel.app",
-        "https://themarketmood.ai",
-    ],
+    allow_origins=settings.get_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,6 +32,7 @@ app.include_router(trending.router)
 app.include_router(deep_analysis_router)
 app.include_router(price_history_router)
 app.include_router(mood_router)
+app.include_router(stock_v2_router)
 
 scheduler = AsyncIOScheduler()
 

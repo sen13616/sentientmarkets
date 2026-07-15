@@ -2,32 +2,50 @@
 
 import Link from 'next/link';
 
+/* Light error state matching the new stock page. Note: ticker-not-found and
+   sentiment-service-down both fall back to the dark AssetPage in page.tsx —
+   this boundary only fires on unexpected render/runtime throws. */
 export default function Error({
   error,
 }: {
   error: Error & { digest?: string };
 }) {
   return (
-    <div style={{
-      maxWidth: 1080, margin: '0 auto', padding: '80px 32px',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16,
-      fontFamily: "'Geist Mono', monospace", textAlign: 'center',
-    }}>
-      <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.4px', color: '#4a5568' }}>
+    <div
+      className="home-light"
+      style={{
+        background: '#fff',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 14,
+        padding: '80px 32px',
+        textAlign: 'center',
+        fontFamily: 'var(--font-inter), system-ui, sans-serif',
+      }}
+    >
+      <div style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#8a919e', fontWeight: 600 }}>
         Error
       </div>
-      <div style={{ fontSize: 20, color: '#f0f4ff', fontFamily: "'Instrument Serif', serif" }}>
+      <div style={{ fontSize: 20, color: '#0a0b0d', fontWeight: 500, letterSpacing: '-0.01em' }}>
         Could not load sentiment data for this ticker.
       </div>
-      <div style={{ fontSize: 12, color: '#4a5568', maxWidth: 400 }}>
-        The ticker may be invalid, or the data service may be temporarily unavailable.
+      <div style={{ fontSize: 13.5, color: '#5b616e', maxWidth: 420 }}>
+        Something went wrong rendering this page. Try reloading, or come back shortly.
       </div>
       <Link
         href="/"
         style={{
-          marginTop: 8, padding: '8px 20px', border: '1px solid rgba(255,255,255,0.12)',
-          borderRadius: 6, color: '#8c9ab5', textDecoration: 'none',
-          fontSize: 13, fontFamily: "'Geist', system-ui, sans-serif", transition: 'color .15s',
+          marginTop: 8,
+          padding: '9px 20px',
+          background: '#0052ff',
+          borderRadius: 999,
+          color: '#fff',
+          textDecoration: 'none',
+          fontSize: 14,
+          fontWeight: 600,
         }}
       >
         ← Back to home

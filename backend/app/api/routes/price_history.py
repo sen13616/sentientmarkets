@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 
+from app.services.sanitize import clean_json_floats
 from app.services.sources.yfinance import get_price_history
 
 router = APIRouter()
@@ -21,4 +22,5 @@ async def price_history(
     if not data:
         raise HTTPException(status_code=404, detail=f"No price history found for {ticker}")
 
-    return data
+    # Non-finite floats are not JSON-compliant and would 500 the response.
+    return clean_json_floats(data)

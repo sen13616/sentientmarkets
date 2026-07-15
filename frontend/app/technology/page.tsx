@@ -216,7 +216,7 @@ export default function TechnologyPage() {
               <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-8">AI narrative layer</div>
               <div className="bg-white border border-[#dee1e6] rounded-xl overflow-hidden">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-[#eef0f3]">
-                  <div className="text-[11px] text-[#7c828a] uppercase tracking-[0.05em] font-semibold">GPT-4o-mini · Pro feature</div>
+                  <div className="text-[11px] text-[#7c828a] uppercase tracking-[0.05em] font-semibold">Claude Haiku 4.5 · Pro feature</div>
                   <span className="text-[10px] font-semibold bg-[#eef0f3] text-[#7c828a] px-2.5 py-0.5 rounded-full">Pro</span>
                 </div>
                 <div className="grid md:grid-cols-2 gap-0">

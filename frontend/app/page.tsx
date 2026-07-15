@@ -2,6 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
@@ -9,7 +10,6 @@ import HeroSearch from './HeroSearch';
 import MoodCard from './components/MoodCard';
 import MarketSnapshot from './components/MarketSnapshot';
 import SocialFeed from './components/SocialFeed';
-import StockDetailPage from './components/StockDetailPage';
 import TickerTape from './components/TickerTape';
 import HeartCanvas from './components/HeartCanvas';
 import { getHomeData } from '@/lib/api';
@@ -18,8 +18,7 @@ import styles from './page.module.css';
 type TrendingTicker = { name: string; change: string; positive: boolean };
 
 export default function Home() {
-  const [currentPage, setCurrentPage] = useState<'home' | 'stock'>('home');
-  const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
+  const router = useRouter();
   const [trending, setTrending] = useState<TrendingTicker[]>([]);
   const [searchFocused, setSearchFocused] = useState<boolean>(false);
 
@@ -46,26 +45,15 @@ export default function Home() {
       .catch(() => {});
   }, []);
 
+  // Ticker clicks route to the SentimentAPI-driven /stock/[ticker] page
+  // (the old in-page StockDetailPage swap is retired; the component remains
+  // in the repo for the asset-page fallback ecosystem).
   function navigateToStock(ticker: string) {
-    setCurrentPage('stock');
-    setSelectedTicker(ticker);
+    router.push(`/stock/${encodeURIComponent(ticker)}`);
   }
 
   function navigateToHome() {
-    setCurrentPage('home');
-    setSelectedTicker(null);
-  }
-
-  if (currentPage === 'stock') {
-    return (
-      <div className="min-h-screen bg-[#0A0A0B]">
-        <Nav variant="dark" onNavigate={(page) => { if (page === 'home') navigateToHome(); }} />
-        <main className="px-6 md:px-20 py-12">
-          <StockDetailPage ticker={selectedTicker} onBack={navigateToHome} />
-        </main>
-        <Footer />
-      </div>
-    );
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   return (
