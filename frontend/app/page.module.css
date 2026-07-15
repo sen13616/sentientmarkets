@@ -1,6 +1,60 @@
 /* ─────────────────────────────────────────
+   Homepage theme wrapper (NEW_DESIGN.md)
+   White canvas + Inter/JetBrains, SCOPED to the
+   homepage only. Remaps the shared --sans/--mono/
+   --serif vars (used by the CSS-module classes below)
+   and upgrades any inline Tailwind font-mono/font-serif
+   utilities inside the homepage subtree. Nothing here
+   leaks to other routes — `.home` only exists on page.tsx.
+───────────────────────────────────────── */
+.home {
+  --sans:  var(--font-inter), -apple-system, system-ui, sans-serif;
+  --mono:  var(--font-jetbrains-mono), 'Geist Mono', ui-monospace, monospace;
+  --serif: var(--font-inter), -apple-system, system-ui, sans-serif;
+
+  /* NEW_DESIGN color tokens */
+  --ink: #0a0b0d;
+  --body: #5b616e;
+  --muted: #7c828a;
+  --muted-soft: #a8acb3;
+  --canvas: #ffffff;
+  --surface-soft: #f7f7f7;
+  --surface-strong: #eef0f3;
+  --hairline: #dee1e6;
+  --hairline-2: #eef0f3;
+  --brand: #0052ff;
+  --brand-active: #003ecc;
+  --bull: #05b169;
+  --bear: #cf202f;
+
+  /* Remap the shared globals.css semantic vars to NEW_DESIGN tokens within
+     the homepage scope. HeroSearch.tsx's inline moodColor() reads these. */
+  --green: #05b169;
+  --red: #cf202f;
+  --tx1: #0a0b0d;
+  --tx2: #5b616e;
+  --tx3: #7c828a;
+
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-inter), -apple-system, system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* Every number inside the homepage renders in JetBrains Mono. */
+.home :global(.font-mono) {
+  font-family: var(--font-jetbrains-mono), 'Geist Mono', ui-monospace, monospace;
+}
+/* No serif on the homepage — Inter is the single text face. */
+.home :global(.font-serif) {
+  font-family: var(--font-inter), -apple-system, system-ui, sans-serif;
+  font-style: normal;
+}
+
+/* ─────────────────────────────────────────
    HeroSearch — required by HeroSearch.tsx
    (do not rename these classes)
+   Light pill search per NEW_DESIGN (search-pill).
 ───────────────────────────────────────── */
 
 .searchOuter {
@@ -11,23 +65,22 @@
 .searchBar {
   display: flex;
   align-items: center;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
+  background: var(--surface-soft, #f7f7f7);
+  border: 1px solid var(--hairline, #dee1e6);
+  border-radius: 100px;
   overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 .searchBar:focus-within {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(59,130,246,0.3);
-  box-shadow: 0 0 40px rgba(59,130,246,0.12), inset 0 0 0 1px rgba(59,130,246,0.2);
+  background: #ffffff;
+  border-color: #0052ff;
+  box-shadow: 0 0 0 4px rgba(0, 82, 255, 0.15);
 }
 
 .searchBar svg {
   margin-left: 20px;
   flex-shrink: 0;
-  opacity: 0.25;
+  opacity: 0.4;
 }
 
 .searchInput {
@@ -35,48 +88,49 @@
   background: none;
   border: none;
   outline: none;
-  padding: 22px 16px 22px 12px;
-  font-size: 1.25rem;
-  font-weight: 300;
-  color: var(--tx1);
-  font-family: var(--sans);
-  letter-spacing: -0.01em;
+  padding: 16px 14px 16px 12px;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--ink, #0a0b0d);
+  font-family: var(--font-inter), -apple-system, system-ui, sans-serif;
+  letter-spacing: 0;
 }
 .searchInput::placeholder {
-  color: rgba(255,255,255,0.2);
+  color: #a8acb3;
 }
 
 .searchGo {
-  background: #ffffff;
-  color: #0A0A0B;
+  background: #0052ff;
+  color: #ffffff;
   border: none;
-  padding: 14px 28px;
+  padding: 10px 20px;
   margin: 4px;
-  border-radius: 10px;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  font-family: var(--sans);
+  border-radius: 100px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: var(--font-inter), -apple-system, system-ui, sans-serif;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
   white-space: nowrap;
   flex-shrink: 0;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
-.searchGo:hover  { background: #E4E4E7; }
+.searchGo:hover  { background: #003ecc; }
 .searchGo:active { transform: scale(0.97); }
 
-/* Autocomplete dropdown */
+/* Autocomplete dropdown — flat card, hairline border, no gradient shadow */
 .searchDropdown {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid var(--hairline, #dee1e6);
+  border-radius: 12px;
   overflow: hidden;
   z-index: 100;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  /* The hero wrapper is text-center; dropdown content must not inherit it. */
+  text-align: left;
 }
 
 .dropdownItem {
@@ -87,39 +141,40 @@
   padding: 12px 18px;
   cursor: pointer;
   transition: background 0.1s;
-  border-bottom: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--hairline-2, #eef0f3);
 }
 .dropdownItem:last-child  { border-bottom: none; }
-.dropdownItem:hover       { background: var(--surface); }
-.dropdownFocused          { background: var(--surface); }
+.dropdownItem:hover       { background: var(--surface-soft, #f7f7f7); }
+.dropdownFocused          { background: var(--surface-soft, #f7f7f7); }
 
 .diLeft   { display: flex; align-items: center; gap: 12px; }
 .diTicker {
-  font-family: var(--mono);
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--tx1);
+  font-weight: 500;
+  color: var(--ink, #0a0b0d);
   min-width: 50px;
 }
-.diName   { font-size: 0.8125rem; color: var(--tx2); }
+.diName   { font-size: 0.8125rem; color: var(--body, #5b616e); }
 .diRight  { display: flex; align-items: center; gap: 8px; }
 
-/* Tag chips */
+/* Tag chips — neutral pill (badge-pill), not blue decoration */
 .tag {
   display: inline-flex;
   align-items: center;
-  font-family: var(--mono);
-  font-size: 0.625rem;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  padding: 3px 8px;
-  border-radius: 4px;
+  padding: 3px 10px;
+  border-radius: 100px;
   white-space: nowrap;
 }
 .tBlue {
-  background: var(--blue-bg);
-  color: var(--blue);
-  border: 1px solid var(--blue-br);
+  background: var(--surface-strong, #eef0f3);
+  color: var(--muted, #7c828a);
+  border: none;
 }
 
 /* ─────────────────────────────────────────
@@ -139,17 +194,13 @@
 .heroFade4 { animation: heroFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; animation-delay: 600ms; }
 
 /* ─────────────────────────────────────────
-   HeroSearch — focus-mode redesign additions
-   (additive only; original classes above untouched)
+   HeroSearch — focus-mode additions
 ───────────────────────────────────────── */
 
-/* Stack the search above the vignette (both inside the hero content
-   stacking context, which page.tsx lifts to z-[45] when focused). */
 .searchOuter { z-index: 2; }
 .searchBar   { position: relative; }
 
-/* Radial dim that darkens the periphery while the search is focused.
-   Sits below .searchOuter (z:1 vs z:2) and below the Nav (root z:50). */
+/* Soft light dim of the periphery while search is focused. */
 .vignette {
   position: fixed;
   inset: 0;
@@ -157,16 +208,10 @@
   z-index: 1;
   opacity: 0;
   transition: opacity 0.5s ease;
-  background: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    rgba(10, 10, 11, 0.92) 100%
-  );
+  background: rgba(255, 255, 255, 0.72);
 }
 .vignetteVisible { opacity: 1; }
 
-/* Cross-fade the input/icon/button group out when the hover preview
-   overlay takes over the search-bar interior. */
 .searchBarContent {
   display: flex;
   align-items: center;
@@ -179,9 +224,6 @@
   pointer-events: none;
 }
 
-/* Icon slot: magnifier (default) and loading spinner stacked, cross-fade
-   driven by inline opacity. Overrides the original `.searchBar svg` rule
-   for the two SVGs that live inside this wrapper. */
 .searchIconWrap {
   position: relative;
   width: 15px;
@@ -199,33 +241,33 @@
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loadingSpinner {
-  color: var(--tx2);
+  color: var(--brand, #0052ff);
   animation: spin 0.8s linear infinite;
 }
 
-/* Dropdown sectioning (Recent / Suggestions on empty query). */
-.dropdownSection      { border-bottom: 1px solid var(--line-soft); }
+/* Dropdown sectioning (Trending / Recent). */
+.dropdownSection      { border-bottom: 1px solid var(--hairline-2, #eef0f3); }
 .dropdownSection:last-child { border-bottom: none; }
 .dropdownSectionHeader {
-  font-family: var(--mono);
+  font-family: var(--font-inter), sans-serif;
   font-size: 0.6875rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--tx3);
+  letter-spacing: 0.05em;
+  color: var(--muted, #7c828a);
   padding: 12px 18px 6px;
 }
 
-/* Substring-match highlight inside .diTicker / .diName.
-   `font: inherit` keeps mono in tickers and sans in names; no baseline shift. */
+/* Substring-match highlight — subtle blue tint. */
 .matchMark {
-  background: var(--blue-bg);
+  background: rgba(0, 82, 255, 0.1);
   color: inherit;
   padding: 0 2px;
   border-radius: 2px;
   font: inherit;
 }
 
-/* No-results empty state inside the dropdown panel. */
+/* No-results empty state. */
 .dropdownEmpty {
   display: flex;
   flex-direction: column;
@@ -234,60 +276,58 @@
   padding: 36px 0;
 }
 .dropdownEmptyIcon {
-  font-family: var(--serif);
-  font-style: italic;
+  font-family: var(--font-inter), sans-serif;
   font-size: 32px;
-  color: var(--tx3);
+  color: var(--muted-soft, #a8acb3);
   line-height: 1;
 }
 .dropdownEmptyLine {
   font-size: 0.875rem;
-  color: var(--tx2);
+  color: var(--body, #5b616e);
   margin-top: 10px;
 }
 .dropdownEmptySubline {
   font-size: 0.75rem;
-  color: var(--tx3);
+  color: var(--muted, #7c828a);
   margin-top: 4px;
 }
 
-/* Hover preview overlay — fills the search bar interior on hover/keyboard
-   focus of a dropdown row. Solid surface-2 background, no gradient. */
+/* Hover preview overlay — flat white surface, no gradient. */
 .previewOverlay {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 14px 20px;
-  background: var(--surface-2);
-  border-radius: 16px;
+  padding: 12px 20px;
+  background: #ffffff;
+  border-radius: 100px;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
 }
 .previewVisible { opacity: 1; }
 .previewTicker {
-  font-family: var(--mono);
-  font-size: 24px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 22px;
   font-weight: 500;
-  color: var(--tx1);
+  color: var(--ink, #0a0b0d);
 }
 .previewDivider {
   display: inline-block;
   width: 1px;
-  height: 28px;
-  background: var(--line);
+  height: 24px;
+  background: var(--hairline, #dee1e6);
 }
 .previewMood {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 26px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 20px;
+  font-weight: 400;
   /* color set inline from moodColor() */
 }
 .previewScore {
-  font-family: var(--mono);
-  font-size: 34px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 28px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   margin-left: auto;
@@ -295,15 +335,14 @@
 }
 .previewHint {
   font-size: 0.75rem;
-  color: var(--tx3);
+  color: var(--muted, #7c828a);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   padding-left: 16px;
 }
 
 /* ─────────────────────────────────────────
    Trending section (top of empty-input dropdown)
-   — fades in when /api/home + /api/sentiment merge resolves
 ───────────────────────────────────────── */
 
 @keyframes trendingFadeIn {
@@ -314,9 +353,6 @@
   animation: trendingFadeIn 0.2s ease backwards;
 }
 
-/* Trending row modifier — denser than .dropdownItem default, with a leading
-   rank column and three right-side cells (mood / score / mention Δ%).
-   The asset-type tag is intentionally omitted on these rows. */
 .dropdownItemTrending {
   padding: 10px 18px;
 }
@@ -328,41 +364,53 @@
 .dropdownItemTrending .diRight {
   gap: 12px;
 }
+/* Ticker + name as two fixed left-aligned columns: the ticker cell is a
+   fixed width (never grows with long symbols), so every company name starts
+   at the same x regardless of ticker or name length. */
+.dropdownItemTrending .diTicker {
+  width: 56px;
+  min-width: 56px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
 .dropdownItemTrending .diName {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
   flex: 1;
+  text-align: left;
 }
 
 /* Trending row cells */
 .diRank {
-  font-family: var(--mono);
-  font-size: 0.6875rem;        /* 11px */
-  color: var(--tx3);
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  color: var(--muted, #7c828a);
   min-width: 16px;
   text-align: right;
   flex-shrink: 0;
 }
 .diMood {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 0.8125rem;        /* 13px */
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.8125rem;
   white-space: nowrap;
   /* color set inline from moodColor() */
 }
 .diScore {
-  font-family: var(--mono);
-  font-size: 0.8125rem;        /* 13px */
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
   min-width: 28px;
   text-align: right;
   /* color set inline from moodColor() */
 }
 .diMention {
-  font-family: var(--mono);
-  font-size: 0.75rem;          /* 12px */
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   min-width: 56px;

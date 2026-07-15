@@ -65,3 +65,19 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 200px 200px;
 }
+
+/* ── Homepage light-mode overrides (NEW_DESIGN, route-scoped) ──
+   Additive only: these fire solely while the light homepage wrapper
+   (`.home-light`, rendered by app/page.tsx's 'home' view) is in the DOM.
+   All other routes — and the in-page dark stock view, which unmounts the
+   wrapper — keep the dark defaults above untouched. Matched via plain CSS
+   at first paint, so there is no pre-hydration dark flash; the white also
+   covers rubber-band overscroll. Browsers without :has() degrade to the
+   previous dark-overscroll/grain behavior on the homepage only. */
+html:has(.home-light),
+body:has(.home-light) {
+  background-color: #ffffff;
+}
+body:has(.home-light)::before {
+  content: none; /* no grain texture on the white canvas */
+}

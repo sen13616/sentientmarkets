@@ -10,9 +10,8 @@ import MoodCard from './components/MoodCard';
 import MarketSnapshot from './components/MarketSnapshot';
 import SocialFeed from './components/SocialFeed';
 import StockDetailPage from './components/StockDetailPage';
-import EcgCanvas from './components/EcgCanvas';
 import TickerTape from './components/TickerTape';
-import ScrollCue from './components/ScrollCue';
+import HeartCanvas from './components/HeartCanvas';
 import { getHomeData } from '@/lib/api';
 import styles from './page.module.css';
 
@@ -60,7 +59,7 @@ export default function Home() {
   if (currentPage === 'stock') {
     return (
       <div className="min-h-screen bg-[#0A0A0B]">
-        <Nav onNavigate={(page) => { if (page === 'home') navigateToHome(); }} />
+        <Nav variant="dark" onNavigate={(page) => { if (page === 'home') navigateToHome(); }} />
         <main className="px-6 md:px-20 py-12">
           <StockDetailPage ticker={selectedTicker} onBack={navigateToHome} />
         </main>
@@ -70,89 +69,98 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0B]">
-      <Nav onNavigate={(page) => { if (page === 'home') navigateToHome(); }} />
+    <div className={`${styles.home} home-light min-h-screen`}>
+      <Nav variant="light" onNavigate={(page) => { if (page === 'home') navigateToHome(); }} />
 
       <main>
-        {/* ── Hero ── */}
-        <section className="relative h-screen min-h-[700px] overflow-hidden -mt-20 flex items-center">
-          {/* ECG canvas + veils — sits behind all hero content */}
-          <EcgCanvas />
+        {/* ── Hero — full-viewport editorial band (NEW_DESIGN). Fills the
+            screen below the 56px nav and re-centers on any resize; the
+            ticker tape forms its bottom edge. ── */}
+        <section className="relative min-h-[calc(100dvh-3.5rem)] flex flex-col overflow-hidden">
+          {/* 3D particle heart + white veil — sits behind all hero content */}
+          <HeartCanvas />
 
-          {/* Hero content — vertically centred by flex, above canvas (z-[2]).
-              Lifts to z-[45] when the search is focused so it sits above the
-              .vignette (z:1 inside the same stacking context) and stays below
-              the Nav (root z-50). */}
-          <div className={`relative px-6 md:px-20 w-full max-w-[520px] lg:w-fit lg:max-w-none ${searchFocused ? 'z-[45]' : 'z-[2]'}`}>
+          {/* Asymmetric vertical padding nudges the content block above true
+              mathematical center — full-screen heroes read balanced when the
+              content sits slightly high. */}
+          <div className="relative z-[2] flex-1 flex items-center justify-center px-6 md:px-20 pt-[6vh] pb-[14vh]">
+            <div className={`relative mx-auto w-full max-w-[760px] text-center ${searchFocused ? 'z-[45]' : 'z-[2]'}`}>
 
-            {/* Eyebrow */}
-            <p className={`font-serif italic text-xl text-[#A1A1AA] mb-8 ${styles.heroFade0}`}>
-              Daily Market Intelligence
-            </p>
+              {/* Eyebrow — muted uppercase caption */}
+              <p className={`text-xs font-semibold uppercase tracking-[0.12em] text-[#7c828a] mb-6 ${styles.heroFade0}`}>
+                Daily Market Intelligence
+              </p>
 
-            {/* H1 — two lines stagger independently */}
-            <h1 className="text-[3.5rem] md:text-[4.5rem] font-semibold text-white mb-16 leading-[1.1] tracking-[-0.03em]">
-              <span className={`block lg:whitespace-nowrap ${styles.heroFade1}`}>Decode the noise.</span>
-              <span className={`block lg:whitespace-nowrap text-[#A1A1AA] ${styles.heroFade2}`}>Discover the mood.</span>
-            </h1>
+              {/* H1 — Inter at weight 400 (editorial calm), two-line stagger */}
+              <h1 className="text-[clamp(2.25rem,6vw,4rem)] font-normal text-[#0a0b0d] mb-8 leading-[1.05] tracking-[-0.04em]">
+                <span className={`block text-[#5b616e] ${styles.heroFade1}`}>Decode the noise.</span>
+                <span className={`block ${styles.heroFade2}`}>Discover the mood.</span>
+              </h1>
 
-            {/* Search */}
-            <div className={`w-full mb-16 ${styles.heroFade3}`}>
-              <HeroSearch onFocusModeChange={setSearchFocused} />
-            </div>
-
-            {/* Trending tickers */}
-            {trending.length > 0 && (
-              <div className={`flex flex-wrap items-center gap-3 mb-8 transition-all duration-300 ease-out ${styles.heroFade4} ${searchFocused ? 'opacity-30 pointer-events-none' : ''}`}>
-                <span className="text-[11px] font-bold text-[#F4F4F5]/40 uppercase tracking-widest">
-                  Trending:
-                </span>
-                {trending.map((ticker, i) => (
-                  <motion.button
-                    key={ticker.name}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.65 + i * 0.05, ease: 'easeOut' }}
-                    whileHover={{ scale: 1.03 }}
-                    onClick={() => navigateToStock(ticker.name)}
-                    className="bg-[#18181B] border border-[#27272A] px-4 py-2 rounded-lg text-sm font-medium text-[#D4D4D8] hover:border-[#3F3F46] transition-colors"
-                  >
-                    {ticker.name}{' '}
-                    {ticker.change && (
-                      <span className={`text-xs font-mono ${ticker.positive ? 'text-green-500' : 'text-red-400'}`}>
-                        {ticker.change}
-                      </span>
-                    )}
-                  </motion.button>
-                ))}
+              {/* Search */}
+              <div className={`w-full max-w-[600px] mx-auto mb-8 ${styles.heroFade3}`}>
+                <HeroSearch onFocusModeChange={setSearchFocused} />
               </div>
-            )}
+
+              {/* Trending tickers */}
+              {trending.length > 0 && (
+                <div className={`flex flex-wrap items-center justify-center gap-2.5 transition-all duration-300 ease-out ${styles.heroFade4} ${searchFocused ? 'opacity-30 pointer-events-none' : ''}`}>
+                  <span className="text-[11px] font-semibold text-[#7c828a] uppercase tracking-[0.08em]">
+                    Trending
+                  </span>
+                  {trending.map((ticker, i) => (
+                    <motion.button
+                      key={ticker.name}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.65 + i * 0.05, ease: 'easeOut' }}
+                      onClick={() => navigateToStock(ticker.name)}
+                      className="inline-flex items-center gap-1.5 bg-[#f7f7f7] border border-[#dee1e6] px-3.5 py-1.5 rounded-full text-sm font-medium text-[#0a0b0d] hover:border-[#a8acb3] transition-colors"
+                    >
+                      {ticker.name}
+                      {ticker.change && (
+                        <span className={`text-xs font-mono ${ticker.positive ? 'text-[#05b169]' : 'text-[#cf202f]'}`}>
+                          {ticker.change}
+                        </span>
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Scroll cue — absolute at bottom-left, fades in after 1.2s */}
-          <ScrollCue />
+          {/* ── Ticker Tape — pinned flush to the hero's bottom edge, a
+              data footer to the fold. z-[1]: above the heart canvas, below
+              the search focus vignette. ── */}
+          <div className="relative z-[1]">
+            <TickerTape />
+          </div>
         </section>
 
-        {/* ── Ticker Tape ── */}
-        <TickerTape />
-
         {/* ── Market Mood ── */}
-        <section className="px-6 md:px-20 pt-20 pb-20">
-          <MoodCard />
+        <section className="px-6 md:px-20 pt-20 md:pt-[88px] pb-20 md:pb-[88px]">
+          <div className="mx-auto w-full max-w-[1200px]">
+            <MoodCard />
+          </div>
         </section>
 
         {/* ── Market Snapshot ── */}
-        <section className="px-6 md:px-20 pb-20">
-          <MarketSnapshot />
+        <section className="px-6 md:px-20 pb-20 md:pb-[88px]">
+          <div className="mx-auto w-full max-w-[1200px]">
+            <MarketSnapshot />
+          </div>
         </section>
 
         {/* ── Reddit Trending + Mood Insights ── */}
-        <section className="px-6 md:px-20 pb-20">
-          <SocialFeed onNavigate={navigateToStock} />
+        <section className="px-6 md:px-20 pb-20 md:pb-[88px]">
+          <div className="mx-auto w-full max-w-[1200px]">
+            <SocialFeed onNavigate={navigateToStock} />
+          </div>
         </section>
       </main>
 
-      <Footer />
+      <Footer variant="light" />
     </div>
   );
 }

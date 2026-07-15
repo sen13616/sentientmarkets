@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 type FaqItem = {
   q: string;
@@ -43,7 +44,7 @@ const groups: FaqGroup[] = [
     items: [
       {
         q: 'Where does the data come from?',
-        a: <>We aggregate from seven sources: <strong>yfinance</strong> for price and fundamentals, <strong>Alpha Vantage</strong> for RSI and news sentiment, <strong>CNN Fear &amp; Greed</strong> for macro context, <strong>Finnhub</strong> for insider activity and earnings, <strong>ApeWisdom</strong> for Reddit mentions, <strong>Google Trends</strong> for search interest, and <strong>NewsAPI</strong> for macro headlines. Full details are on the <Link href="/technology" className="text-[var(--blue)] hover:underline">Technology page</Link>.</>,
+        a: <>We aggregate from seven sources: <strong>yfinance</strong> for price and fundamentals, <strong>Alpha Vantage</strong> for RSI and news sentiment, <strong>CNN Fear &amp; Greed</strong> for macro context, <strong>Finnhub</strong> for insider activity and earnings, <strong>ApeWisdom</strong> for Reddit mentions, <strong>Google Trends</strong> for search interest, and <strong>NewsAPI</strong> for macro headlines. Full details are on the <Link href="/technology" className="text-[#0052ff] hover:underline">Technology page</Link>.</>,
       },
       {
         q: 'Is the data real-time?',
@@ -127,20 +128,20 @@ export default function FaqAccordion() {
   }
 
   return (
-    <section className="py-8 px-6 md:px-8">
+    <section className="py-8">
       <div className="flex gap-12">
 
         {/* STICKY SIDE NAV */}
         <div className="hidden md:flex flex-col gap-1 w-44 shrink-0 sticky top-28 self-start">
-          <div className="text-[10px] uppercase tracking-[1.4px] text-[#71717A] font-bold mb-3">Jump to</div>
+          <div className="text-[11px] uppercase tracking-[0.06em] text-[#a8acb3] font-semibold mb-3">Jump to</div>
           {groups.map(g => (
             <button
               key={g.id}
               onClick={() => scrollToGroup(g.id)}
-              className={`text-left text-xs py-1.5 px-2 rounded transition-colors ${
+              className={`text-left text-xs py-1.5 px-2 rounded-full transition-colors ${
                 activeNav === g.id
-                  ? 'text-white bg-white/5'
-                  : 'text-[#A1A1AA] hover:text-white'
+                  ? 'text-[#0a0b0d] bg-[#eef0f3] font-semibold'
+                  : 'text-[#5b616e] hover:text-[#0a0b0d]'
               }`}
             >
               {g.label}
@@ -151,32 +152,36 @@ export default function FaqAccordion() {
         {/* ACCORDION CONTENT */}
         <div className="flex-1 flex flex-col gap-10">
           {groups.map(group => (
-            <div
+            <motion.div
               key={group.id}
               id={group.id}
               ref={el => { groupRefs.current[group.id] = el; }}
+              initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
+              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="text-[10px] uppercase tracking-[1.4px] text-[#A1A1AA] font-bold mb-4">{group.label}</div>
-              <div className="border border-white/[0.07] rounded-xl overflow-hidden">
+              <div className="text-[12px] uppercase tracking-[0.06em] text-[#7c828a] font-semibold mb-4">{group.label}</div>
+              <div className="bg-white border border-[#dee1e6] rounded-xl overflow-hidden">
                 {group.items.map((item, i) => {
                   const key = `${group.id}-${i}`;
                   const isOpen = openItem === key;
                   return (
                     <div
                       key={key}
-                      className={`border-b border-white/[0.07] last:border-b-0 ${isOpen ? 'bg-white/[0.02]' : ''}`}
+                      className={`border-b border-[#eef0f3] last:border-b-0 ${isOpen ? 'bg-[#f7f7f7]' : ''}`}
                     >
                       <button
                         className="w-full flex items-center justify-between px-5 py-4 text-left"
                         onClick={() => toggle(group.id, i)}
                       >
-                        <span className="text-sm font-medium text-white pr-4">{item.q}</span>
-                        <span className={`shrink-0 w-4 h-4 flex items-center justify-center text-[#A1A1AA] transition-transform ${isOpen ? 'rotate-45' : ''}`}>
+                        <span className="text-sm font-medium text-[#0a0b0d] pr-4">{item.q}</span>
+                        <span className={`shrink-0 w-4 h-4 flex items-center justify-center text-[#7c828a] transition-transform ${isOpen ? 'rotate-45' : ''}`}>
                           +
                         </span>
                       </button>
                       {isOpen && (
-                        <div className="px-5 pb-4 text-sm text-[#A1A1AA] leading-relaxed">
+                        <div className="px-5 pb-4 text-sm text-[#5b616e] leading-relaxed">
                           {item.a}
                         </div>
                       )}
@@ -184,19 +189,24 @@ export default function FaqAccordion() {
                   );
                 })}
               </div>
-            </div>
+            </motion.div>
           ))}
 
           {/* CONTACT NUDGE */}
-          <div className="flex items-center justify-between bg-[#111112] border border-white/[0.07] rounded-xl p-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center justify-between bg-white border border-[#dee1e6] rounded-xl p-6">
             <div>
-              <div className="text-sm font-bold text-white mb-1">Still have questions?</div>
-              <div className="text-xs text-[#A1A1AA]">We&apos;re happy to help — reach out and we&apos;ll get back to you promptly.</div>
+              <div className="text-sm font-semibold text-[#0a0b0d] mb-1">Still have questions?</div>
+              <div className="text-xs text-[#7c828a]">We&apos;re happy to help — reach out and we&apos;ll get back to you promptly.</div>
             </div>
-            <Link href="/contact" className="shrink-0 ml-4 text-xs font-bold text-white border border-white/10 px-4 py-2 rounded-md hover:bg-white/5 transition-colors">
+            <Link href="/contact" className="shrink-0 ml-4 text-xs font-semibold text-[#0a0b0d] bg-[#eef0f3] hover:bg-[#dee1e6] px-4 py-2 rounded-full transition-colors">
               Contact us →
             </Link>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

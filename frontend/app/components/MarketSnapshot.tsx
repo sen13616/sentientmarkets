@@ -52,15 +52,15 @@ function fgLabel(score: number): string {
 }
 
 function fgTextColor(score: number): string {
-  if (score > 60) return 'text-green-500';
-  if (score >= 40) return 'text-yellow-500';
-  return 'text-red-500';
+  if (score > 60) return 'text-[#05b169]';
+  if (score >= 40) return 'text-[#7c828a]';
+  return 'text-[#cf202f]';
 }
 
 function fgFillColor(score: number): string {
-  if (score > 60) return 'bg-green-500';
-  if (score >= 40) return 'bg-yellow-500';
-  return 'bg-red-500';
+  if (score > 60) return 'bg-[#05b169]';
+  if (score >= 40) return 'bg-[#7c828a]';
+  return 'bg-[#cf202f]';
 }
 
 function vixTag(price: number): string {
@@ -80,21 +80,21 @@ export default function MarketSnapshot() {
   if (!data) {
     return (
       <div className="animate-pulse">
-        <div className="h-3 w-36 bg-white/5 rounded mb-6" />
+        <div className="h-3 w-36 bg-[#eef0f3] rounded mb-6" />
         <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1 bg-[#111112] border border-white/5 rounded-[2rem] p-10 space-y-8">
-            <div className="h-24 w-32 bg-white/5 rounded" />
-            <div className="h-2 w-full bg-white/5 rounded-full" />
+          <div className="flex-1 bg-white border border-[#dee1e6] rounded-xl p-8 space-y-8">
+            <div className="h-24 w-32 bg-[#eef0f3] rounded" />
+            <div className="h-2 w-full bg-[#eef0f3] rounded-full" />
             <div className="flex gap-3">
-              {[0,1,2].map(i => <div key={i} className="h-8 w-16 bg-white/5 rounded-xl" />)}
+              {[0,1,2].map(i => <div key={i} className="h-8 w-16 bg-[#eef0f3] rounded-xl" />)}
             </div>
           </div>
           <div className="flex-[1.2] grid grid-cols-2 gap-6">
             {[0,1,2,3].map(i => (
-              <div key={i} className="bg-[#111112] border border-white/5 rounded-[2rem] p-8 space-y-4">
-                <div className="h-3 w-20 bg-white/5 rounded" />
-                <div className="h-10 w-32 bg-white/5 rounded" />
-                <div className="h-3 w-16 bg-white/5 rounded" />
+              <div key={i} className="bg-white border border-[#dee1e6] rounded-xl p-8 space-y-4">
+                <div className="h-3 w-20 bg-[#eef0f3] rounded" />
+                <div className="h-10 w-32 bg-[#eef0f3] rounded" />
+                <div className="h-3 w-16 bg-[#eef0f3] rounded" />
               </div>
             ))}
           </div>
@@ -120,34 +120,34 @@ export default function MarketSnapshot() {
       viewport={{ once: true, margin: '-100px' }}
       transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
     >
-      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#A1A1AA] opacity-60 px-2 mb-6">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.05em] text-[#7c828a] mb-6">
         Market Snapshot
       </p>
 
       <div className="flex flex-col lg:flex-row gap-6">
 
         {/* ── Fear & Greed card ── */}
-        <div className="flex-1 bg-[#111112] border border-white/5 rounded-[2rem] p-10 space-y-12">
+        <div className="flex-1 bg-white border border-[#dee1e6] rounded-xl p-8 space-y-12">
 
           {/* Score */}
           <div>
-            <p className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-widest opacity-60 mb-4">
+            <p className="text-[11px] font-semibold text-[#7c828a] uppercase tracking-[0.05em] mb-4">
               Fear &amp; Greed Index
             </p>
             <div className="flex items-end gap-2 mb-3">
-              <span className={`text-6xl font-bold font-mono tracking-tighter ${fgTextColor(fgScore)}`}>
+              <span className={`text-6xl font-medium font-mono tracking-tight ${fgTextColor(fgScore)}`}>
                 <CountUp value={fgScore} decimals={0} duration={800} />
               </span>
-              <span className="text-2xl font-bold text-[#A1A1AA] opacity-60 mb-2">/100</span>
+              <span className="text-2xl font-medium font-mono text-[#a8acb3] mb-2">/100</span>
             </div>
-            <div className={`text-2xl font-bold ${fgTextColor(fgScore)}`}>
+            <div className={`text-2xl font-normal ${fgTextColor(fgScore)}`}>
               {fgLabel(fgScore)}
             </div>
           </div>
 
-          {/* Gradient bar */}
+          {/* Progress bar — flat fill, no gradient */}
           <div>
-            <div className="h-1.5 w-full bg-neutral-800 rounded-full relative overflow-hidden">
+            <div className="h-1.5 w-full bg-[#eef0f3] rounded-full relative overflow-hidden">
               <motion.div
                 className={`absolute left-0 top-0 h-full rounded-full ${fgFillColor(fgScore)}`}
                 initial={{ width: '0%' }}
@@ -157,10 +157,10 @@ export default function MarketSnapshot() {
               />
             </div>
             <div className="flex justify-between mt-2">
-              <span className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-[0.1em] opacity-50">
+              <span className="text-[10px] font-semibold text-[#a8acb3] uppercase tracking-[0.05em]">
                 Extreme Fear
               </span>
-              <span className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-[0.1em] opacity-50">
+              <span className="text-[10px] font-semibold text-[#a8acb3] uppercase tracking-[0.05em]">
                 Extreme Greed
               </span>
             </div>
@@ -168,7 +168,7 @@ export default function MarketSnapshot() {
 
           {/* Historical chips */}
           <div>
-            <p className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-widest opacity-40 mb-4">
+            <p className="text-[10px] font-semibold text-[#7c828a] uppercase tracking-[0.05em] mb-4">
               Historical
             </p>
             <div className="flex gap-3">
@@ -176,14 +176,14 @@ export default function MarketSnapshot() {
                 <button
                   key={h.label}
                   onClick={() => setActiveHistorical(i)}
-                  className={`px-4 py-2 rounded-xl font-mono flex items-center gap-2 transition-all ${
+                  className={`px-4 py-2 rounded-full font-mono flex items-center gap-2 transition-all ${
                     i === activeHistorical
-                      ? 'bg-blue-500/10 border border-blue-500/30 text-blue-400'
-                      : 'bg-white/[0.03] border border-white/5 text-[#A1A1AA]'
+                      ? 'bg-[rgba(0,82,255,0.08)] border border-[rgba(0,82,255,0.3)] text-[#0052ff]'
+                      : 'bg-[#f7f7f7] border border-[#dee1e6] text-[#7c828a] hover:border-[#a8acb3]'
                   }`}
                 >
-                  <span className="text-[10px] opacity-60">{h.label}</span>
-                  <span className="text-sm font-bold">{h.value > 0 ? h.value : '—'}</span>
+                  <span className="text-[10px] opacity-70">{h.label}</span>
+                  <span className="text-sm font-medium">{h.value > 0 ? h.value : '—'}</span>
                 </button>
               ))}
             </div>
@@ -197,7 +197,7 @@ export default function MarketSnapshot() {
             const isVix = key === 'vix';
             const isPos = (idx.change_percent ?? 0) >= 0;
             const tag   = isVix ? vixTag(idx.price ?? 0) : (isPos ? 'Bullish' : 'Bearish');
-            const changeColor = isPos ? 'text-green-500' : 'text-red-500';
+            const changeColor = isPos ? 'text-[#05b169]' : 'text-[#cf202f]';
             const absChange   = idx.change ?? 0;
 
             const tile = (
@@ -206,31 +206,31 @@ export default function MarketSnapshot() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className={`bg-[#111112] border border-white/5 rounded-[2rem] p-8 flex flex-col justify-between h-full ${route ? 'hover:border-white/10 transition-colors duration-200' : ''}`}
+                className={`bg-white border border-[#dee1e6] rounded-xl p-8 flex flex-col justify-between h-full ${route ? 'hover:border-[#a8acb3] transition-colors duration-200' : ''}`}
               >
                 {/* Top row */}
                 <div className="flex items-center justify-between mb-6">
-                  <span className="text-[11px] font-bold text-white tracking-wide">
+                  <span className="text-[12px] font-semibold text-[#0a0b0d] tracking-wide">
                     {label}
                   </span>
-                  <div className="px-3 py-1 rounded-full bg-white/[0.03] border border-white/5">
-                    <span className="text-[8px] font-bold text-[#A1A1AA] uppercase tracking-wider">
+                  <div className="px-2.5 py-1 rounded-full bg-[#eef0f3]">
+                    <span className="text-[9px] font-semibold text-[#7c828a] uppercase tracking-[0.05em]">
                       {tag}
                     </span>
                   </div>
                 </div>
 
-                {/* Price */}
-                <div className="text-4xl font-serif font-bold text-white tracking-tighter mb-3">
-                  <span className="text-2xl mr-0.5">$</span>
+                {/* Price — mono per NEW_DESIGN */}
+                <div className="text-4xl font-mono font-medium text-[#0a0b0d] tracking-tight mb-3">
+                  <span className="text-2xl mr-0.5 text-[#a8acb3]">$</span>
                   {fmtPrice(idx.price)}
                 </div>
 
                 {/* Change row */}
-                <div className={`flex items-center gap-1.5 text-[11px] font-bold font-mono ${changeColor}`}>
+                <div className={`flex items-center gap-1.5 text-[11px] font-medium font-mono ${changeColor}`}>
                   {isPos ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
                   <span>{fmtPct(idx.change_percent)}</span>
-                  <span className="opacity-40">
+                  <span className="text-[#a8acb3]">
                     {isPos ? '+' : ''}{absChange.toFixed(2)}
                   </span>
                 </div>

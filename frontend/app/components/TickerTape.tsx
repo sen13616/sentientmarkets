@@ -26,7 +26,7 @@ export default function TickerTape({ tickers = DEFAULT_TICKERS }: { tickers?: Ta
   const doubled = [...tickers, ...tickers];
 
   return (
-    <div className="overflow-hidden whitespace-nowrap border-t border-white/[0.07] border-b bg-[#111112] py-3.5 select-none">
+    <div className="overflow-hidden whitespace-nowrap border-t border-b border-[#dee1e6] bg-[#f7f7f7] py-3 select-none">
       <style>{`
         @keyframes ticker-scroll {
           from { transform: translateX(0); }
@@ -39,21 +39,21 @@ export default function TickerTape({ tickers = DEFAULT_TICKERS }: { tickers?: Ta
       <div className="tape-track inline-flex items-center gap-0">
         {doubled.map(({ ticker, change, positive }, i) => (
           <span key={`${ticker}-${i}`} className="inline-flex items-center">
-            <span className="text-[0.72rem] font-medium tracking-wide">
-              <span className="text-[#A1A1AA]">{ticker}</span>
+            <span className="text-[0.75rem] tracking-wide">
+              <span className="font-semibold text-[#0a0b0d]">{ticker}</span>
               <span
-                className={`ml-1.5 ${
+                className={`ml-1.5 font-mono ${
                   positive === null
-                    ? 'text-[#71717A]'
+                    ? 'text-[#7c828a]'
                     : positive
-                    ? 'text-[#4afa8a]'
-                    : 'text-[#ff5c5c]'
+                    ? 'text-[#05b169]'
+                    : 'text-[#cf202f]'
                 }`}
               >
                 {change}
               </span>
             </span>
-            <span className="mx-10 text-white/10 text-xs">·</span>
+            <span className="mx-10 text-[#dee1e6] text-xs">·</span>
           </span>
         ))}
       </div>
