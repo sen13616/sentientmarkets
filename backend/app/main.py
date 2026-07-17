@@ -11,6 +11,7 @@ from app.api.routes.mood import router as mood_router
 from app.api.routes.stock_v2 import router as stock_v2_router
 from app.api.routes.market_v2 import router as market_v2_router
 from app.services.mood import refresh_mood
+from app.services.screener import refresh_screener
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -49,11 +50,13 @@ scheduler = AsyncIOScheduler()
 @app.on_event("startup")
 async def startup():
     scheduler.add_job(refresh_mood, "interval", minutes=15, id="mood_refresh")
+    scheduler.add_job(refresh_screener, "interval", minutes=15, id="screener_refresh")
     scheduler.start()
-    logger.info("Mood scheduler started — refreshing every 15 minutes")
-    # Generate initial mood on startup (don't block — run in background)
+    logger.info("Schedulers started — mood + screener refreshing every 15 minutes")
+    # Generate initial payloads on startup (don't block — run in background)
     import asyncio
     asyncio.create_task(refresh_mood())
+    asyncio.create_task(refresh_screener())
 
 
 @app.on_event("shutdown")

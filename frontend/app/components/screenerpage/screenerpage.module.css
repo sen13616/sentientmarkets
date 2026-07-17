@@ -1,0 +1,570 @@
+/* Screener page — verbatim port of "Screener — SentientMarkets.html".
+   Tokens are the mockup's own (note: --ch-macro is #94a3b8 here, deliberately
+   different from the stock page's #d9dee8). Local duplication of shared
+   primitives (fadeUp, tip, shimmer) is the standing decision. */
+
+.page {
+  --blue: #0052ff;
+  --ch-market: #0052ff;
+  --ch-narrative: #5e8bff;
+  --ch-influencer: #a8c0ff;
+  --ch-macro: #94a3b8;
+  --ink: #0a0b0d;
+  --muted: #5b616e;
+  --faint: #8a919e;
+  --line: #eceef1;
+  --line-strong: #d9dee8;
+  --wash: #f7f8fa;
+  --green: #05b169;
+  --green-bg: #e8f7f0;
+  --red: #cf202f;
+
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+.mono {
+  font-family: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+/* ══ page head ══ */
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  padding-top: 22px;
+  margin-bottom: 16px;
+}
+.hTitle {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.hSub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.hCount {
+  text-align: right;
+  flex-shrink: 0;
+}
+.countNum {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+.countSub {
+  font-size: 11.5px;
+  color: var(--faint);
+  margin-top: 2px;
+}
+
+/* ══ presets ══ */
+.presets {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.preset {
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  border-radius: 999px;
+  padding: 0 14px;
+  height: 30px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--muted);
+  font-weight: 500;
+  cursor: pointer;
+}
+.presetOn {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+/* ══ layout ══ */
+.cols {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ══ filter rail ══ */
+.rail {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 4px 16px 14px;
+}
+.fGroup {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.fGroup:last-of-type {
+  border-bottom: none;
+}
+.fGroupTitle {
+  font-size: 9.5px;
+  color: var(--faint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+.f {
+  margin-bottom: 14px;
+}
+.f:last-child {
+  margin-bottom: 0;
+}
+.fLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 7px;
+}
+.fName {
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.fVal {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+.fValAct {
+  color: var(--blue);
+}
+
+/* dual-thumb slider */
+.track {
+  position: relative;
+  height: 4px;
+  background: var(--line);
+  border-radius: 2px;
+  margin: 0 6px; /* room for the knobs at 0/100% */
+}
+.fill {
+  position: absolute;
+  height: 4px;
+  background: var(--line-strong);
+  border-radius: 2px;
+}
+.fillAct {
+  background: var(--blue);
+}
+.knob {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1.5px solid var(--line-strong);
+  top: -4px;
+  margin-left: -6px;
+  cursor: grab;
+  touch-action: none;
+}
+.knob:active {
+  cursor: grabbing;
+}
+.knobAct {
+  border-color: var(--blue);
+}
+.knob:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+/* ≥44px hit area around the 12px visual knob (touch rule). */
+.knob::before {
+  content: '';
+  position: absolute;
+  inset: -16px;
+}
+
+.chips {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.chip {
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  border-radius: 6px;
+  padding: 0 9px;
+  height: 25px;
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--muted);
+  font-weight: 500;
+  cursor: pointer;
+}
+.chipOn {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+.checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 0;
+  text-align: left;
+}
+.box {
+  width: 13px;
+  height: 13px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.boxOn {
+  background: var(--blue);
+  border-color: var(--blue);
+  position: relative;
+}
+.boxOn::after {
+  content: '';
+  position: absolute;
+  left: 3.5px;
+  top: 1px;
+  width: 3px;
+  height: 6px;
+  border: solid #fff;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+}
+.sectorList {
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.clearBtn {
+  width: 100%;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  border-radius: 8px;
+  height: 32px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--muted);
+  font-weight: 500;
+  margin-top: 14px;
+  cursor: pointer;
+}
+
+/* ══ table ══ */
+.tbl {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.tHead,
+.tRow {
+  display: grid;
+  grid-template-columns: 56px 1fr 128px 48px 48px 148px 40px 62px;
+  gap: 10px;
+  align-items: center;
+}
+.tHead {
+  font-size: 9.5px;
+  color: var(--faint);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 11px 16px;
+  background: var(--wash);
+  border-bottom: 1px solid var(--line);
+}
+.tHead span:nth-child(4),
+.tHead span:nth-child(5),
+.tHead span:nth-child(7),
+.tHead span:nth-child(8) {
+  text-align: right;
+}
+.sortable {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  padding: 0;
+  justify-content: flex-end;
+}
+.sortOn {
+  color: var(--ink);
+}
+.tRow {
+  padding: 0 16px;
+  height: 44px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+.tRow:last-of-type {
+  border-bottom: none;
+}
+.tRow:hover {
+  background: var(--wash);
+}
+.rTicker {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.rName {
+  font-size: 12.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rSector {
+  font-size: 11.5px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rScore {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: right;
+}
+.rDelta {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: right;
+}
+.rPctl {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 11.5px;
+  color: var(--faint);
+  text-align: right;
+}
+.rRank {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--faint);
+  text-align: right;
+}
+.pos {
+  color: var(--green);
+}
+.neg {
+  color: var(--red);
+}
+.sparkWrap {
+  position: relative;
+  width: 148px;
+  height: 20px;
+}
+.spark {
+  width: 148px;
+  height: 20px;
+  display: block;
+}
+
+.tFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--wash);
+  border-top: 1px solid var(--line);
+}
+.legend {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 10.5px;
+  color: var(--faint);
+  flex-wrap: wrap;
+}
+.lgItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.lgDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.loadMore {
+  font-size: 12.5px;
+  color: var(--blue);
+  font-weight: 500;
+  text-decoration: none;
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+.footInfo {
+  font-size: 11.5px;
+  color: var(--faint);
+}
+
+/* empty state — always offers a way out, never a bare "0 results" */
+.empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+.emptyClear {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.note {
+  font-size: 11px;
+  color: var(--faint);
+  line-height: 1.5;
+  margin-top: 16px;
+}
+
+/* unavailable / building state */
+.unavailable {
+  border: 1px dashed var(--line-strong);
+  border-radius: 14px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin: 22px 0;
+}
+
+/* ── row tooltip (local tip primitive) ── */
+.tip {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(10, 11, 13, 0.07);
+  padding: 8px 11px;
+  min-width: 128px;
+  white-space: nowrap;
+}
+.tipTitle {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  color: var(--faint);
+  margin-bottom: 5px;
+}
+.tipRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.tipSwatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.tipLabel {
+  color: var(--muted);
+}
+.tipValue {
+  margin-left: auto;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+/* ── entrance stagger (local copy) ── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.fadeUp0,
+.fadeUp1 {
+  animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.fadeUp1 {
+  animation-delay: 120ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fadeUp0,
+  .fadeUp1 {
+    animation: none;
+  }
+}
+
+@media (max-width: 920px) {
+  .cols {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .tHead,
+  .tRow {
+    grid-template-columns: 56px 1fr 48px 48px 62px;
+  }
+  .rSector,
+  .sparkWrap,
+  .tHead span:nth-child(3),
+  .tHead span:nth-child(6),
+  .tHead span:nth-child(7),
+  .rPctl {
+    display: none;
+  }
+}

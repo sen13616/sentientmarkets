@@ -68,6 +68,10 @@ export async function getPriceHistory(ticker: string, period: '1M' | '3M' | '6M'
   return res.json();
 }
 
+export async function getScreener() {
+  return v2Fetch('/api/v2/market/screener');
+}
+
 export async function getMarketSp500() {
   return v2Fetch('/api/v2/market/sp500');
 }

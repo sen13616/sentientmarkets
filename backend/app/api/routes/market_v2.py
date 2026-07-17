@@ -14,6 +14,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.services import sentiment_api
 from app.services.cache import get_cached, set_cached
+from app.services.screener import get_screener_blob
 from app.services.market_stats import distribution_stats, histogram, widest_sector_gap
 from app.services.sanitize import clean_json_floats
 from app.services.sentiment_api import UpstreamUnavailable
@@ -48,6 +49,22 @@ def _mover(entry: dict, universe: dict) -> dict:
         "score": entry.get("score"),
         "change_1d": entry.get("score_change_1d"),
     }
+
+
+@router.get("/api/v2/market/screener")
+async def get_screener():
+    """Serve the swept screener blob. Never touches upstream per-request —
+    the scheduled sweep (services/screener.py) is the only writer."""
+    blob = await get_screener_blob()
+    if blob is None:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "error": "screener_building",
+                "message": "First universe scan is still in progress — try again in a few minutes",
+            },
+        )
+    return blob
 
 
 @router.get("/api/v2/market/sp500")

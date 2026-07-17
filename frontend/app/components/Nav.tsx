@@ -61,6 +61,7 @@ export default function Nav({
           Markets
         </button>
         {[
+          ['/screener', 'Screener'],
           ['/about', 'About'],
           ['/technology', 'Technology'],
           ['/faq', 'FAQ'],
