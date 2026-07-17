@@ -23,7 +23,9 @@ interface TrendingItem {
   rank: number;
   ticker: string;
   name: string;
-  mention_change_percent: number;
+  /* 1d PRICE change — the old mention_change_percent (Reddit mention growth)
+     read as a price stat and confused everyone. */
+  price_change_percent: number | null;
   momentum_signal: string;
   market_mood_score: number;
   market_mood_label: string;
@@ -151,7 +153,8 @@ export default function HeroSearch({ onFocusModeChange }: HeroSearchProps) {
           rank: t.rank,
           ticker: t.ticker,
           name: t.name,
-          mention_change_percent: t.mention_change_percent,
+          // 1d price move from the same sentiment payload — no extra fetch.
+          price_change_percent: sentiments[i]!.price_data?.change_percent ?? null,
           momentum_signal: t.momentum_signal,
           market_mood_score: sentiments[i]!.market_mood_score,
           market_mood_label: sentiments[i]!.market_mood_label,
@@ -420,9 +423,10 @@ export default function HeroSearch({ onFocusModeChange }: HeroSearchProps) {
     const i = kbBase + listIndex;
     const tMoodC = moodColor(t.market_mood_label);
     const tScoreSign = t.market_mood_score >= 50 ? '+' : '';
-    const pct = t.mention_change_percent;
-    const arrow = pct > 0 ? '▲' : pct < 0 ? '▼' : '';
-    const pctColor = pct > 0 ? 'var(--green)' : pct < 0 ? 'var(--red)' : 'var(--tx2)';
+    const pct = t.price_change_percent;
+    const arrow = pct !== null && pct > 0 ? '▲' : pct !== null && pct < 0 ? '▼' : '';
+    const pctColor =
+      pct !== null && pct > 0 ? 'var(--green)' : pct !== null && pct < 0 ? 'var(--red)' : 'var(--tx2)';
     return (
       <div
         key={`trending-${t.ticker}-${i}`}
@@ -443,9 +447,11 @@ export default function HeroSearch({ onFocusModeChange }: HeroSearchProps) {
           <span className={styles.diScore} style={{ color: tMoodC }}>
             {tScoreSign}{Math.round(t.market_mood_score)}
           </span>
-          <span className={styles.diMention} style={{ color: pctColor }}>
-            {arrow ? `${arrow} ` : ''}{Math.abs(pct).toFixed(1)}%
-          </span>
+          {pct !== null && (
+            <span className={styles.diMention} style={{ color: pctColor }}>
+              {arrow ? `${arrow} ` : ''}{Math.abs(pct).toFixed(2)}% (1d)
+            </span>
+          )}
         </div>
       </div>
     );

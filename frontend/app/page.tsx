@@ -12,7 +12,7 @@ import MarketSnapshot from './components/MarketSnapshot';
 import SocialFeed from './components/SocialFeed';
 import TickerTape from './components/TickerTape';
 import HeartCanvas from './components/HeartCanvas';
-import { getHomeData } from '@/lib/api';
+import { getHomeData, getStockQuoteV2 } from '@/lib/api';
 import styles from './page.module.css';
 
 type TrendingTicker = { name: string; change: string; positive: boolean };
@@ -23,26 +23,31 @@ export default function Home() {
   const [searchFocused, setSearchFocused] = useState<boolean>(false);
 
   useEffect(() => {
-    getHomeData()
-      .then((data) => {
-        const top5: TrendingTicker[] = (data.trending_tickers ?? [])
-          .slice(0, 5)
-          .map((t: any) => {
-            const pct: number | null = t.mention_change_percent ?? null;
-            const signal: string = t.momentum_signal ?? '';
-            return {
-              name: t.ticker,
-              change: pct != null
-                ? (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%'
-                : signal,
-              positive: pct != null
-                ? pct >= 0
-                : !signal.toLowerCase().includes('fall'),
-            };
-          });
-        if (top5.length > 0) setTrending(top5);
-      })
-      .catch(() => {});
+    (async () => {
+      try {
+        const data = await getHomeData();
+        const top: any[] = (data.trending_tickers ?? []).slice(0, 5);
+        if (top.length === 0) return;
+        // The chip % is the 1d PRICE change (cheap cached quote route) — the
+        // old mention_change_percent was Reddit mention growth and read as a
+        // wildly wrong price stat (e.g. NFLX "+603.6%").
+        const quotes = await Promise.all(
+          top.map((t) => getStockQuoteV2(t.ticker).catch(() => null)),
+        );
+        const top5: TrendingTicker[] = top.map((t, i) => {
+          const pct: number | null = quotes[i]?.change_percent ?? null;
+          return {
+            name: t.ticker,
+            // No quote → chip shows just the ticker; never a stand-in stat.
+            change: pct != null ? (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%' : '',
+            positive: pct != null ? pct >= 0 : true,
+          };
+        });
+        setTrending(top5);
+      } catch {
+        /* chips simply don't render */
+      }
+    })();
   }, []);
 
   // Ticker clicks route to the SentimentAPI-driven /stock/[ticker] page

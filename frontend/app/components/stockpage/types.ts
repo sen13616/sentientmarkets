@@ -58,6 +58,12 @@ export type HistoryPoint = {
   missing_layers: string[];
 };
 
+/* One price observation for the history-chart overlay (t = epoch ms). */
+export type PricePoint = {
+  t: number;
+  close: number;
+};
+
 export type HistoryPayload = {
   ticker: string;
   days: 7 | 30 | 90;

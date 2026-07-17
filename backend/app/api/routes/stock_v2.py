@@ -11,12 +11,18 @@ sentiment=null, and every null-valued derived stat (percentiles, sigma,
 sector context, overview) still renders the light page.
 """
 import asyncio
+import json
 import logging
 
+from anthropic import AsyncAnthropic
 from fastapi import APIRouter, HTTPException, Query
 
+from app.config import settings
 from app.services import sentiment_api
+from app.services.cache import get_cached, set_cached
 from app.services.sentiment_api import TickerNotFound, UpstreamUnavailable
+from app.services.sources.newsapi import get_company_news
+from app.services.sources.yfinance import get_quote
 from app.services.sentiment_stats import (
     GAP_HOURS,
     own_history_percentile,
@@ -197,6 +203,153 @@ async def get_stock_history(ticker: str, days: int = Query(30)):
         "segments": segments,
         "gaps": gaps,
     }
+
+
+INSIGHT_TTL = 900   # one Claude call per ticker per scoring tick
+NEWS_TTL = 3600     # NewsAPI free tier is 100 req/day — the cache is load-bearing
+NEWS_NEG_TTL = 900  # empty/failed results still shield the daily quota
+
+_NOT_FOUND = HTTPException(
+    status_code=404,
+    detail={"error": "ticker_not_found", "message": "Ticker is not in the supported universe"},
+)
+
+
+def _insight_prompt(ticker: str, name: str | None, sector: str | None,
+                    sentiment: dict, sector_ctx: dict) -> str:
+    """The insight describes the SAME cached payload the page renders."""
+    data = {
+        "ticker": ticker,
+        "company": name,
+        "sector": sector,
+        "score": sentiment.get("score"),
+        "score_raw": sentiment.get("score_raw"),
+        "score_change_1d": sentiment.get("score_change_1d"),
+        "label": sentiment.get("label"),
+        "confidence": sentiment.get("confidence"),
+        "universe_percentile": sentiment.get("universe_percentile"),
+        "sub_indices": sentiment.get("sub_indices"),
+        "divergence": sentiment.get("divergence"),
+        "top_drivers": sentiment.get("top_drivers"),
+        "explanation": sentiment.get("explanation"),
+        "sector_rank": sector_ctx.get("rank"),
+        "sector_size": sector_ctx.get("size"),
+        "sector_average": sector_ctx.get("average"),
+    }
+    return (
+        f"Write a 2-3 sentence plain-prose interpretation of the current sentiment "
+        f"picture for {name or ticker} ({ticker}) for a retail dashboard. Reference "
+        f"the actual numbers (composite score is 0-100, 50 is neutral). Mention the "
+        f"strongest channel or driver and any notable divergence between channels. "
+        f"Do not give investment advice or predictions.\n\n"
+        f"DATA: {json.dumps(data, default=str)}\n\n"
+        f"Return only the prose — no headers, no bullet points, no markdown."
+    )
+
+
+@router.get("/api/v2/stock/{ticker}/insight")
+async def get_stock_insight(ticker: str):
+    ticker = ticker.upper()
+    cache_key = f"sapi:insight:{ticker}"
+    cached = await get_cached(cache_key)
+    if cached is not None:
+        return cached
+
+    try:
+        universe = await sentiment_api.get_universe()
+    except UpstreamUnavailable:
+        raise _UNAVAILABLE
+    meta = universe.get(ticker)
+    if meta is None:
+        raise _NOT_FOUND
+
+    try:
+        sentiment = await sentiment_api.get_sentiment(ticker)
+    except UpstreamUnavailable:
+        raise _UNAVAILABLE
+    status = sentiment.get("status")
+    if status == "ticker_not_found":
+        raise _NOT_FOUND
+    if status is not None or sentiment.get("score") is None:
+        # No scored data this tick — nothing to interpret. Don't cache: the
+        # next tick may score it.
+        return {"ticker": ticker, "insight": None}
+
+    try:
+        overview = await sentiment_api.get_overview()
+    except UpstreamUnavailable:
+        overview = None
+    sector = meta.get("sector")
+    sector_ctx = _sector_context(overview, ticker, sector, sentiment.get("score"))
+
+    try:
+        client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+        message = await client.messages.create(
+            model="claude-haiku-4-5",
+            max_tokens=300,
+            messages=[{
+                "role": "user",
+                "content": _insight_prompt(ticker, meta.get("name"), sector, sentiment, sector_ctx),
+            }],
+        )
+        insight = next(b.text for b in message.content if b.type == "text").strip()
+    except Exception as exc:
+        # Claude failure degrades to a hidden card, never a 500 — and is not
+        # cached, so the next request retries.
+        logger.error("stock insight generation failed for %s: %s", ticker, exc)
+        return {"ticker": ticker, "insight": None}
+
+    payload = {"ticker": ticker, "insight": insight, "generated_at": sentiment.get("timestamp")}
+    await set_cached(cache_key, payload, INSIGHT_TTL)
+    return payload
+
+
+QUOTE_TTL = 300      # header quote refreshes every 5 minutes
+QUOTE_NEG_TTL = 120  # brief shield when yfinance errors out
+
+
+@router.get("/api/v2/stock/{ticker}/quote")
+async def get_stock_quote(ticker: str):
+    ticker = ticker.upper()
+    cache_key = f"sapi:quote:{ticker}"
+    cached = await get_cached(cache_key)
+    if cached is not None:
+        return cached
+
+    quote = await get_quote(ticker)
+    payload = {
+        "ticker": ticker,
+        "price": quote.get("price"),
+        "change": quote.get("change"),
+        "change_percent": quote.get("change_percent"),
+    }
+    await set_cached(cache_key, payload, QUOTE_TTL if quote else QUOTE_NEG_TTL)
+    return payload
+
+
+@router.get("/api/v2/stock/{ticker}/news")
+async def get_stock_news(ticker: str):
+    ticker = ticker.upper()
+    cache_key = f"sapi:news:{ticker}"
+    cached = await get_cached(cache_key)
+    if cached is not None:
+        return cached
+
+    try:
+        universe = await sentiment_api.get_universe()
+    except UpstreamUnavailable:
+        raise _UNAVAILABLE
+    meta = universe.get(ticker)
+    if meta is None:
+        raise _NOT_FOUND
+
+    name = meta.get("name")
+    query = f'"{name}" OR {ticker}' if name else ticker
+    articles = await get_company_news(query)
+
+    payload = {"ticker": ticker, "articles": articles[:9]}
+    await set_cached(cache_key, payload, NEWS_TTL if articles else NEWS_NEG_TTL)
+    return payload
 
 
 @router.get("/api/v2/market/overview")

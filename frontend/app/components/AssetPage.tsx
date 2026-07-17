@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import { getSentiment } from '@/lib/api';
 import styles from '@/app/components/AssetPage.module.css';
 import Link from 'next/link';
@@ -7,7 +6,6 @@ import InsightTabs from '@/app/components/stock/InsightTabs';
 import PriceChart from '@/app/components/stock/PriceChart';
 import FadeIn from '@/app/FadeIn';
 import CountUp from '@/app/components/stock/CountUp';
-import IndexConstituents, { IndexConstituentsSkeleton } from '@/app/components/IndexConstituents';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -521,14 +519,6 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
         />
       </div>
       </FadeIn>
-
-      {isIndex && (
-        <FadeIn delay={60}>
-          <Suspense fallback={<IndexConstituentsSkeleton />}>
-            <IndexConstituents ticker={ticker} />
-          </Suspense>
-        </FadeIn>
-      )}
 
       {/* ── 5. SIGNAL BREAKDOWN ─────────────────────────────────── */}
       <FadeIn delay={60}>

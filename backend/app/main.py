@@ -9,6 +9,7 @@ from app.api.routes.deep_analysis import router as deep_analysis_router
 from app.api.routes.price_history import router as price_history_router
 from app.api.routes.mood import router as mood_router
 from app.api.routes.stock_v2 import router as stock_v2_router
+from app.api.routes.market_v2 import router as market_v2_router
 from app.services.mood import refresh_mood
 from app.config import settings
 
@@ -40,6 +41,7 @@ app.include_router(deep_analysis_router)
 app.include_router(price_history_router)
 app.include_router(mood_router)
 app.include_router(stock_v2_router)
+app.include_router(market_v2_router)
 
 scheduler = AsyncIOScheduler()
 

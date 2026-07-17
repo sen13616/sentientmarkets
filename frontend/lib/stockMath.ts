@@ -74,6 +74,13 @@ export function fmtShortDate(iso: string): string {
   return `${d.getUTCMonth() + 1}/${d.getUTCDate()}`;
 }
 
+/** Tooltip title: daily points show the date; hourly points add the hour. */
+export function fmtPointDate(iso: string, interval: 'daily' | 'hourly'): string {
+  if (interval === 'daily') return fmtShortDate(iso);
+  const d = new Date(iso);
+  return `${fmtShortDate(iso)} ${String(d.getUTCHours()).padStart(2, '0')}:00 UTC`;
+}
+
 export function fmtGapRange(from: string, to: string): string {
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const a = new Date(from);

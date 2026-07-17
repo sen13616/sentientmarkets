@@ -53,20 +53,6 @@
   color: #fff;
   border-color: var(--ink);
 }
-.newTag {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  background: rgba(0, 82, 255, 0.08);
-  color: var(--blue);
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  padding: 2px 8px;
-  text-transform: uppercase;
-  margin-left: 8px;
-  vertical-align: 2px;
-}
 .deltaBadge {
   display: inline-flex;
   align-items: center;
@@ -119,21 +105,11 @@
 .header {
   padding: 36px 0 26px;
 }
-.crumb {
-  font-size: 13px;
-  color: var(--faint);
-  margin-bottom: 14px;
-}
-.crumb a {
-  color: var(--faint);
-  text-decoration: none;
-}
-.crumb a:hover {
-  color: var(--ink);
-}
 .headRow {
   display: flex;
-  align-items: flex-start;
+  /* Stretch so the score block can pin its meta/freshness rows to the same
+     bottom edge as the left column's pills row. */
+  align-items: stretch;
   justify-content: space-between;
   gap: 32px;
   flex-wrap: wrap;
@@ -153,6 +129,27 @@
   font-size: 15px;
   margin-top: 2px;
 }
+/* Header quote box: last price + 1d change, between the sector line and
+   the status pills. Fixed min-height so the skeleton → quote swap and the
+   pills row below never shift. */
+.priceBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 14px;
+  margin-top: 12px;
+  min-height: 41px;
+  background: #fff;
+}
+.priceNum {
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
 .identPills {
   display: flex;
   gap: 8px;
@@ -161,19 +158,16 @@
 }
 .scoreBlock {
   text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 .scoreLabel {
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--faint);
-  margin-bottom: 2px;
-}
-.scoreLine {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  justify-content: flex-end;
+  margin-bottom: 6px;
 }
 .scoreNum {
   font-size: 52px;
@@ -181,17 +175,34 @@
   font-weight: 500;
   letter-spacing: -0.02em;
 }
+.scoreLine {
+  display: flex;
+  /* flex-end (not baseline): the badge's pill background extends below its
+     text baseline, so baseline-aligning left it hanging under the score. */
+  align-items: flex-end;
+  gap: 12px;
+  justify-content: flex-end;
+}
+.scoreLine .deltaBadge {
+  /* Nudge the badge box up to the digits' visual bottom (line-height 1 still
+     reserves a little descent below them). */
+  margin-bottom: 3px;
+}
 .scoreMeta {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
-  margin-top: 10px;
+  margin-top: 8px;
   align-items: center;
 }
+/* Bottom group starts here: timestamp + pills pin to the block's bottom so
+   the pills row shares a bottom edge with the left column's status pills.
+   Gaps sit on the 4px scale (6 / 12 / 8) to match the left column's rhythm. */
 .freshness {
   font-size: 12px;
   color: var(--faint);
-  margin-top: 9px;
+  margin-top: auto;
+  padding-top: 12px;
 }
 
 /* ---------- context strip ---------- */
@@ -241,6 +252,10 @@
   padding: 22px 24px 20px;
   margin-bottom: 22px;
   background: #fff;
+  /* Flex column so footer blocks (.pressFoot) can pin to the card bottom
+     regardless of how many lines the description wraps to. */
+  display: flex;
+  flex-direction: column;
 }
 .cardHead {
   display: flex;
@@ -307,47 +322,225 @@
   border-top-style: dashed;
 }
 
-.gapNote {
-  display: inline-flex;
+/* Key/swatch for the data-gap band (matches the in-chart band fill). */
+.gapSwatch {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 14px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 6px;
+  vertical-align: -1px;
+  background: rgba(10, 11, 13, 0.035);
+  border: 1px dashed var(--line-strong);
+}
+
+/* ── shared skeleton for the two bottom cards (pressure + attribution) ──
+   Identical structure so their footers align by construction: header block,
+   .cardBody (flex:1, centers content), .cardFoot pinned via margin-top:auto. */
+.cardBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.cardFoot {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 34px;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.statLabel {
+  font-size: 11px;
+  color: var(--faint);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.statValue {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.statProse {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.dim {
+  color: var(--faint);
+  font-weight: 400;
+}
+.pos {
+  color: var(--green);
+}
+.neg {
+  color: var(--red);
+}
+
+/* ── attribution stacked bar ── */
+.stackBar {
+  display: flex;
+  height: 42px;
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--line);
+}
+.stackSeg {
+  position: relative;
+}
+.stackSeg + .stackSeg {
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.85);
+}
+.stackScale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--faint);
+}
+
+/* ── attribution rows ── */
+.attrRows {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.attrRow {
+  display: grid;
+  grid-template-columns: 9px 88px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  height: 27px;
+}
+.swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2.5px;
+}
+.attrName {
+  font-size: 13px;
+  font-weight: 500;
+}
+.attrMath {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--faint);
+  letter-spacing: -0.01em;
+}
+.attrVal {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: right;
+  letter-spacing: -0.01em;
+}
+
+/* ── entrance stagger (local copy — CSS-module keyframes don't cross files) ── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.fadeUp0,
+.fadeUp1,
+.fadeUp2 {
+  animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.fadeUp1 {
+  animation-delay: 120ms;
+}
+.fadeUp2 {
+  animation-delay: 240ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fadeUp0,
+  .fadeUp1,
+  .fadeUp2 {
+    animation: none;
+  }
+}
+
+/* Reveal wrapper as a two-col grid child: let the card stretch through it. */
+.revealCol {
+  display: flex;
+}
+.revealCol > * {
+  flex: 1;
+}
+
+/* ── chart hover: wrapper, crosshair tooltip ── */
+.chartWrap {
+  position: relative;
+}
+.chartWrap svg {
+  touch-action: pan-y; /* horizontal scrub captured, vertical scroll passes */
+}
+.tip {
+  position: absolute;
+  top: 8px;
+  z-index: 5;
+  pointer-events: none;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(10, 11, 13, 0.07);
+  padding: 8px 11px;
+  min-width: 128px;
+  white-space: nowrap;
+}
+.tipTitle {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  color: var(--faint);
+  margin-bottom: 5px;
+}
+.tipRow {
+  display: flex;
   align-items: center;
   gap: 7px;
   font-size: 12px;
-  color: var(--muted);
-  border: 1px dashed var(--line-strong);
-  border-radius: 8px;
-  padding: 5px 10px;
-  margin-top: 12px;
+  line-height: 1.7;
 }
-.gapSwatch {
-  width: 14px;
-  height: 11px;
+.tipSwatch {
+  width: 8px;
+  height: 8px;
   border-radius: 2px;
-  background: repeating-linear-gradient(-45deg, #f1f3f6 0 3px, #e4e8ee 3px 6px);
+  flex-shrink: 0;
+}
+.tipLabel {
+  color: var(--muted);
+}
+.tipValue {
+  margin-left: auto;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--ink);
 }
 
-/* pressure / attribution footer stats */
-.pressFoot {
+/* ── data-gap note under the pressure chart ── */
+.gapNote {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--faint);
   display: flex;
-  gap: 36px;
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-  flex-wrap: wrap;
-}
-.pfItem .ctxLabel {
-  margin-bottom: 2px;
-}
-.pfItem .mono {
-  font-size: 16px;
-}
-.pfText {
-  font-size: 14px;
-}
-.pfGreen {
-  color: var(--green);
-}
-.pfRed {
-  color: var(--red);
+  align-items: center;
+  gap: 7px;
 }
 
 .twoCol {
@@ -355,9 +548,151 @@
   grid-template-columns: 1fr 1fr;
   gap: 22px;
   margin-bottom: 22px;
+  align-items: stretch;
 }
 .twoCol .card {
   margin-bottom: 0;
+}
+/* Reserve exactly two description lines in the two bottom cards so both
+   card bodies start at the same y whether the copy wraps or not. */
+.twoCol .cardSub {
+  min-height: 2.9em;
+}
+
+/* ── AI insight card ── */
+.aiBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--wash);
+  white-space: nowrap;
+}
+.aiSpark {
+  color: var(--blue);
+  font-size: 12px;
+  line-height: 1;
+}
+.insightProse {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--muted);
+  margin: 2px 0 0;
+}
+.insightFoot {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--faint);
+}
+
+/* ── shimmer skeleton (insight prose + news cells) ──
+   Fixed-height lines reserve space so loaded content doesn't shift layout. */
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+.skelLine {
+  height: 13px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--wash) 25%, #eef0f4 50%, var(--wash) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+.skelLine + .skelLine {
+  margin-top: 9px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skelLine {
+    animation: none;
+    background: var(--wash);
+  }
+}
+
+/* ── news grid (3 → 2 → 1 columns) ── */
+.newsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.newsCell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  min-height: 118px;
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.newsCell:hover {
+  border-color: var(--line-strong);
+  box-shadow: 0 4px 14px rgba(10, 11, 13, 0.05);
+}
+.newsMeta {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 10.5px;
+  color: var(--faint);
+  min-width: 0;
+}
+.newsMeta span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.newsTitle {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.15s ease;
+}
+.newsCell:hover .newsTitle {
+  color: var(--blue);
+}
+.newsSkelCell {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  min-height: 118px;
+}
+@media (max-width: 920px) {
+  .newsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .newsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Thin divider between the range pills and the price-overlay toggle. */
+.pillDivider {
+  width: 1px;
+  align-self: stretch;
+  margin: 2px 5px;
+  background: var(--line-strong);
 }
 
 /* empty / pending state */
@@ -369,6 +704,61 @@
   color: var(--muted);
   font-size: 14px;
   margin-bottom: 22px;
+}
+
+/* ── not-covered / service-unavailable state (light AssetPage replacement) ── */
+.nfBlock {
+  padding: 96px 0 120px;
+  max-width: 560px;
+}
+.nfTitle {
+  margin: 18px 0 0;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 400; /* editorial calm — emphasis via two-tone, never bolding */
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.nfSetup {
+  color: var(--muted);
+}
+.nfPayoff {
+  color: var(--ink);
+}
+.nfSub {
+  margin-top: 18px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.nfActions {
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.nfPrimary {
+  display: inline-flex;
+  align-items: center;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.nfSecondary {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+}
+.nfSecondary:hover {
+  color: var(--ink);
 }
 
 .footNote {
@@ -395,9 +785,13 @@
   }
   .scoreBlock {
     text-align: left;
+    align-items: flex-start;
   }
-  .scoreLine,
+  .scoreLine {
+    justify-content: flex-start;
+  }
   .scoreMeta {
     justify-content: flex-start;
+    margin-top: 10px;
   }
 }

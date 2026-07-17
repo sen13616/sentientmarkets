@@ -12,9 +12,7 @@ export default function ContextStrip({ composite }: { composite: Composite }) {
   return (
     <div className={s.contextStrip}>
       <div className={s.ctxCell}>
-        <div className={s.ctxLabel}>
-          Universe percentile <span className={s.newTag}>New</span>
-        </div>
+        <div className={s.ctxLabel}>Universe percentile</div>
         <div className={`${s.ctxValue} ${s.mono}`}>
           {ctx.universe_percentile !== null ? `p${Math.round(ctx.universe_percentile)}` : '—'}
         </div>

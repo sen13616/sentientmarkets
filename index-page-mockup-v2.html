@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>S&P 500 — SentientMarkets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#0052ff;
+    --ink:#0a0b0d;
+    --muted:#5b616e;
+    --faint:#8a919e;
+    --line:#eceef1;
+    --line-strong:#d9dee8;
+    --wash:#f7f8fa;
+    --green:#05b169;
+    --green-bg:#e8f7f0;
+    --red:#cf202f;
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:#fff;color:var(--ink);-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px 60px}
+
+  .nav{height:58px;display:flex;align-items:center;justify-content:space-between;
+       border-bottom:1px solid var(--line);margin-bottom:20px}
+  .navLogo{font-size:17px;font-weight:600;letter-spacing:-0.015em}
+  .navLinks{display:flex;gap:26px}
+  .navLinks a{font-size:13.5px;color:var(--muted);text-decoration:none;font-weight:500}
+  .navCta{background:var(--blue);color:#fff;border:none;border-radius:999px;
+          padding:0 19px;height:36px;font-size:13px;font-weight:600;font-family:inherit}
+
+  /* ══ HEADER — mirrors the shipped stock page ══ */
+  .head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+
+  .hName{font-size:16px;font-weight:600;letter-spacing:-0.015em;display:flex;align-items:center;gap:8px}
+  .tickerPill{font-family:var(--mono);font-size:10.5px;color:var(--muted);font-weight:400;
+              border:1px solid var(--line-strong);border-radius:5px;padding:2px 6px}
+  .hSector{font-size:12.5px;color:var(--muted);margin-top:4px}
+
+  /* index level sits exactly where the stock page's price sits */
+  .hLevel{display:flex;align-items:center;gap:9px;margin-top:12px}
+  .lvlNum{font-family:var(--mono);font-size:19px;font-weight:500;letter-spacing:-0.02em}
+  .badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);
+         font-size:11.5px;font-weight:500;border-radius:6px;padding:3px 7px}
+  .badge.up{background:var(--green-bg);color:var(--green)}
+
+  .hPills{display:flex;gap:8px;margin-top:12px}
+  .statPill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);
+            border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+  .dot{width:5px;height:5px;border-radius:50%;background:var(--faint)}
+  .dot.amber{background:#e5a13a}
+
+  .hRight{text-align:right;display:flex;flex-direction:column;align-items:flex-end}
+  .hLabel{font-size:9.5px;color:var(--faint);letter-spacing:0.08em;text-transform:uppercase;font-weight:500}
+  .hBig{display:flex;align-items:center;gap:11px;margin-top:2px}
+  .bigNum{font-family:var(--mono);font-size:46px;font-weight:500;letter-spacing:-0.035em;line-height:1.05}
+  .hSubPills{display:flex;gap:7px;margin-top:10px}
+  .subPill{font-family:var(--mono);font-size:11px;color:var(--muted);
+           border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+  .stamp{font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:8px}
+
+  /* ══ cards ══ */
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;
+        padding:20px 22px 18px;margin-bottom:16px}
+  .cardTitle{font-size:14.5px;font-weight:600;letter-spacing:-0.01em;margin-bottom:4px}
+  .cardSub{font-size:12.5px;line-height:1.45;color:var(--muted);margin-bottom:14px}
+  .chart{width:100%;display:block}
+
+  /* ══ strip — below the first chart, as on the stock page ══ */
+  .strip{display:grid;grid-template-columns:repeat(4,1fr);
+         border:1px solid var(--line);border-radius:12px;margin-bottom:16px}
+  .cell{padding:14px 17px;border-right:1px solid var(--line)}
+  .cell:last-child{border-right:none}
+  .cellLabel{font-size:9.5px;color:var(--faint);letter-spacing:0.08em;
+             text-transform:uppercase;font-weight:500;margin-bottom:6px}
+  .cellVal{font-family:var(--mono);font-size:19px;letter-spacing:-0.02em}
+  .cellSub{font-size:11.5px;color:var(--muted);margin-top:3px}
+
+  .twoCol{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .twoCol .card{margin-bottom:0}
+
+  .mvHead,.moverRow{display:grid;grid-template-columns:52px 1fr 46px 58px;gap:11px;align-items:center}
+  .mvHead{font-size:9.5px;color:var(--faint);letter-spacing:0.07em;text-transform:uppercase;
+          font-weight:500;padding-bottom:7px;border-bottom:1px solid var(--line);margin-bottom:4px}
+  .mvHead span:nth-child(3),.mvHead span:nth-child(4){text-align:right}
+  .moverRow{height:31px}
+  .mvTicker{font-family:var(--mono);font-size:12.5px;font-weight:500}
+  .mvName{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mvScore{font-family:var(--mono);font-size:12.5px;color:var(--faint);text-align:right}
+  .mvDelta{font-family:var(--mono);font-size:12.5px;font-weight:500;text-align:right}
+  .pos{color:var(--green)}
+  .neg{color:var(--red)}
+
+  .tblHead,.tblRow{display:grid;grid-template-columns:62px 1fr 186px 66px 80px;gap:11px}
+  .tblHead{font-size:9.5px;color:var(--faint);letter-spacing:0.07em;text-transform:uppercase;
+           font-weight:500;padding-bottom:9px;border-bottom:1px solid var(--line)}
+  .tblHead span:nth-child(5){text-align:right}
+  .tblRow{align-items:center;height:37px;border-bottom:1px solid var(--line)}
+  .tblRow:last-of-type{border-bottom:none}
+  .cTicker{font-family:var(--mono);font-size:12.5px;font-weight:500}
+  .cName{font-size:12.5px}
+  .cSector{font-size:12.5px;color:var(--muted)}
+  .cScore{font-family:var(--mono);font-size:12.5px;font-weight:500}
+  .cRank{font-family:var(--mono);font-size:11.5px;color:var(--faint);text-align:right}
+  .tblFoot{margin-top:13px;padding-top:13px;border-top:1px solid var(--line);
+           display:flex;justify-content:space-between;align-items:center}
+  .sortPills{display:flex;gap:6px}
+  .pill{border:1px solid var(--line-strong);background:#fff;border-radius:999px;padding:0 13px;
+        height:27px;font-size:11.5px;font-family:inherit;color:var(--muted);font-weight:500}
+  .pill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .showAll{font-size:12.5px;color:var(--blue);font-weight:500;text-decoration:none}
+
+  .footNote{font-size:11px;color:var(--faint);margin-top:12px;display:flex;align-items:center;gap:7px}
+  .fnDot{width:6px;height:6px;border-radius:50%;background:var(--faint)}
+  .pageFoot{border-top:1px solid var(--line);margin-top:28px;padding-top:16px;
+            font-size:11px;color:var(--faint);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="nav">
+    <div class="navLogo">SentientMarkets</div>
+    <div class="navLinks">
+      <a href="#">Markets</a><a href="#">About</a><a href="#">Technology</a><a href="#">FAQ</a><a href="#">Contact</a>
+    </div>
+    <button class="navCta">Get Pro</button>
+  </div>
+
+  <!-- ══════════ HEADER ══════════ -->
+  <div class="head">
+    <div>
+      <div class="hName">S&amp;P 500 <span class="tickerPill">^GSPC</span></div>
+      <div class="hSector">502 large-cap US names · 11 sectors</div>
+      <div class="hLevel">
+        <span class="lvlNum">6,247.31</span>
+        <span class="badge up">+26.14 (+0.42%) (1d)</span>
+      </div>
+      <div class="hPills">
+        <span class="statPill"><span class="dot"></span>Off-hours · scored 12 min ago</span>
+        <span class="statPill"><span class="dot amber"></span>Dispersion · σ 7.4 across names</span>
+      </div>
+    </div>
+
+    <div class="hRight">
+      <div class="hLabel">Breadth above neutral</div>
+      <div class="hBig"><span class="bigNum">73.1%</span></div>
+      <div class="hSubPills">
+        <span class="subPill">367 of 502</span>
+        <span class="subPill">Improving 50.4%</span>
+      </div>
+      <div class="stamp">2026-07-16 04:00 UTC</div>
+    </div>
+  </div>
+
+  <!-- ══════════ DISTRIBUTION (first chart, as history is on the stock page) ══════════ -->
+  <div class="card">
+    <h3 class="cardTitle">Score distribution</h3>
+    <p class="cardSub">Every scored name placed in a 5-point bucket. The shape is what a single index-level average would destroy — a market can average 54 while being split, or while agreeing.</p>
+
+    <svg class="chart" viewBox="0 0 1000 200" xmlns="http://www.w3.org/2000/svg" aria-label="Distribution of sentiment scores across 502 names">
+      <g stroke="#f1f3f6" stroke-width="1">
+        <line x1="40" x2="980" y1="150" y2="150"/>
+        <line x1="40" x2="980" y1="115.5" y2="115.5"/>
+        <line x1="40" x2="980" y1="81" y2="81"/>
+        <line x1="40" x2="980" y1="46.5" y2="46.5"/>
+        <line x1="40" x2="980" y1="12" y2="12"/>
+      </g>
+      <g font-family="JetBrains Mono, monospace" font-size="10" fill="#8a919e" text-anchor="end">
+        <text x="31" y="153.5">0</text><text x="31" y="119">32</text><text x="31" y="84.5">65</text>
+        <text x="31" y="50">97</text><text x="31" y="15.5">130</text>
+      </g>
+
+      <g fill="#cf202f" opacity="0.72">
+        <rect x="47"  y="148.94" width="80" height="1.06" rx="1"/>
+        <rect x="141" y="145.75" width="80" height="4.25" rx="1"/>
+        <rect x="235" y="140.45" width="80" height="9.55" rx="1.5"/>
+        <rect x="329" y="100.10" width="80" height="49.9" rx="1.5"/>
+        <rect x="423" y="71.40"  width="80" height="78.6" rx="1.5"/>
+      </g>
+      <g fill="#05b169" opacity="0.72">
+        <rect x="517" y="27.90"  width="80" height="122.1" rx="1.5"/>
+        <rect x="611" y="17.30"  width="80" height="132.7" rx="1.5"/>
+        <rect x="705" y="48.10"  width="80" height="101.9" rx="1.5"/>
+        <rect x="799" y="121.30" width="80" height="28.7" rx="1.5"/>
+        <rect x="893" y="145.75" width="80" height="4.25" rx="1"/>
+      </g>
+
+      <line x1="510" x2="510" y1="12" y2="150" stroke="#0a0b0d" stroke-width="1" stroke-dasharray="3 3" opacity="0.45"/>
+      <text x="504" y="24" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" fill="#5b616e">neutral 50</text>
+      <line x1="40" x2="980" y1="150" y2="150" stroke="#c9cfd8" stroke-width="1"/>
+
+      <g font-family="JetBrains Mono, monospace" font-size="10" fill="#8a919e">
+        <text x="40"  y="168" text-anchor="start">25</text>
+        <text x="181" y="168" text-anchor="middle">35</text>
+        <text x="369" y="168" text-anchor="middle">45</text>
+        <text x="557" y="168" text-anchor="middle">55</text>
+        <text x="745" y="168" text-anchor="middle">65</text>
+        <text x="980" y="168" text-anchor="end">75</text>
+      </g>
+    </svg>
+
+    <div class="footNote">
+      <span class="fnDot"></span>
+      <span>135 names below neutral · 336 neutral-to-bullish · 31 at 65 or above</span>
+    </div>
+  </div>
+
+  <!-- ══════════ STRIP ══════════ -->
+  <div class="strip">
+    <div class="cell">
+      <div class="cellLabel">Median score</div>
+      <div class="cellVal">55.0</div>
+      <div class="cellSub">mean 54.4</div>
+    </div>
+    <div class="cell">
+      <div class="cellLabel">Bullish · 65+</div>
+      <div class="cellVal">31</div>
+      <div class="cellSub">6.2% of names</div>
+    </div>
+    <div class="cell">
+      <div class="cellLabel">Bearish · under 50</div>
+      <div class="cellVal">135</div>
+      <div class="cellSub">26.9% of names</div>
+    </div>
+    <div class="cell">
+      <div class="cellLabel">Widest sector gap</div>
+      <div class="cellVal">8.2</div>
+      <div class="cellSub">Financials over Info Tech</div>
+    </div>
+  </div>
+
+  <!-- ══════════ SECTORS ══════════ -->
+  <div class="card">
+    <h3 class="cardTitle">Sector breakdown</h3>
+    <p class="cardSub">Mean composite per sector, measured from neutral. The dashed line is the universe mean — sectors to its right are running hotter than the market as a whole.</p>
+
+    <svg class="chart" viewBox="0 0 1000 350" xmlns="http://www.w3.org/2000/svg" aria-label="Mean sentiment score by sector">
+      <g stroke="#f1f3f6" stroke-width="1">
+        <line x1="316.7" x2="316.7" y1="8" y2="308"/>
+        <line x1="433.3" x2="433.3" y1="8" y2="308"/>
+        <line x1="550"   x2="550"   y1="8" y2="308"/>
+        <line x1="666.7" x2="666.7" y1="8" y2="308"/>
+        <line x1="783.3" x2="783.3" y1="8" y2="308"/>
+      </g>
+
+      <g>
+        <rect x="200" y="12"  width="559.4" height="16" rx="2.5" fill="#0052ff"/>
+        <rect x="200" y="40"  width="327.8" height="16" rx="2.5" fill="#0052ff" opacity="0.82"/>
+        <rect x="200" y="68"  width="324.9" height="16" rx="2.5" fill="#0052ff" opacity="0.82"/>
+        <rect x="200" y="96"  width="281.8" height="16" rx="2.5" fill="#0052ff" opacity="0.74"/>
+        <rect x="200" y="124" width="270.7" height="16" rx="2.5" fill="#0052ff" opacity="0.74"/>
+        <rect x="200" y="152" width="267.8" height="16" rx="2.5" fill="#0052ff" opacity="0.74"/>
+        <rect x="200" y="180" width="239.2" height="16" rx="2.5" fill="#0052ff" opacity="0.66"/>
+        <rect x="200" y="208" width="228.1" height="16" rx="2.5" fill="#0052ff" opacity="0.66"/>
+        <rect x="200" y="236" width="175.6" height="16" rx="2.5" fill="#0052ff" opacity="0.58"/>
+        <rect x="200" y="264" width="140.6" height="16" rx="2.5" fill="#0052ff" opacity="0.58"/>
+        <rect x="200" y="292" width="84"    height="16" rx="2.5" fill="#0052ff" opacity="0.5"/>
+      </g>
+
+      <g font-family="Inter, sans-serif" font-size="12.5" fill="#0a0b0d" text-anchor="end">
+        <text x="188" y="24">Financials</text>
+        <text x="188" y="52">Energy</text>
+        <text x="188" y="80">Real Estate</text>
+        <text x="188" y="108">Utilities</text>
+        <text x="188" y="136">Consumer Staples</text>
+        <text x="188" y="164">Industrials</text>
+        <text x="188" y="192">Consumer Discretionary</text>
+        <text x="188" y="220">Communication Services</text>
+        <text x="188" y="248">Materials</text>
+        <text x="188" y="276">Health Care</text>
+        <text x="188" y="304">Information Technology</text>
+      </g>
+
+      <g font-family="JetBrains Mono, monospace" font-size="12" fill="#0a0b0d">
+        <text x="769.4" y="24">59.6</text><text x="537.8" y="52">55.6</text><text x="534.9" y="80">55.6</text>
+        <text x="491.8" y="108">54.8</text><text x="480.7" y="136">54.6</text><text x="477.8" y="164">54.6</text>
+        <text x="449.2" y="192">54.1</text><text x="438.1" y="220">53.9</text><text x="385.6" y="248">53.0</text>
+        <text x="350.6" y="276">52.4</text><text x="294" y="304">51.4</text>
+      </g>
+      <g font-family="JetBrains Mono, monospace" font-size="10.5" fill="#8a919e" text-anchor="end">
+        <text x="980" y="24">61 names</text><text x="980" y="52">25 names</text><text x="980" y="80">35 names</text>
+        <text x="980" y="108">27 names</text><text x="980" y="136">34 names</text><text x="980" y="164">71 names</text>
+        <text x="980" y="192">59 names</text><text x="980" y="220">23 names</text><text x="980" y="248">24 names</text>
+        <text x="980" y="276">61 names</text><text x="980" y="304">82 names</text>
+      </g>
+
+      <line x1="456.1" x2="456.1" y1="8" y2="308" stroke="#0a0b0d" stroke-width="1" stroke-dasharray="3 3" opacity="0.45"/>
+      <text x="461" y="322" font-family="JetBrains Mono, monospace" font-size="10" fill="#5b616e">universe mean 54.4</text>
+      <line x1="200" x2="200" y1="8" y2="308" stroke="#c9cfd8" stroke-width="1"/>
+      <text x="200" y="322" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#8a919e">50</text>
+      <g font-family="JetBrains Mono, monospace" font-size="10" fill="#8a919e" text-anchor="middle">
+        <text x="316.7" y="322">52</text><text x="666.7" y="322">58</text><text x="783.3" y="322">60</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ══════════ MOVERS ══════════ -->
+  <div class="twoCol">
+    <div class="card">
+      <h3 class="cardTitle">Biggest gainers</h3>
+      <p class="cardSub">Largest 1-day composite increases.</p>
+      <div class="mvHead"><span>Ticker</span><span>Name</span><span>Score</span><span>1d</span></div>
+      <div class="moverRow"><span class="mvTicker">PENN</span><span class="mvName">Penn Entertainment</span><span class="mvScore">61.2</span><span class="mvDelta pos">+15.5</span></div>
+      <div class="moverRow"><span class="mvTicker">SMCI</span><span class="mvName">Super Micro Computer</span><span class="mvScore">66.8</span><span class="mvDelta pos">+11.2</span></div>
+      <div class="moverRow"><span class="mvTicker">DVN</span><span class="mvName">Devon Energy</span><span class="mvScore">63.1</span><span class="mvDelta pos">+9.8</span></div>
+      <div class="moverRow"><span class="mvTicker">F</span><span class="mvName">Ford Motor</span><span class="mvScore">58.4</span><span class="mvDelta pos">+8.4</span></div>
+      <div class="moverRow"><span class="mvTicker">NCLH</span><span class="mvName">Norwegian Cruise Line</span><span class="mvScore">60.9</span><span class="mvDelta pos">+7.9</span></div>
+    </div>
+
+    <div class="card">
+      <h3 class="cardTitle">Biggest decliners</h3>
+      <p class="cardSub">Largest 1-day composite decreases.</p>
+      <div class="mvHead"><span>Ticker</span><span>Name</span><span>Score</span><span>1d</span></div>
+      <div class="moverRow"><span class="mvTicker">CNC</span><span class="mvName">Centene Corp.</span><span class="mvScore">38.4</span><span class="mvDelta neg">−16.5</span></div>
+      <div class="moverRow"><span class="mvTicker">MRNA</span><span class="mvName">Moderna Inc.</span><span class="mvScore">41.2</span><span class="mvDelta neg">−12.1</span></div>
+      <div class="moverRow"><span class="mvTicker">EL</span><span class="mvName">Estée Lauder</span><span class="mvScore">44.7</span><span class="mvDelta neg">−10.4</span></div>
+      <div class="moverRow"><span class="mvTicker">ENPH</span><span class="mvName">Enphase Energy</span><span class="mvScore">39.8</span><span class="mvDelta neg">−9.2</span></div>
+      <div class="moverRow"><span class="mvTicker">LW</span><span class="mvName">Lamb Weston Holdings</span><span class="mvScore">46.3</span><span class="mvDelta neg">−8.7</span></div>
+    </div>
+  </div>
+
+  <!-- ══════════ CONSTITUENTS ══════════ -->
+  <div class="card">
+    <h3 class="cardTitle">Constituents</h3>
+    <p class="cardSub">Every scored name, with its rank inside its own sector.</p>
+
+    <div class="tblHead">
+      <span>Ticker</span><span>Name</span><span>Sector</span><span>Score</span><span>Sector rank</span>
+    </div>
+    <div class="tblRow"><span class="cTicker">JPM</span><span class="cName">JPMorgan Chase</span><span class="cSector">Financials</span><span class="cScore">68.4</span><span class="cRank">#2 of 61</span></div>
+    <div class="tblRow"><span class="cTicker">SMCI</span><span class="cName">Super Micro Computer</span><span class="cSector">Information Technology</span><span class="cScore">66.8</span><span class="cRank">#1 of 82</span></div>
+    <div class="tblRow"><span class="cTicker">DVN</span><span class="cName">Devon Energy</span><span class="cSector">Energy</span><span class="cScore">63.1</span><span class="cRank">#3 of 25</span></div>
+    <div class="tblRow"><span class="cTicker">NVDA</span><span class="cName">NVIDIA Corp.</span><span class="cSector">Information Technology</span><span class="cScore">62.0</span><span class="cRank">#8 of 82</span></div>
+    <div class="tblRow"><span class="cTicker">PENN</span><span class="cName">Penn Entertainment</span><span class="cSector">Consumer Discretionary</span><span class="cScore">61.2</span><span class="cRank">#4 of 59</span></div>
+    <div class="tblRow"><span class="cTicker">AAPL</span><span class="cName">Apple Inc.</span><span class="cSector">Information Technology</span><span class="cScore">59.0</span><span class="cRank">#18 of 82</span></div>
+    <div class="tblRow"><span class="cTicker">CNC</span><span class="cName">Centene Corp.</span><span class="cSector">Health Care</span><span class="cScore">38.4</span><span class="cRank">#59 of 61</span></div>
+
+    <div class="tblFoot">
+      <div class="sortPills">
+        <button class="pill on">Score</button>
+        <button class="pill">Sector</button>
+        <button class="pill">Movers</button>
+        <button class="pill">A–Z</button>
+      </div>
+      <a class="showAll" href="#">Show all 502 →</a>
+    </div>
+  </div>
+
+  <div class="pageFoot">
+    Breadth and dispersion are computed across the scored universe on a fixed cadence. No index-level sentiment score is published — the index is described by the distribution of its constituents, not by their average. Sentiment is not investment advice.
+  </div>
+
+</div>
+</body>
+</html>

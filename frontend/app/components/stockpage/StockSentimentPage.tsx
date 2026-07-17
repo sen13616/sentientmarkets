@@ -1,22 +1,36 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Nav from '../Nav';
 import Footer from '../Footer';
+import Reveal from '../Reveal';
 import StockHeader from './StockHeader';
 import ContextStrip from './ContextStrip';
 import AttributionCard from './AttributionCard';
+import InsightCard from './InsightCard';
+import NewsCard from './NewsCard';
 import HistoryChart from './charts/HistoryChart';
 import DriversChart from './charts/DriversChart';
 import PressureChart from './charts/PressureChart';
-import { Composite, HistoryPayload } from './types';
-import { getStockHistoryV2 } from '@/lib/api';
+import { Composite, HistoryPayload, PricePoint } from './types';
+import { getPriceHistory, getStockHistoryV2 } from '@/lib/api';
 import { fmtGapRange } from '@/lib/stockMath';
 import s from './stockpage.module.css';
 
 const RANGES = [7, 30, 90] as const;
 type Range = (typeof RANGES)[number];
+
+function fmtSigned(v: number | null | undefined): string {
+  if (v === null || v === undefined) return '—';
+  return `${v >= 0 ? '+' : ''}${v.toFixed(1)}`;
+}
+
+/* Semantic coloring for signed stats: positive green, negative red, zero plain. */
+function signClass(v: number | null | undefined): string {
+  if (v === null || v === undefined || v === 0) return '';
+  return v > 0 ? s.pos : s.neg;
+}
 
 export default function StockSentimentPage({
   composite,
@@ -38,11 +52,52 @@ export default function StockSentimentPage({
   // not follow the range pills (mockup behavior: a fixed 30-day oscillator).
   const pressureHistory = initialHistory;
 
+  // ── Price overlay ── fetched lazily on first enable, memoized per yfinance
+  // period (7D/30D share the 1M payload; 90D uses 3M).
+  const [showPrice, setShowPrice] = useState(false);
+  const [priceData, setPriceData] = useState<PricePoint[] | null>(null);
+  const priceCacheRef = useRef<Map<'1M' | '3M', PricePoint[]>>(new Map());
+  const pricePeriod: '1M' | '3M' = days === 90 ? '3M' : '1M';
+
+  useEffect(() => {
+    if (!showPrice) return;
+    const cached = priceCacheRef.current.get(pricePeriod);
+    if (cached) {
+      setPriceData(cached);
+      return;
+    }
+    let stale = false;
+    getPriceHistory(composite.ticker, pricePeriod)
+      .then((d) => {
+        const dates: string[] = Array.isArray(d?.dates) ? d.dates : [];
+        const closes: unknown[] = Array.isArray(d?.stock_prices) ? d.stock_prices : [];
+        const series: PricePoint[] = dates
+          .map((iso, i) => ({ t: Date.parse(iso), close: closes[i] as number }))
+          .filter((p) => Number.isFinite(p.t) && typeof p.close === 'number' && Number.isFinite(p.close));
+        priceCacheRef.current.set(pricePeriod, series);
+        if (!stale) setPriceData(series);
+      })
+      .catch(() => {
+        if (!stale) setPriceData([]);
+      });
+    return () => {
+      stale = true;
+    };
+  }, [showPrice, pricePeriod, composite.ticker]);
+
+  // Slice the fetched period down to the visible sentiment window.
+  const priceSeries = useMemo(() => {
+    if (!showPrice || !priceData || !history || history.points.length === 0) return null;
+    const start = Date.parse(history.points[0].t) - 86_400_000;
+    const sliced = priceData.filter((p) => p.t >= start);
+    return sliced.length >= 2 ? sliced : null;
+  }, [showPrice, priceData, history]);
+
   const switchRange = useCallback(
     async (next: Range) => {
-      setDays(next);
       const cached = cacheRef.current.get(next);
       if (cached) {
+        setDays(next);
         setHistory(cached);
         return;
       }
@@ -50,9 +105,13 @@ export default function StockSentimentPage({
       try {
         const payload = (await getStockHistoryV2(composite.ticker, next)) as HistoryPayload;
         cacheRef.current.set(next, payload);
+        // Commit the pill and the data together — flipping the pill before
+        // the fetch left an active 90D pill over a 30D chart whenever the
+        // client-side fetch failed (e.g. CORS on preview deploys).
+        setDays(next);
         setHistory(payload);
       } catch {
-        // keep the previous range on failure
+        // fetch failed — pill and chart both stay on the previous range
       } finally {
         setLoadingRange(false);
       }
@@ -62,6 +121,7 @@ export default function StockSentimentPage({
 
   const sentiment = composite.sentiment ?? null;
   const gap = history?.gaps?.[0];
+  const pressureGap = pressureHistory?.gaps?.[0];
 
   return (
     <div className={`${s.page} home-light`}>
@@ -71,16 +131,19 @@ export default function StockSentimentPage({
         <StockHeader composite={composite} />
 
         {!sentiment && (
-          <div className={s.pending}>
-            {composite.ticker} is in the supported universe but hasn&apos;t been scored yet —
-            scores appear after the next scoring tick.
-          </div>
+          <Reveal>
+            <div className={s.pending}>
+              {composite.ticker} is in the supported universe but hasn&apos;t been scored yet —
+              scores appear after the next scoring tick.
+            </div>
+          </Reveal>
         )}
 
-        {sentiment && <ContextStrip composite={composite} />}
-
-        {/* ── Sentiment history ── */}
+        {/* ── Sentiment history — first card on the page. The Reveal sits
+            OUTSIDE everything that re-renders on a range switch, so it can
+            never replay. ── */}
         {history && history.points.length > 0 && (
+          <Reveal>
           <div className={s.card}>
             <div className={s.cardHead}>
               <div className={s.cardTitle}>Sentiment history</div>
@@ -95,46 +158,68 @@ export default function StockSentimentPage({
                     {r}D
                   </button>
                 ))}
+                <span className={s.pillDivider} aria-hidden="true" />
+                <button
+                  type="button"
+                  className={`${s.pill} ${showPrice ? s.pillOn : ''}`}
+                  aria-pressed={showPrice}
+                  onClick={() => setShowPrice((v) => !v)}
+                >
+                  Price
+                </button>
               </div>
             </div>
             <div className={s.cardSub}>
-              Smoothed composite (4-hour EMA) with raw composite underlay. Windows never
-              interpolate across missing data.
+              Smoothed composite (4-hour EMA) with raw underlay.
             </div>
             <div className={loadingRange ? s.chartLoading : undefined}>
-              <HistoryChart history={history} hatchId="hatch-history" />
+              <HistoryChart history={history} priceSeries={priceSeries} />
             </div>
             <div className={s.legend}>
               <span><span className={s.legendLineKey} style={{ borderColor: 'var(--blue)' }} />Smoothed score</span>
               <span><span className={`${s.legendLineKey} ${s.legendDashed}`} style={{ borderColor: '#b8c8f0' }} />Raw composite</span>
               <span><span className={s.legendLineKey} style={{ borderColor: 'var(--line-strong)' }} />Neutral 50</span>
+              {priceSeries && (
+                <span><span className={s.legendLineKey} style={{ borderColor: '#8a919e' }} />Price (right axis)</span>
+              )}
+              {gap && (
+                <span>
+                  <span className={s.gapSwatch} />
+                  No data {fmtGapRange(gap.from, gap.to)} · never interpolated
+                </span>
+              )}
             </div>
-            {gap && (
-              <div className={s.gapNote}>
-                <span className={s.gapSwatch} />
-                No data · {fmtGapRange(gap.from, gap.to)} · stats skip this window, never interpolate
-              </div>
-            )}
           </div>
+          </Reveal>
+        )}
+
+        {sentiment && (
+          <Reveal>
+            <ContextStrip composite={composite} />
+          </Reveal>
+        )}
+
+        {sentiment && (
+          <Reveal>
+            <InsightCard ticker={composite.ticker} />
+          </Reveal>
         )}
 
         {/* ── Sentiment drivers ── */}
         {history && history.points.length > 0 && (
+          <Reveal delay={0.1}>
           <div className={s.card}>
             <div className={s.cardHead}>
-              <div className={s.cardTitle}>
-                Sentiment drivers <span className={s.newTag}>New</span>
-              </div>
+              <div className={s.cardTitle}>Sentiment drivers</div>
               <span className={s.pill}>
                 Channel weights <span className={s.mono}>.35 / .30 / .25 / .10</span>
               </span>
             </div>
             <div className={s.cardSub}>
-              Weighted contribution of each channel to the composite at every scoring tick —
-              why the score is where it is, not just where it is.
+              Weighted contribution of each channel to the composite at every tick.
             </div>
             <div className={loadingRange ? s.chartLoading : undefined}>
-              <DriversChart history={history} hatchId="hatch-drivers" />
+              <DriversChart history={history} />
             </div>
             <div className={s.legend}>
               <span><span className={s.legendKey} style={{ background: 'var(--ch-market)' }} />Market</span>
@@ -143,62 +228,69 @@ export default function StockSentimentPage({
               <span><span className={s.legendKey} style={{ background: 'var(--ch-macro)' }} />Macro</span>
             </div>
           </div>
+          </Reveal>
         )}
 
         {sentiment && (
           <div className={s.twoCol}>
             {/* ── Short-term pressure ── */}
+            <Reveal className={s.revealCol}>
             <div className={s.card}>
-              <div className={s.cardHead}>
-                <div className={s.cardTitle}>
-                  Short-term pressure <span className={s.newTag}>New</span>
-                </div>
+              <div>
+                <h3 className={s.cardTitle}>Short-term pressure</h3>
+                <p className={s.cardSub}>
+                  Raw composite minus the smoothed score. Positive means fresh signal is
+                  running ahead of the EMA trend.
+                </p>
               </div>
-              <div className={s.cardSub}>
-                Raw minus smoothed score. Positive bars: fresh signal running ahead of the EMA
-                trend. Negative: cooling under it.
+              <div className={s.cardBody}>
+                {pressureHistory && pressureHistory.points.length > 0 && (
+                  <PressureChart history={pressureHistory} />
+                )}
+                {pressureGap && (
+                  <div className={s.gapNote}>
+                    <span className={s.gapSwatch} />
+                    <span>
+                      No data {fmtGapRange(pressureGap.from, pressureGap.to)} · never interpolated
+                    </span>
+                  </div>
+                )}
               </div>
-              {pressureHistory && pressureHistory.points.length > 0 && (
-                <PressureChart history={pressureHistory} hatchId="hatch-pressure" />
-              )}
-              <div className={s.pressFoot}>
-                <div className={s.pfItem}>
-                  <div className={s.ctxLabel}>Current gap</div>
-                  <div
-                    className={`${s.mono} ${
-                      (composite.pressure?.current_gap ?? 0) > 0
-                        ? s.pfGreen
-                        : (composite.pressure?.current_gap ?? 0) < 0
-                          ? s.pfRed
-                          : ''
-                    }`}
-                  >
-                    {composite.pressure?.current_gap !== null && composite.pressure?.current_gap !== undefined
-                      ? `${composite.pressure.current_gap >= 0 ? '+' : ''}${composite.pressure.current_gap.toFixed(1)}`
-                      : '—'}
-                  </div>
+              <div className={s.cardFoot}>
+                <div className={s.stat}>
+                  <span className={s.statLabel}>Current gap</span>
+                  <span className={`${s.statValue} ${signClass(composite.pressure?.current_gap)}`}>
+                    {fmtSigned(composite.pressure?.current_gap)}
+                  </span>
                 </div>
-                <div className={s.pfItem}>
-                  <div className={s.ctxLabel}>7-day mean</div>
-                  <div className={s.mono}>
-                    {composite.pressure?.mean_7d !== null && composite.pressure?.mean_7d !== undefined
-                      ? `${composite.pressure.mean_7d >= 0 ? '+' : ''}${composite.pressure.mean_7d.toFixed(1)}`
-                      : '—'}
-                  </div>
+                <div className={s.stat}>
+                  <span className={s.statLabel}>7-day mean</span>
+                  <span className={`${s.statValue} ${signClass(composite.pressure?.mean_7d)}`}>
+                    {fmtSigned(composite.pressure?.mean_7d)}
+                  </span>
                 </div>
                 {composite.pressure?.reads_as && (
-                  <div className={s.pfItem}>
-                    <div className={s.ctxLabel}>Reads as</div>
-                    <div className={s.pfText}>{composite.pressure.reads_as}</div>
+                  <div className={s.stat}>
+                    <span className={s.statLabel}>Reads as</span>
+                    <span className={`${s.statValue} ${s.statProse}`}>
+                      {composite.pressure.reads_as}
+                    </span>
                   </div>
                 )}
               </div>
             </div>
+            </Reveal>
 
             {/* ── Today's attribution ── */}
-            <AttributionCard sentiment={sentiment} />
+            <Reveal delay={0.1} className={s.revealCol}>
+              <AttributionCard sentiment={sentiment} />
+            </Reveal>
           </div>
         )}
+
+        <Reveal>
+          <NewsCard ticker={composite.ticker} />
+        </Reveal>
 
         <div className={s.footNote}>
           Scores are computed on a fixed cadence from market, narrative, influencer and macro

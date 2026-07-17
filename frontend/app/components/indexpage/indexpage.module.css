@@ -1,0 +1,554 @@
+/* S&P 500 breadth page — verbatim port of index-page-mockup-v2.html.
+   Tokens mirror the mockup's own; duplicating primitives from
+   stockpage.module.css is accepted for this page (no shared refactor).
+   The white body comes from the shared `home-light` marker on .page. */
+
+.page {
+  --blue: #0052ff;
+  --ink: #0a0b0d;
+  --muted: #5b616e;
+  --faint: #8a919e;
+  --line: #eceef1;
+  --line-strong: #d9dee8;
+  --wash: #f7f8fa;
+  --green: #05b169;
+  --green-bg: #e8f7f0;
+  --red: #cf202f;
+  --red-bg: #fdecee;
+
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+.mono {
+  font-family: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+.page svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ══ header — mirrors the shipped stock page ══ */
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding-top: 22px;
+  margin-bottom: 18px;
+}
+.hName {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tickerPill {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  font-weight: 400;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  padding: 2px 6px;
+}
+.hSector {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+/* index level sits exactly where the stock page's price sits */
+.hLevel {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 12px;
+}
+.lvlNum {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 11.5px;
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 3px 7px;
+}
+.badgeUp {
+  background: var(--green-bg);
+  color: var(--green);
+}
+.badgeDown {
+  background: var(--red-bg);
+  color: var(--red);
+}
+.hPills {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.statPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 11px;
+}
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--faint);
+}
+.dotAmber {
+  background: #e5a13a;
+}
+.dotGreen {
+  background: var(--green);
+}
+.hRight {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.hLabel {
+  font-size: 9.5px;
+  color: var(--faint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.hBig {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 2px;
+}
+.bigNum {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 46px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+.hSubPills {
+  display: flex;
+  gap: 7px;
+  margin-top: 10px;
+}
+.subPill {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+.stamp {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--faint);
+  margin-top: 8px;
+}
+
+/* ══ cards ══ */
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 22px 18px;
+  margin-bottom: 16px;
+}
+.cardTitle {
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+.cardSub {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.chart {
+  width: 100%;
+  display: block;
+}
+
+/* ══ strip — below the first chart, as on the stock page ══ */
+.strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.cell {
+  padding: 14px 17px;
+  border-right: 1px solid var(--line);
+}
+.cell:last-child {
+  border-right: none;
+}
+.cellLabel {
+  font-size: 9.5px;
+  color: var(--faint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.cellVal {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+}
+.cellSub {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.twoCol .card {
+  margin-bottom: 0;
+}
+
+/* ══ movers ══ */
+.mvHead,
+.moverRow {
+  display: grid;
+  grid-template-columns: 52px 1fr 46px 58px;
+  gap: 11px;
+  align-items: center;
+}
+.mvHead {
+  font-size: 9.5px;
+  color: var(--faint);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4px;
+}
+.mvHead span:nth-child(3),
+.mvHead span:nth-child(4) {
+  text-align: right;
+}
+.moverRow {
+  height: 31px;
+}
+.mvTicker {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.mvName {
+  font-size: 12.5px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mvScore {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12.5px;
+  color: var(--faint);
+  text-align: right;
+}
+.mvDelta {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-align: right;
+}
+.pos {
+  color: var(--green);
+}
+.neg {
+  color: var(--red);
+}
+
+/* ══ constituents ══ */
+.tblHead,
+.tblRow {
+  display: grid;
+  grid-template-columns: 62px 1fr 186px 66px 80px;
+  gap: 11px;
+}
+.tblHead {
+  font-size: 9.5px;
+  color: var(--faint);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--line);
+}
+.tblHead span:nth-child(5) {
+  text-align: right;
+}
+.tblRow {
+  align-items: center;
+  height: 37px;
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+}
+.tblRow:hover .cTicker,
+.tblRow:hover .cName {
+  color: var(--blue);
+}
+.tblRow:last-of-type {
+  border-bottom: none;
+}
+.cTicker {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12.5px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+.cName {
+  font-size: 12.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+.cSector {
+  font-size: 12.5px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cScore {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.cRank {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 11.5px;
+  color: var(--faint);
+  text-align: right;
+}
+.tblFoot {
+  margin-top: 13px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.sortPills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pill {
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  border-radius: 999px;
+  padding: 0 13px;
+  height: 27px;
+  font-size: 11.5px;
+  font-family: inherit;
+  color: var(--muted);
+  font-weight: 500;
+  cursor: pointer;
+}
+.pillOn {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.showAll {
+  font-size: 12.5px;
+  color: var(--blue);
+  font-weight: 500;
+  text-decoration: none;
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.footNote {
+  font-size: 11px;
+  color: var(--faint);
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.fnDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--faint);
+  flex-shrink: 0;
+}
+.pageFoot {
+  border-top: 1px solid var(--line);
+  margin-top: 28px;
+  padding-top: 16px;
+  font-size: 11px;
+  color: var(--faint);
+  line-height: 1.5;
+}
+
+/* ── chart hover: wrapper + crosshair tooltip (stock-page primitives,
+   duplicated locally — the pages stay decoupled) ── */
+.chartWrap {
+  position: relative;
+}
+.chartWrap svg {
+  touch-action: pan-y; /* horizontal scrub captured, vertical scroll passes */
+}
+.tip {
+  position: absolute;
+  top: 8px;
+  z-index: 5;
+  pointer-events: none;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(10, 11, 13, 0.07);
+  padding: 8px 11px;
+  min-width: 128px;
+  white-space: nowrap;
+}
+.tipTitle {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  color: var(--faint);
+  margin-bottom: 5px;
+}
+.tipRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.tipSwatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.tipLabel {
+  color: var(--muted);
+}
+.tipValue {
+  margin-left: auto;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+/* ── entrance stagger (local copy — CSS-module keyframes don't cross files) ── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.fadeUp0,
+.fadeUp1,
+.fadeUp2 {
+  animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.fadeUp1 {
+  animation-delay: 120ms;
+}
+.fadeUp2 {
+  animation-delay: 240ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fadeUp0,
+  .fadeUp1,
+  .fadeUp2 {
+    animation: none;
+  }
+}
+
+/* upstream-unavailable state (no dark fallback exists for this page) */
+.unavailable {
+  border: 1px dashed var(--line-strong);
+  border-radius: 14px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  margin: 22px 0;
+}
+
+@media (max-width: 920px) {
+  .strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .cell:nth-child(2) {
+    border-right: none;
+  }
+  .cell:nth-child(1),
+  .cell:nth-child(2) {
+    border-bottom: 1px solid var(--line);
+  }
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+  .hRight {
+    text-align: left;
+    align-items: flex-start;
+  }
+}
+@media (max-width: 640px) {
+  .tblHead,
+  .tblRow {
+    grid-template-columns: 56px 1fr 60px 70px;
+  }
+  .cSector {
+    display: none;
+  }
+  .tblHead span:nth-child(3) {
+    display: none;
+  }
+}

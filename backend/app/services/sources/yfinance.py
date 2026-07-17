@@ -101,6 +101,44 @@ def detect_asset_type(info: dict) -> dict:
     }
 
 
+async def get_quote(ticker: str) -> dict:
+    """Lightweight quote for the stock-page header: current price + 1d change.
+    Same field-extraction chain as get_yfinance_data's price_data, without the
+    fundamentals/analyst/institutional payload. Returns {} on any error.
+    """
+    try:
+        t = yf.Ticker(ticker)
+        info = await asyncio.to_thread(lambda: t.info)
+
+        current_price = (
+            info.get('regularMarketPrice') or
+            info.get('currentPrice') or
+            info.get('previousClose') or
+            info.get('ask') or
+            info.get('bid') or
+            None
+        )
+        previous_close = info.get('previousClose') or info.get('regularMarketPreviousClose')
+
+        change = info.get('regularMarketChange')
+        if change is None:
+            change = _safe_sub(current_price, previous_close)
+        change_pct = info.get('regularMarketChangePercent')
+        if change_pct is None:
+            change_pct = _safe_pct(change, previous_close)
+
+        if current_price is None:
+            return {}
+        return {
+            "price": current_price,
+            "change": change,
+            "change_percent": change_pct,
+        }
+    except Exception as exc:
+        logger.error("get_quote failed for %s: %s", ticker, exc)
+        return {}
+
+
 async def get_yfinance_data(ticker: str) -> dict:
     """Fetch price, fundamentals, analyst, technical, and institutional data
     from yfinance for *ticker*.  Returns an empty dict on any unhandled error.

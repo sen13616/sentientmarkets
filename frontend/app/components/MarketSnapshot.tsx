@@ -26,10 +26,12 @@ type HomeData = {
 };
 
 const INDEX_DEFS: { key: string; label: string; route?: string }[] = [
-  { key: 'sp500',  label: 'S&P 500',   route: '/index/%5EGSPC' },
-  { key: 'nasdaq', label: 'NASDAQ',    route: '/index/%5ENDX'  },
-  { key: 'dow',    label: 'Dow Jones', route: '/index/%5EDJI'  },
-  { key: 'vix',    label: 'VIX'                                },
+  // Only the S&P 500 has a breadth page; NASDAQ and Dow tiles display
+  // levels but no longer navigate (their index pages were removed).
+  { key: 'sp500',  label: 'S&P 500',   route: '/index/sp500' },
+  { key: 'nasdaq', label: 'NASDAQ'                           },
+  { key: 'dow',    label: 'Dow Jones'                        },
+  { key: 'vix',    label: 'VIX'                              },
 ];
 
 function fmtPrice(n: number | null | undefined): string {

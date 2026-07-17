@@ -1,0 +1,77 @@
+/* Light skeleton for the S&P 500 breadth page. */
+
+.page {
+  background: #fff;
+  min-height: 100vh;
+}
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+.skeleton {
+  background: #f1f3f6;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
+  animation: shimmer 1.8s ease-in-out infinite;
+  transform: translateX(-100%);
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding: 22px 0 18px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.card {
+  border: 1px solid #eceef1;
+  border-radius: 14px;
+  padding: 20px 22px 18px;
+  margin-bottom: 16px;
+}
+
+.strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid #eceef1;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.cell {
+  padding: 14px 17px;
+  border-right: 1px solid #eceef1;
+}
+
+.cell:last-child {
+  border-right: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation: none;
+  }
+}
