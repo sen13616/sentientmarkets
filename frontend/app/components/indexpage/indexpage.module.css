@@ -551,4 +551,19 @@
   .tblHead span:nth-child(3) {
     display: none;
   }
+  .bigNum {
+    font-size: 36px;
+  }
+
+  /* Charts keep a legible rendered width; the wrapper scrolls horizontally.
+     touch-action:auto (over the module's pan-y) lets touch drag the scroll
+     container — tap still places the crosshair via onPointerDown. */
+  .chartWrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .chartWrap svg {
+    min-width: 640px;
+    touch-action: auto;
+  }
 }

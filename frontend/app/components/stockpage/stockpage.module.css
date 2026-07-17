@@ -795,3 +795,41 @@
     margin-top: 10px;
   }
 }
+
+/* ── Phone (≤640px) ── */
+@media (max-width: 640px) {
+  /* Grid items may not shrink below their nowrap stat footers (or the
+     chart svg min-widths below) otherwise. */
+  .twoCol > * {
+    min-width: 0;
+  }
+  .revealCol > * {
+    min-width: 0;
+  }
+  .cardFoot {
+    flex-wrap: wrap;
+    gap: 12px 24px;
+  }
+  .statValue {
+    white-space: normal;
+  }
+  .scoreNum {
+    font-size: 40px;
+  }
+
+  /* Charts keep a legible rendered width; the wrapper scrolls horizontally.
+     touch-action:auto (over the module's pan-y) lets touch drag the scroll
+     container — tap still places the crosshair via onPointerDown. */
+  .chartWrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .chartWrap svg {
+    min-width: 640px;
+    touch-action: auto;
+  }
+  /* PressureChart's 470-wide viewBox needs less room. */
+  .chartWrapSm svg {
+    min-width: 420px;
+  }
+}

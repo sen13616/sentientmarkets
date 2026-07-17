@@ -62,16 +62,8 @@
 .logoWord { font-size: 14px; font-weight: 500; color: var(--tx1); letter-spacing: -0.3px; }
 .logoTld  { font-family: var(--mono); font-size: 11px; color: var(--blue); }
 
-.navSearchWrap { flex: 1; max-width: 380px; position: relative; margin: 0 auto; }
-.navSearchWrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.35; pointer-events: none; }
-.navSearch {
-  width: 100%; background: var(--surface); border: 1px solid var(--line);
-  border-radius: 7px; padding: 7px 14px 7px 36px;
-  font-size: 13px; color: var(--tx2); font-family: var(--sans);
-  outline: none; transition: all .15s;
-}
-.navSearch::placeholder { color: var(--tx3); }
-.navSearch:focus { border-color: rgba(255,255,255,0.18); color: var(--tx1); background: var(--surface-2); }
+/* NavSearch styles live in components/stock/page.module.css — the module
+   NavSearch.tsx actually imports. */
 
 .btnPro {
   background: var(--tx1); color: var(--bg); flex-shrink: 0;
@@ -526,6 +518,12 @@
 
 /* Mobile — single column; gauge goes above chart via CSS order */
 @media (max-width: 640px) {
+  /* Top bar — tighter chrome; the search input must be allowed to shrink
+     (its intrinsic size-attribute width would otherwise force overflow). */
+  .navInner        { padding: 0 16px; gap: 10px; }
+  .navInner input  { min-width: 0; }
+  .btnPro          { padding: 6px 12px; font-size: 12px; }
+
   /* Stock header */
   .stockHeader    { padding: 16px; }
   .stockTopRow    { gap: 8px; flex-wrap: wrap; }
@@ -569,6 +567,13 @@
   .insightTab  { white-space: nowrap; padding: 10px 12px; font-size: 10px; }
   .insightBody { padding: 16px; }
   .insightText { font-size: 14px; }
+
+  /* Analyst view — the 220px+1fr grid can't fit; stack it */
+  .analystGrid { grid-template-columns: 1fr; }
+  .ptItem      { padding: 0 8px; }
+
+  /* Footer — three-across row wraps instead of overflowing */
+  .footer { flex-wrap: wrap; gap: 10px; padding: 20px 16px; }
 }
 
 @media (max-width: 380px) {

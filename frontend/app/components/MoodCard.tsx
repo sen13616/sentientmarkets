@@ -181,7 +181,7 @@ export default function MoodCard() {
                 <p className="text-[11px] font-semibold text-[#7c828a] uppercase tracking-[0.06em] mb-3">
                   5-Day Mood History
                 </p>
-                <div className="flex items-center gap-7">
+                <div className="flex items-center flex-wrap gap-4 sm:gap-7">
                   {history.map((h, i) => {
                     const isToday = i === history.length - 1;
                     const neg = isNegative(h.emotion);

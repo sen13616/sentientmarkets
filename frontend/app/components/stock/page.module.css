@@ -7,6 +7,18 @@
 .neg { color: var(--red);   }
 .neu { color: var(--amber); }
 
+/* ── NavSearch (dark asset-page top bar) ── */
+.navSearchWrap { flex: 1; max-width: 380px; position: relative; margin: 0 auto; min-width: 0; }
+.navSearchWrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: 0.35; pointer-events: none; }
+.navSearch {
+  width: 100%; min-width: 0; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 7px; padding: 7px 14px 7px 36px;
+  font-size: 13px; color: var(--tx2); font-family: var(--sans);
+  outline: none; transition: all .15s;
+}
+.navSearch::placeholder { color: var(--tx3); }
+.navSearch:focus { border-color: rgba(255,255,255,0.18); color: var(--tx1); background: var(--surface-2); }
+
 /* ── PriceChart toolbar ── */
 .chartToolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
 .chartLabel   { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--tx3); }

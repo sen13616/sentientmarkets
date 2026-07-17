@@ -118,6 +118,18 @@
 .searchGo:hover  { background: #003ecc; }
 .searchGo:active { transform: scale(0.97); }
 
+/* Phone: keep the button label ("Read mood →") inside the pill */
+@media (max-width: 480px) {
+  .searchGo {
+    padding: 8px 14px;
+    font-size: 0.8125rem;
+  }
+  .searchInput {
+    padding: 14px 10px 14px 10px;
+    font-size: 0.9375rem;
+  }
+}
+
 /* Autocomplete dropdown — flat card, hairline border, no gradient shadow */
 .searchDropdown {
   position: absolute;

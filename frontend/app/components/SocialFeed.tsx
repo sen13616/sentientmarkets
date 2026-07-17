@@ -71,10 +71,13 @@ export default function SocialFeed({
 
         <div className="bg-white border border-[#dee1e6] rounded-xl overflow-hidden flex-1 flex flex-col">
 
-          {/* Table header */}
-          <div className="grid grid-cols-[3rem_1fr_auto_auto] gap-4 items-center bg-[#f7f7f7] border-b border-[#dee1e6] px-8 py-4">
+          {/* Table header — the Mentions column drops out below sm */}
+          <div className="grid grid-cols-[2.5rem_1fr_auto] sm:grid-cols-[3rem_1fr_auto_auto] gap-4 items-center bg-[#f7f7f7] border-b border-[#dee1e6] px-4 sm:px-8 py-4">
             {['Rank', 'Ticker', 'Mentions', 'Momentum'].map((h) => (
-              <span key={h} className="text-[11px] font-semibold text-[#7c828a] uppercase tracking-[0.05em]">
+              <span
+                key={h}
+                className={`text-[11px] font-semibold text-[#7c828a] uppercase tracking-[0.05em] ${h === 'Mentions' ? 'hidden sm:block' : ''}`}
+              >
                 {h}
               </span>
             ))}
@@ -84,13 +87,13 @@ export default function SocialFeed({
           {!loaded && (
             <div className="divide-y divide-[#eef0f3]">
               {Array.from({ length: 6 }, (_, i) => (
-                <div key={i} className="grid grid-cols-[3rem_1fr_auto_auto] gap-4 items-center px-8 py-4 animate-pulse">
+                <div key={i} className="grid grid-cols-[2.5rem_1fr_auto] sm:grid-cols-[3rem_1fr_auto_auto] gap-4 items-center px-4 sm:px-8 py-4 animate-pulse">
                   <div className="h-3 w-4 bg-[#eef0f3] rounded" />
                   <div className="space-y-1.5">
                     <div className="h-3 w-20 bg-[#eef0f3] rounded" />
                     <div className="h-2 w-28 bg-[#eef0f3] rounded" />
                   </div>
-                  <div className="h-3 w-12 bg-[#eef0f3] rounded" />
+                  <div className="hidden sm:block h-3 w-12 bg-[#eef0f3] rounded" />
                   <div className="h-5 w-16 bg-[#eef0f3] rounded-full" />
                 </div>
               ))}
@@ -115,7 +118,7 @@ export default function SocialFeed({
                       viewport={{ once: true }}
                       transition={{ duration: 0.4, delay: Math.min(rowIdx, 7) * 0.04, ease: 'easeOut' }}
                       onClick={() => onNavigate(stock.ticker)}
-                      className="group flex-1 grid grid-cols-[3rem_1fr_auto_auto] gap-4 items-center px-8 py-4 hover:bg-[#f7f7f7] cursor-pointer transition-colors"
+                      className="group flex-1 grid grid-cols-[2.5rem_1fr_auto] sm:grid-cols-[3rem_1fr_auto_auto] gap-4 items-center px-4 sm:px-8 py-4 hover:bg-[#f7f7f7] cursor-pointer transition-colors"
                     >
                       {/* Rank */}
                       <span className="text-sm font-mono text-[#7c828a]">{stock.rank}</span>
@@ -130,8 +133,8 @@ export default function SocialFeed({
                         </div>
                       </div>
 
-                      {/* Mentions */}
-                      <div className="flex items-center gap-2">
+                      {/* Mentions — hidden on phones (column drops out) */}
+                      <div className="hidden sm:flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-[#a8acb3]" />
                         <span className="text-sm font-mono font-medium text-[#0a0b0d]">
                           {(stock.mentions ?? 0).toLocaleString()}

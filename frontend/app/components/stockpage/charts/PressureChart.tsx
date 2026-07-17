@@ -45,7 +45,7 @@ export default function PressureChart({ history }: { history: HistoryPayload }) 
       : null;
 
   return (
-    <div className={css.chartWrap}>
+    <div className={`${css.chartWrap} ${css.chartWrapSm}`}>
       <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Short-term pressure chart" {...handlers}>
         {[-6, -3, 3, 6].map((g) => (
           <line key={g} x1={PL} x2={W - PR} y1={s.y(g)} y2={s.y(g)} stroke="#f1f3f6" strokeWidth={1} />
