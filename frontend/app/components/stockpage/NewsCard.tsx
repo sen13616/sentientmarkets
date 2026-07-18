@@ -24,7 +24,7 @@ function timeAgo(iso: string): string {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-/* Latest per-ticker coverage from NewsAPI in a responsive 3×3 grid.
+/* Latest per-ticker coverage from Finnhub in a responsive 3×3 grid.
    Hidden entirely when the (backend-cached) result comes back empty. */
 export default function NewsCard({ ticker }: { ticker: string }) {
   // null = loading; [] = confirmed empty (card hides).
@@ -52,7 +52,7 @@ export default function NewsCard({ ticker }: { ticker: string }) {
       <div className={s.cardHead}>
         <div className={s.cardTitle}>In the news</div>
       </div>
-      <div className={s.cardSub}>Latest coverage via NewsAPI. Links open the source.</div>
+      <div className={s.cardSub}>Latest coverage via Finnhub. Links open the source.</div>
       <div className={s.newsGrid}>
         {articles === null
           ? Array.from({ length: 9 }, (_, i) => (

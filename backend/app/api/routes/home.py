@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.services.sources.fear_greed import get_fear_greed_data
 from app.services.sources.apewisdom import get_trending_tickers
-from app.services.sources.newsapi import get_newsapi_data
+from app.services.sources.finnhub import get_market_news
 from app.services.sources.yfinance import get_market_indices
 from app.services.cache import get_cached, set_cached
 
@@ -28,7 +28,7 @@ async def get_home():
         fear_greed, trending, news, indices = await asyncio.gather(
             get_fear_greed_data(),
             get_trending_tickers(20),
-            get_newsapi_data(),
+            get_market_news(),
             get_market_indices(),
             return_exceptions=True,
         )

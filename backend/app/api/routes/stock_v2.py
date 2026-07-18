@@ -21,7 +21,7 @@ from app.config import settings
 from app.services import sentiment_api
 from app.services.cache import get_cached, set_cached
 from app.services.sentiment_api import TickerNotFound, UpstreamUnavailable
-from app.services.sources.newsapi import get_company_news
+from app.services.sources.finnhub import get_company_news
 from app.services.sources.yfinance import get_quote
 from app.services.sentiment_stats import (
     GAP_HOURS,
@@ -206,8 +206,8 @@ async def get_stock_history(ticker: str, days: int = Query(30)):
 
 
 INSIGHT_TTL = 900   # one Claude call per ticker per scoring tick
-NEWS_TTL = 3600     # NewsAPI free tier is 100 req/day — the cache is load-bearing
-NEWS_NEG_TTL = 900  # empty/failed results still shield the daily quota
+NEWS_TTL = 3600     # cache Finnhub company news for an hour to spare the rate limit
+NEWS_NEG_TTL = 900  # empty/failed results still shielded so we don't refetch on every hit
 
 _NOT_FOUND = HTTPException(
     status_code=404,
@@ -343,9 +343,7 @@ async def get_stock_news(ticker: str):
     if meta is None:
         raise _NOT_FOUND
 
-    name = meta.get("name")
-    query = f'"{name}" OR {ticker}' if name else ticker
-    articles = await get_company_news(query)
+    articles = await get_company_news(ticker)
 
     payload = {"ticker": ticker, "articles": articles[:9]}
     await set_cached(cache_key, payload, NEWS_TTL if articles else NEWS_NEG_TTL)

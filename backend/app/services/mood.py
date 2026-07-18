@@ -15,7 +15,7 @@ from app.services.cache import get_cached, set_cached
 from app.services.sources.yfinance import get_yfinance_data
 from app.services.sources.fear_greed import get_fear_greed_data
 from app.services.sources.apewisdom import get_trending_tickers
-from app.services.sources.newsapi import get_newsapi_data
+from app.services.sources.finnhub import get_market_news
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +114,7 @@ async def fetch_mood_signals() -> dict:
             get_yfinance_data('SPY'),
             get_fear_greed_data(),
             get_trending_tickers(10),
-            get_newsapi_data(),
+            get_market_news(),
             return_exceptions=True,
         )
 

@@ -6,7 +6,6 @@ load_dotenv()
 
 class Settings(BaseSettings):
     ALPHA_VANTAGE_API_KEY: str = ""
-    NEWSAPI_KEY: str = ""
     FINNHUB_API_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
     # External SentimentAPI (docs/SENTIMENTAPI_CONTRACT.md). PRO_API_KEY is the

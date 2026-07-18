@@ -127,3 +127,60 @@ async def get_finnhub_data(ticker: str) -> dict:
         "insider_sentiment":  insider_sentiment,
         "earnings_surprises": earnings_surprises,
     }
+
+
+def _map_news(raw: list) -> list[dict]:
+    """Map Finnhub news articles to our display shape, dropping headline-less
+    stubs. Field names match what the homepage and stock-page consumers
+    already expect (title / source / published_at / description / url)."""
+    articles = []
+    for article in raw or []:
+        headline = article.get("headline")
+        if not headline:
+            continue
+        ts = article.get("datetime")
+        articles.append({
+            "title":        headline,
+            "source":       article.get("source"),
+            "published_at": _iso(ts) if ts is not None else None,
+            "description":  article.get("summary"),
+            "url":          article.get("url"),
+        })
+    return articles
+
+
+async def get_market_news() -> dict:
+    """Fetch general market headlines from Finnhub for the homepage macro feed.
+    Returns the articles list wrapped in a small envelope. Returns an empty
+    dict on any error (callers treat that as 'no news').
+    """
+    try:
+        raw = await asyncio.to_thread(_get, "/news", {"category": "general"})
+        articles = _map_news(raw if isinstance(raw, list) else [])[:10]
+        return {
+            "source":        "Finnhub",
+            "total_results": len(articles),
+            "articles":      articles,
+        }
+    except Exception as exc:
+        logger.error("get_market_news failed: %s", exc)
+        return {}
+
+
+async def get_company_news(ticker: str) -> list[dict]:
+    """Latest company news for *ticker* from Finnhub over a 7-day window,
+    newest first, at most 9. Returns [] on any error — callers negative-cache
+    empty results to shield the rate limit.
+    """
+    try:
+        today    = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        week_ago = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
+        raw = await asyncio.to_thread(
+            _get, "/company-news", {"symbol": ticker, "from": week_ago, "to": today}
+        )
+        raw = raw if isinstance(raw, list) else []
+        raw.sort(key=lambda a: a.get("datetime") or 0, reverse=True)
+        return _map_news(raw)[:9]
+    except Exception as exc:
+        logger.error("get_company_news failed for %s: %s", ticker, exc)
+        return []

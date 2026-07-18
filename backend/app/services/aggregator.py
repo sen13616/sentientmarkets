@@ -12,7 +12,6 @@ from app.services.sources.fear_greed import get_fear_greed_data
 from app.services.sources.apewisdom import get_apewisdom_data
 from app.services.sources.finnhub import get_finnhub_data
 from app.services.sources.alpha_vantage import get_alpha_vantage_data
-from app.services.sources.newsapi import get_newsapi_data
 from app.services.sources.google_trends import get_google_trends_data
 
 logger = logging.getLogger(__name__)
@@ -43,9 +42,6 @@ async def gather_signals(ticker: str) -> dict:
     # Finnhub — stocks only (insider + earnings)
     if asset_meta.get('has_insider', False) or asset_meta.get('has_earnings', False):
         tasks['finnhub'] = get_finnhub_data(ticker)
-
-    # NewsAPI — always (macro context useful for all)
-    tasks['newsapi'] = get_newsapi_data()
 
     # Google Trends — everything except forex
     if asset_type != 'forex':
@@ -82,7 +78,6 @@ async def gather_signals(ticker: str) -> dict:
         "fear_greed":    task_results.get('fear_greed', {}),
         "apewisdom":     task_results.get('apewisdom', {}),
         "finnhub":       task_results.get('finnhub', {}),
-        "newsapi":       task_results.get('newsapi', {}),
         "google_trends": task_results.get('google_trends', {}),
         "alpha_vantage": alpha_vantage_data,
     }
