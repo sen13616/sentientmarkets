@@ -49,10 +49,10 @@ scheduler = AsyncIOScheduler()
 
 @app.on_event("startup")
 async def startup():
-    scheduler.add_job(refresh_mood, "interval", minutes=15, id="mood_refresh")
+    scheduler.add_job(refresh_mood, "interval", minutes=60, id="mood_refresh")
     scheduler.add_job(refresh_screener, "interval", minutes=15, id="screener_refresh")
     scheduler.start()
-    logger.info("Schedulers started — mood + screener refreshing every 15 minutes")
+    logger.info("Schedulers started — mood refreshing every 60 minutes, screener every 15 minutes")
     # Generate initial payloads on startup (don't block — run in background)
     import asyncio
     asyncio.create_task(refresh_mood())
