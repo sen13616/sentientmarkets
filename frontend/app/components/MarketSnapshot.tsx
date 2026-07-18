@@ -222,9 +222,11 @@ export default function MarketSnapshot() {
                   </div>
                 </div>
 
-                {/* Price — mono per NEW_DESIGN */}
-                <div className="text-4xl font-mono font-medium text-[#0a0b0d] tracking-tight mb-3">
-                  <span className="text-2xl mr-0.5 text-[#a8acb3]">$</span>
+                {/* Price — mono per NEW_DESIGN. Font shrinks in the narrow lg
+                    band (2-col grid on a row layout) so 5-digit index levels
+                    like the Dow don't overflow the card. */}
+                <div className="text-4xl lg:text-2xl xl:text-4xl font-mono font-medium text-[#0a0b0d] tracking-tight mb-3 whitespace-nowrap">
+                  <span className="text-2xl lg:text-lg xl:text-2xl mr-0.5 text-[#a8acb3]">$</span>
                   {fmtPrice(idx.price)}
                 </div>
 
