@@ -24,7 +24,6 @@ jiter==0.13.0
 lxml==6.0.2
 multitasking==0.0.12
 numpy==2.2.6
-openai==2.29.0
 pandas==2.3.3
 peewee==4.0.2
 platformdirs==4.9.4
