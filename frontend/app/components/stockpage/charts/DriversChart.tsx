@@ -8,10 +8,13 @@ import { labelIndices, makeScale } from './chartUtils';
 import GapBands from './GapBands';
 import ChartTooltip from './ChartTooltip';
 import useChartHover from './useChartHover';
+import useCompactChart from './useCompactChart';
 import css from '../stockpage.module.css';
 
 // PR reserves room for the final centered x tick (Part B: no clipping).
-const W = 960, H = 280, PL = 42, PR = 40, PT = 12, PB = 26;
+// The compact set keeps 11-unit labels legible at phone widths.
+const DESKTOP = { W: 960, H: 280, PL: 42, PR: 40, PT: 12, PB: 26 };
+const COMPACT = { W: 390, H: 240, PL: 30, PR: 8, PT: 12, PB: 24 };
 
 const COLORS: Record<string, string> = {
   market: '#0052ff',
@@ -33,6 +36,8 @@ const LABELS: Record<string, string> = {
 export default function DriversChart({ history }: { history: HistoryPayload }) {
   const { points, segments, gaps } = history;
   const svgRef = useRef<SVGSVGElement>(null);
+  const compact = useCompactChart();
+  const { W, H, PL, PR, PT, PB } = compact ? COMPACT : DESKTOP;
 
   const geom = useMemo(() => {
     // Per-point channel contributions (renormalized over present layers).
@@ -52,7 +57,7 @@ export default function DriversChart({ history }: { history: HistoryPayload }) {
       .filter((e) => e.ok)
       .map(({ i, x }) => ({ i, x }));
     return { contribs, totals, s, grid, hoverXs };
-  }, [points]);
+  }, [points, W, H, PL, PR, PT, PB]);
 
   const { hover, handlers } = useChartHover({ svgRef, xs: geom.hoverXs, viewBoxWidth: W });
 
@@ -89,7 +94,7 @@ export default function DriversChart({ history }: { history: HistoryPayload }) {
             </text>
           </g>
         ))}
-        {labelIndices(s.n).map((i, idx, arr) => (
+        {labelIndices(s.n, compact ? 3 : 6).map((i, idx, arr) => (
           <text
             key={i}
             x={s.x(i)}

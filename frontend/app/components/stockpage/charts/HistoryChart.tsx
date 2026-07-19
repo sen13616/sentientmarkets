@@ -8,13 +8,16 @@ import { labelIndices, makeScale, yDomain } from './chartUtils';
 import GapBands from './GapBands';
 import ChartTooltip from './ChartTooltip';
 import useChartHover from './useChartHover';
+import useCompactChart from './useCompactChart';
 import useDrawIn from './useDrawIn';
 import css from '../stockpage.module.css';
 
 // PR reserves room so the final centered x tick and the endpoint value label
-// stay inside the 960 viewBox instead of clipping.
-const W = 960, H = 300, PL = 42, PR = 40, PT = 12, PB = 26;
-const PLOT_W = W - PL - PR;
+// stay inside the 960 viewBox instead of clipping. The compact set trades
+// that gutter for label legibility at phone widths (price labels move
+// inside the plot there, so nothing renders past the viewBox).
+const DESKTOP = { W: 960, H: 300, PL: 42, PR: 40, PT: 12, PB: 26 };
+const COMPACT = { W: 390, H: 260, PL: 30, PR: 8, PT: 12, PB: 24 };
 
 /* Smoothed composite (solid blue) over raw composite (dashed underlay),
    neutral-50 dashline, quiet flat bands over data gaps. Draws in with a
@@ -32,6 +35,9 @@ export default function HistoryChart({
   const svgRef = useRef<SVGSVGElement>(null);
   const clipId = useId();
   const { shouldDraw, reduced } = useDrawIn(svgRef);
+  const compact = useCompactChart();
+  const { W, H, PL, PR, PT, PB } = compact ? COMPACT : DESKTOP;
+  const PLOT_W = W - PL - PR;
 
   const geom = useMemo(() => {
     const scores = points.map((p) => p.score);
@@ -50,7 +56,7 @@ export default function HistoryChart({
         .filter((e) => e.ok)
         .map(({ i, x }) => ({ i, x })),
     };
-  }, [points, segments]);
+  }, [points, segments, W, H, PL, PR, PT, PB]);
 
   /* Price overlay geometry: its own right-axis scale, and ONE continuous
      path — price trades straight through sentiment outages, so the line
@@ -75,7 +81,7 @@ export default function HistoryChart({
       d += `${i === 0 ? 'M' : 'L'}${s.xAt(p.t).toFixed(1)} ${y(p.close).toFixed(1)} `;
     });
     return { pts, y, d, labels: [dataLo, (dataLo + dataHi) / 2, dataHi] };
-  }, [priceSeries, geom]);
+  }, [priceSeries, geom, W, H, PL, PR, PT, PB]);
 
   const { hover, handlers } = useChartHover({ svgRef, xs: geom.hoverXs, viewBoxWidth: W });
 
@@ -130,7 +136,7 @@ export default function HistoryChart({
             </text>
           </g>
         ))}
-        {labelIndices(s.n).map((i, idx, arr) => (
+        {labelIndices(s.n, compact ? 3 : 6).map((i, idx, arr) => (
           <text
             key={i}
             x={s.x(i)}
@@ -182,13 +188,16 @@ export default function HistoryChart({
             />
           )}
         </g>
-        {/* Right price axis — only while the overlay is on. */}
+        {/* Right price axis — only while the overlay is on. Desktop: just
+            past the viewBox edge in the card's padding gutter (overflow is
+            visible); compact: inside the plot so nothing escapes the phone
+            viewport. */}
         {priceGeom && (
           <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }}>
             {priceGeom.labels.map((v, i) => (
               <text
                 key={i}
-                x={W + 12}
+                x={compact ? W - 4 : W + 12}
                 y={priceGeom.y(v) + 4}
                 textAnchor="end"
                 fontSize={10.5}

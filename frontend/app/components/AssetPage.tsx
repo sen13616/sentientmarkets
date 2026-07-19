@@ -441,12 +441,8 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
                   return (
                     <div
                       key={key}
+                      className={styles.sbRow}
                       style={{
-                        display: 'grid',
-                        gridTemplateColumns: '160px 1fr 48px 36px',
-                        alignItems: 'center',
-                        gap: 14,
-                        padding: '11px 20px',
                         borderBottom: i < SIGNAL_ORDER.length - 1 ? '1px solid var(--line)' : 'none',
                         opacity: available ? 1 : 0.38,
                       }}

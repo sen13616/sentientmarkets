@@ -1,41 +1,17 @@
 import Link from 'next/link';
 import styles from '../page.module.css';
+import Nav from '../components/Nav';
 import Reveal from '../components/Reveal';
 
 export const metadata = {
   title: 'Contact — SentientMarkets',
 };
 
-const NAV_LINKS: [string, string][] = [
-  ['/', 'Markets'],
-  ['/about', 'About'],
-  ['/technology', 'Technology'],
-  ['/faq', 'FAQ'],
-  ['/contact', 'Contact'],
-];
 
 export default function ContactPage() {
   return (
     <div className={`${styles.home} home-light min-h-screen`}>
-      <nav className="sticky top-0 z-50 flex items-center justify-between px-6 md:px-20 h-14 backdrop-blur-md border-b bg-white/95 border-[#dee1e6]">
-        <Link href="/" className="text-lg font-semibold tracking-[-0.01em] text-[#0a0b0d]">
-          SentientMarkets
-        </Link>
-        <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map(([href, label]) => (
-            <Link
-              key={label}
-              href={href}
-              className="text-sm font-medium text-[#5b616e] hover:text-[#0a0b0d] transition-colors"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-        <button className="bg-[#0052ff] hover:bg-[#003ecc] text-white px-5 h-10 rounded-full text-sm font-semibold transition-all active:scale-95">
-          Get Pro
-        </button>
-      </nav>
+      <Nav variant="light" />
 
       <div className="px-6 md:px-20">
         <div className="mx-auto w-full max-w-[1200px] pb-24">

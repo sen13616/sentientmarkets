@@ -4,15 +4,17 @@ import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { SectorRow } from '../types';
 import ChartTooltip from './ChartTooltip';
+import useCompactChart from './useCompactChart';
 import useDrawIn from './useDrawIn';
 import s from '../indexpage.module.css';
 
-const W = 1000;
-const LABEL_R = 188;      // sector names, right-aligned into a fixed gutter
-const PLOT_L = 205;       // plot starts right of the gutter — left-extending
-const PLOT_R = 890;       //   (bearish) bars can never collide with labels
-const NAMES_X = 980;      // "N names" column
-const ROW_H = 28, BAR_H = 16, TOP = 12;
+// LABEL_R: sector names, right-aligned into a fixed gutter. PLOT_L: plot
+// starts right of the gutter — left-extending (bearish) bars can never
+// collide with labels. NAMES_X: "N names" column (desktop only — compact
+// drops it; the count stays in the tooltip). Compact narrows the whole
+// frame so text renders near-1:1 at phone widths instead of ~4px.
+const DESKTOP = { W: 1000, LABEL_R: 188, PLOT_L: 205, PLOT_R: 890, NAMES_X: 980, ROW_H: 28, BAR_H: 16, TOP: 12 };
+const COMPACT = { W: 390, LABEL_R: 145, PLOT_L: 153, PLOT_R: 352, NAMES_X: null, ROW_H: 28, BAR_H: 14, TOP: 12 };
 
 /* Horizontal sector bars measured from the 50 baseline: right and blue when
    the sector mean is >= 50, LEFT and red when it is below (the mockup's
@@ -27,7 +29,10 @@ export default function SectorChart({
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const { shouldDraw, reduced } = useDrawIn(svgRef);
+  const compact = useCompactChart();
   const [hover, setHover] = useState<number | null>(null); // row index
+
+  const { W, LABEL_R, PLOT_L, PLOT_R, NAMES_X, ROW_H, BAR_H, TOP } = compact ? COMPACT : DESKTOP;
 
   const rows = sectors
     .filter((r): r is SectorRow & { average_score: number } => r.average_score !== null)
@@ -46,16 +51,24 @@ export default function SectorChart({
   const baseX = xAt(50);
   const meanX = mean !== null ? xAt(mean) : null;
 
-  // Vertical gridlines + ticks every 2 score points; skip ticks that would
-  // sit under the baseline "50" or the universe-mean label.
+  // Vertical gridlines + ticks every 2 score points (4 in compact — the
+  // narrow plot gets crowded); skip ticks that would sit under the
+  // baseline "50" or the universe-mean label.
+  const tickStep = compact ? 4 : 2;
   const ticks: number[] = [];
-  for (let v = Math.ceil(xMin / 2) * 2; v <= xMax; v += 2) ticks.push(v);
+  for (let v = Math.ceil(xMin / tickStep) * tickStep; v <= xMax; v += tickStep) ticks.push(v);
   // The mean label renders rightward from meanX (+5, ~110px wide) — skip
-  // ticks inside that span, not just a symmetric radius.
+  // ticks inside that span, not just a symmetric radius. Compact renders
+  // near-1:1, so the same physical label needs a smaller viewBox window.
+  const meanLabelSpan = compact ? 70 : 130;
+  // In compact, near-1:1 rendering also needs a keep-out zone around the
+  // baseline "50" label itself, not just the exact v === 50 tick.
+  const baselineKeepOut = compact ? 20 : 0;
   const labelled = ticks.filter(
     (v) =>
       v !== 50 &&
-      (meanX === null || xAt(v) < meanX - 25 || xAt(v) > meanX + 130) &&
+      Math.abs(xAt(v) - baseX) > baselineKeepOut &&
+      (meanX === null || xAt(v) < meanX - 25 || xAt(v) > meanX + meanLabelSpan) &&
       xAt(v) >= PLOT_L - 1 && xAt(v) <= PLOT_R + 1,
   );
 
@@ -126,13 +139,16 @@ export default function SectorChart({
                 transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: 0.15 + i * 0.05 }}
               />
             )}
-            <text x={LABEL_R} y={y + 12} textAnchor="end" fontFamily="var(--font-inter), sans-serif" fontSize={12.5} fill="#0a0b0d">
+            <text x={LABEL_R} y={y + 12} textAnchor="end" fontFamily="var(--font-inter), sans-serif" fontSize={compact ? 11.5 : 12.5} fill="#0a0b0d">
               {r.sector}
             </text>
+            {/* Bearish labels extend left of the bar end; in the compact
+                frame that runs into the name gutter, so they move to the
+                empty space right of the baseline instead. */}
             <motion.text
-              x={bullish ? endX + 10 : endX - 8}
+              x={bullish ? endX + 10 : compact ? baseX + 10 : endX - 8}
               y={y + 12}
-              textAnchor={bullish ? 'start' : 'end'}
+              textAnchor={bullish || compact ? 'start' : 'end'}
               fontFamily="var(--font-jetbrains-mono), monospace"
               fontSize={12}
               fill="#0a0b0d"
@@ -142,7 +158,7 @@ export default function SectorChart({
             >
               {r.average_score.toFixed(1)}
             </motion.text>
-            {r.size !== null && (
+            {r.size !== null && NAMES_X !== null && (
               <text x={NAMES_X} y={y + 12} textAnchor="end" fontFamily="var(--font-jetbrains-mono), monospace" fontSize={10.5} fill="#8a919e">
                 {r.size} names
               </text>
