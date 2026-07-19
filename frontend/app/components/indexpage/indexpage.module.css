@@ -551,4 +551,15 @@
   .tblHead span:nth-child(3) {
     display: none;
   }
+  .wrap {
+    padding: 0 16px 60px;
+  }
+  .bigNum {
+    font-size: 36px;
+  }
+  .mvHead,
+  .moverRow {
+    grid-template-columns: 44px 1fr 44px 54px;
+    gap: 8px;
+  }
 }

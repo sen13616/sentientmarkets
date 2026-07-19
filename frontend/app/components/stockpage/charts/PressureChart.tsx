@@ -8,11 +8,15 @@ import { labelIndices, makeScale } from './chartUtils';
 import GapBands from './GapBands';
 import ChartTooltip from './ChartTooltip';
 import useChartHover from './useChartHover';
+import useCompactChart from './useCompactChart';
 import useDrawIn from './useDrawIn';
 import css from '../stockpage.module.css';
 
 // PR reserves room for the final centered x tick (Part B: no clipping).
-const W = 470, H = 190, PL = 34, PR = 26, PT = 10, PB = 22;
+// This chart's 470-unit viewBox already renders ≥8px labels on phones —
+// compact only narrows W so the geometry matches the real aspect ratio.
+const DESKTOP = { W: 470, H: 190, PL: 34, PR: 26, PT: 10, PB: 22 };
+const COMPACT = { W: 390, H: 190, PL: 34, PR: 26, PT: 10, PB: 22 };
 const LIMIT = 6;
 
 /* Raw minus smoothed score per point, clamped to ±6 — green above trend,
@@ -22,6 +26,8 @@ export default function PressureChart({ history }: { history: HistoryPayload }) 
   const { points, gaps } = history;
   const svgRef = useRef<SVGSVGElement>(null);
   const { shouldDraw, reduced } = useDrawIn(svgRef);
+  const compact = useCompactChart();
+  const { W, H, PL, PR, PT, PB } = compact ? COMPACT : DESKTOP;
 
   const geom = useMemo(() => {
     const s = makeScale(points, { W, H, PL, PR, PT, PB, yMin: -LIMIT, yMax: LIMIT });
@@ -31,7 +37,7 @@ export default function PressureChart({ history }: { history: HistoryPayload }) 
       .filter((e) => e.ok)
       .map(({ i, x }) => ({ i, x }));
     return { s, barW, hoverXs };
-  }, [points]);
+  }, [points, W, H, PL, PR, PT, PB]);
 
   const { hover, handlers } = useChartHover({ svgRef, xs: geom.hoverXs, viewBoxWidth: W });
 

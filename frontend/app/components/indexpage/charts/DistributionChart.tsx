@@ -4,12 +4,14 @@ import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { HistogramBucket } from '../types';
 import ChartTooltip from './ChartTooltip';
+import useCompactChart from './useCompactChart';
 import useDrawIn from './useDrawIn';
 import s from '../indexpage.module.css';
 
-const W = 1000, H = 200, PL = 40, PR = 20, TOP = 12, FLOOR = 150;
-const PLOT_W = W - PL - PR; // 940
-const PLOT_H = FLOOR - TOP; // 138
+// Compact keeps the 10-unit labels legible at phone widths (≈9px real
+// instead of ≈3.5px when the 1000-unit viewBox squeezes into ~360 CSS px).
+const DESKTOP = { W: 1000, H: 200, PL: 40, PR: 20, TOP: 12, FLOOR: 150 };
+const COMPACT = { W: 390, H: 170, PL: 30, PR: 8, TOP: 10, FLOOR: 128 };
 
 /* Bucket bars over whatever range the API returns — nothing about the
    x-domain, y-max, or the neutral-50 marker is hardcoded. Buckets aligned
@@ -18,9 +20,14 @@ const PLOT_H = FLOOR - TOP; // 138
 export default function DistributionChart({ histogram }: { histogram: HistogramBucket[] }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const { shouldDraw, reduced } = useDrawIn(svgRef);
+  const compact = useCompactChart();
   const [hover, setHover] = useState<number | null>(null); // bucket index
 
   if (histogram.length === 0) return null;
+
+  const { W, H, PL, PR, TOP, FLOOR } = compact ? COMPACT : DESKTOP;
+  const PLOT_W = W - PL - PR;
+  const PLOT_H = FLOOR - TOP;
 
   const histMin = histogram[0].from;
   const histMax = histogram[histogram.length - 1].to;
@@ -37,9 +44,10 @@ export default function DistributionChart({ histogram }: { histogram: HistogramB
   // Horizontal gridlines at quarters of the clean max.
   const gridVals = [0, 0.25, 0.5, 0.75, 1].map((f) => Math.round(yMax * f));
 
-  // Boundary labels every 2 buckets (10 points for 5-point buckets).
+  // Boundary labels every 2 buckets (10 points for 5-point buckets);
+  // every 4 in compact so labels never collide at phone widths.
   const tickVals: number[] = [];
-  for (let v = histMin; v <= histMax; v += (histogram[0].to - histogram[0].from) * 2) {
+  for (let v = histMin; v <= histMax; v += (histogram[0].to - histogram[0].from) * (compact ? 4 : 2)) {
     tickVals.push(v);
   }
   if (tickVals[tickVals.length - 1] !== histMax) tickVals.push(histMax);

@@ -81,3 +81,11 @@ body:has(.home-light) {
 body:has(.home-light)::before {
   content: none; /* no grain texture on the white canvas */
 }
+
+/* ── Safety net: never let a stray wide element create page-level
+   horizontal scroll on phones. `clip` (not `hidden`) — it does not create
+   a scroll container, so the sticky navs keep working. ── */
+html,
+body {
+  overflow-x: clip;
+}

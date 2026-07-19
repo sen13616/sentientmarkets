@@ -376,6 +376,9 @@
 .sfFill { height: 100%; border-radius: 3px; background: var(--green); }
 .sfAxis { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--tx3); margin-bottom: 12px; }
 
+/* Score-breakdown signal row (class, not inline, so the phone override applies) */
+.sbRow { display: grid; grid-template-columns: 160px 1fr 48px 36px; align-items: center; gap: 14px; padding: 11px 20px; }
+
 /* ═══════════════════════════════════════════
    5. NEWS
 ═══════════════════════════════════════════ */
@@ -569,6 +572,44 @@
   .insightTab  { white-space: nowrap; padding: 10px 12px; font-size: 10px; }
   .insightBody { padding: 16px; }
   .insightText { font-size: 14px; }
+
+  /* Nav */
+  .navInner { padding: 0 14px; gap: 10px; }
+
+  /* Fundamentals — 4-up → 2-up */
+  .fundGrid { grid-template-columns: repeat(2, 1fr); }
+  .fundCell { padding: 14px 16px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .fundCell:nth-child(2n) { border-right: none; }
+  .fundCell:nth-last-child(-n+2) { border-bottom: none; }
+
+  /* Institutional stats — 1×4 → 2×2 */
+  .instTop { grid-template-columns: repeat(2, 1fr); }
+  .instStat { padding: 14px 16px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .instStat:nth-child(2n) { border-right: none; }
+  .instStat:nth-last-child(-n+2) { border-bottom: none; }
+
+  /* Analyst view — consensus card stacks above targets */
+  .analystGrid { grid-template-columns: 1fr; }
+  .ptItem { padding: 0 8px; }
+  .ptItemVal { font-size: 14px; }
+
+  /* Earnings table — 4 short numeric cols, tightened */
+  .etHead, .etRow { grid-template-columns: 1fr 1fr 1fr 64px; gap: 8px; padding: 10px 14px; }
+  .etHead span { font-size: 9px; }
+  .etRow span { font-size: 11px; }
+
+  /* Holders table — name column wins the width fight */
+  .htHead, .htRow { grid-template-columns: 1.6fr 1fr 0.9fr 0.9fr; gap: 8px; padding: 10px 14px; }
+  .htHead span { font-size: 9px; }
+  .htRow span { font-size: 11px; }
+  .htRow span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Score breakdown rows */
+  .sbRow { grid-template-columns: 90px 1fr 40px 30px; gap: 8px; }
+  .sbRow span:first-child { font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Footer — column stack */
+  .footer { flex-direction: column; gap: 12px; padding: 20px 16px; text-align: center; }
 }
 
 @media (max-width: 380px) {

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
-import styles from './page.module.css';
+import styles from '../AssetPage.module.css';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 

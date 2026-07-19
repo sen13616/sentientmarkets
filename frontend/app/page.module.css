@@ -417,3 +417,20 @@
   text-align: right;
   /* color set inline from positivity */
 }
+
+/* ── Phone: keep the hero search pill intact — the input's implicit
+   min-width (long placeholder) otherwise pushes the CTA past the clip ── */
+@media (max-width: 640px) {
+  .searchInput {
+    min-width: 0;
+    padding: 14px 10px 14px 8px;
+    font-size: 0.9375rem;
+  }
+  .searchGo {
+    padding: 10px 14px;
+    font-size: 0.8125rem;
+  }
+  .searchBar svg {
+    margin-left: 14px;
+  }
+}
