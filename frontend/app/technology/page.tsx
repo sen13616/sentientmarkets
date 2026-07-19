@@ -1,41 +1,17 @@
 import Link from 'next/link';
 import styles from '../page.module.css';
+import Nav from '../components/Nav';
 import Reveal from '../components/Reveal';
 
 export const metadata = {
   title: 'Technology — SentientMarkets',
 };
 
-const NAV_LINKS: [string, string][] = [
-  ['/', 'Markets'],
-  ['/about', 'About'],
-  ['/technology', 'Technology'],
-  ['/faq', 'FAQ'],
-  ['/contact', 'Contact'],
-];
 
 export default function TechnologyPage() {
   return (
     <div className={`${styles.home} home-light min-h-screen`}>
-      <nav className="sticky top-0 z-50 flex items-center justify-between px-6 md:px-20 h-14 backdrop-blur-md border-b bg-white/95 border-[#dee1e6]">
-        <Link href="/" className="text-lg font-semibold tracking-[-0.01em] text-[#0a0b0d]">
-          SentientMarkets
-        </Link>
-        <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map(([href, label]) => (
-            <Link
-              key={label}
-              href={href}
-              className="text-sm font-medium text-[#5b616e] hover:text-[#0a0b0d] transition-colors"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-        <button className="bg-[#0052ff] hover:bg-[#003ecc] text-white px-5 h-10 rounded-full text-sm font-semibold transition-all active:scale-95">
-          Get Pro
-        </button>
-      </nav>
+      <Nav variant="light" />
 
       <div className="px-6 md:px-20">
         <div className="mx-auto w-full max-w-[1200px] pb-24">
@@ -59,10 +35,10 @@ export default function TechnologyPage() {
             <Reveal>
               <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-8">Data sources</div>
               <div className="bg-white border border-[#dee1e6] rounded-xl overflow-hidden">
-                <div className="grid grid-cols-[140px_1fr_140px] gap-4 px-5 py-3 bg-[#f7f7f7] border-b border-[#dee1e6] text-[11px] uppercase tracking-[0.05em] text-[#7c828a] font-semibold">
+                <div className="grid grid-cols-[100px_1fr] sm:grid-cols-[140px_1fr_140px] gap-4 px-5 py-3 bg-[#f7f7f7] border-b border-[#dee1e6] text-[11px] uppercase tracking-[0.05em] text-[#7c828a] font-semibold">
                   <span>Source</span>
                   <span>What we use it for</span>
-                  <span>Signals</span>
+                  <span className="hidden sm:block">Signals</span>
                 </div>
                 {[
                   {
@@ -103,11 +79,11 @@ export default function TechnologyPage() {
                 ].map(({ name, desc, signals }, i, arr) => (
                   <div
                     key={name}
-                    className={`grid grid-cols-[140px_1fr_140px] gap-4 px-5 py-4 items-start ${i < arr.length - 1 ? 'border-b border-[#eef0f3]' : ''}`}
+                    className={`grid grid-cols-[100px_1fr] sm:grid-cols-[140px_1fr_140px] gap-4 px-5 py-4 items-start ${i < arr.length - 1 ? 'border-b border-[#eef0f3]' : ''}`}
                   >
                     <div className="text-sm font-semibold text-[#0a0b0d]">{name}</div>
                     <div className="text-xs text-[#5b616e] leading-relaxed">{desc}</div>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="col-span-2 sm:col-span-1 flex flex-wrap gap-1">
                       {signals.map(s => (
                         <span key={s} className="text-[10px] font-mono bg-[#eef0f3] px-2 py-0.5 rounded-[5px] text-[#7c828a]">{s}</span>
                       ))}

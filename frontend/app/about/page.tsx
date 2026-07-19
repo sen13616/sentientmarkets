@@ -1,41 +1,16 @@
 import Link from 'next/link';
 import styles from '../page.module.css';
+import Nav from '../components/Nav';
 import Reveal from '../components/Reveal';
 
 export const metadata = {
   title: 'About — SentientMarkets',
 };
 
-const NAV_LINKS: [string, string][] = [
-  ['/', 'Markets'],
-  ['/about', 'About'],
-  ['/technology', 'Technology'],
-  ['/faq', 'FAQ'],
-  ['/contact', 'Contact'],
-];
-
 export default function AboutPage() {
   return (
     <div className={`${styles.home} home-light min-h-screen`}>
-      <nav className="sticky top-0 z-50 flex items-center justify-between px-6 md:px-20 h-14 backdrop-blur-md border-b bg-white/95 border-[#dee1e6]">
-        <Link href="/" className="text-lg font-semibold tracking-[-0.01em] text-[#0a0b0d]">
-          SentientMarkets
-        </Link>
-        <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map(([href, label]) => (
-            <Link
-              key={label}
-              href={href}
-              className="text-sm font-medium text-[#5b616e] hover:text-[#0a0b0d] transition-colors"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-        <button className="bg-[#0052ff] hover:bg-[#003ecc] text-white px-5 h-10 rounded-full text-sm font-semibold transition-all active:scale-95">
-          Get Pro
-        </button>
-      </nav>
+      <Nav variant="light" />
 
       <div className="px-6 md:px-20">
         <div className="mx-auto w-full max-w-[1200px] pb-24">
@@ -97,7 +72,7 @@ export default function AboutPage() {
             <Reveal>
               <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-8">How the score works</div>
               <div className="flex flex-col md:flex-row gap-8 bg-white border border-[#dee1e6] rounded-xl p-8">
-                <div className="text-7xl font-mono font-medium text-[#05b169] tabular-nums shrink-0">72</div>
+                <div className="text-5xl md:text-7xl font-mono font-medium text-[#05b169] tabular-nums shrink-0">72</div>
                 <div className="flex flex-col gap-4 flex-1">
                   <div className="text-[11px] uppercase tracking-[0.05em] font-semibold text-[#7c828a]">MarketMood Score — example</div>
                   <div className="text-lg font-semibold text-[#0a0b0d]">One score, three sentiment pillars</div>

@@ -91,9 +91,9 @@ export default function MarketSnapshot() {
               {[0,1,2].map(i => <div key={i} className="h-8 w-16 bg-[#eef0f3] rounded-xl" />)}
             </div>
           </div>
-          <div className="flex-[1.2] grid grid-cols-2 gap-6">
+          <div className="flex-[1.2] grid grid-cols-1 md:grid-cols-2 gap-6">
             {[0,1,2,3].map(i => (
-              <div key={i} className="bg-white border border-[#dee1e6] rounded-xl p-8 space-y-4">
+              <div key={i} className="bg-white border border-[#dee1e6] rounded-xl p-6 sm:p-8 space-y-4">
                 <div className="h-3 w-20 bg-[#eef0f3] rounded" />
                 <div className="h-10 w-32 bg-[#eef0f3] rounded" />
                 <div className="h-3 w-16 bg-[#eef0f3] rounded" />
@@ -129,7 +129,7 @@ export default function MarketSnapshot() {
       <div className="flex flex-col lg:flex-row gap-6">
 
         {/* ── Fear & Greed card ── */}
-        <div className="flex-1 bg-white border border-[#dee1e6] rounded-xl p-8 space-y-12">
+        <div className="flex-1 bg-white border border-[#dee1e6] rounded-xl p-6 sm:p-8 space-y-12">
 
           {/* Score */}
           <div>
@@ -208,7 +208,7 @@ export default function MarketSnapshot() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className={`bg-white border border-[#dee1e6] rounded-xl p-8 flex flex-col justify-between h-full ${route ? 'hover:border-[#a8acb3] transition-colors duration-200' : ''}`}
+                className={`bg-white border border-[#dee1e6] rounded-xl p-6 sm:p-8 flex flex-col justify-between h-full ${route ? 'hover:border-[#a8acb3] transition-colors duration-200' : ''}`}
               >
                 {/* Top row */}
                 <div className="flex items-center justify-between mb-6">
@@ -225,8 +225,8 @@ export default function MarketSnapshot() {
                 {/* Price — mono per NEW_DESIGN. Font shrinks in the narrow lg
                     band (2-col grid on a row layout) so 5-digit index levels
                     like the Dow don't overflow the card. */}
-                <div className="text-4xl lg:text-2xl xl:text-4xl font-mono font-medium text-[#0a0b0d] tracking-tight mb-3 whitespace-nowrap">
-                  <span className="text-2xl lg:text-lg xl:text-2xl mr-0.5 text-[#a8acb3]">$</span>
+                <div className="text-3xl sm:text-4xl lg:text-2xl xl:text-4xl font-mono font-medium text-[#0a0b0d] tracking-tight mb-3 whitespace-nowrap">
+                  <span className="text-xl sm:text-2xl lg:text-lg xl:text-2xl mr-0.5 text-[#a8acb3]">$</span>
                   {fmtPrice(idx.price)}
                 </div>
 

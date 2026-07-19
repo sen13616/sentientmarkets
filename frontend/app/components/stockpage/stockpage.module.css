@@ -685,6 +685,20 @@
   .newsGrid {
     grid-template-columns: 1fr;
   }
+  .wrap {
+    padding: 0 16px;
+  }
+  .scoreNum {
+    font-size: 40px;
+  }
+  .cardFoot {
+    flex-wrap: wrap;
+    gap: 12px 24px;
+  }
+  .attrRow {
+    grid-template-columns: 9px 76px 1fr auto;
+    gap: 8px;
+  }
 }
 
 /* Thin divider between the range pills and the price-overlay toggle. */

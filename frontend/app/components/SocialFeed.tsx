@@ -72,9 +72,9 @@ export default function SocialFeed({
         <div className="bg-white border border-[#dee1e6] rounded-xl overflow-hidden flex-1 flex flex-col">
 
           {/* Table header */}
-          <div className="grid grid-cols-[3rem_1fr_auto_auto] gap-4 items-center bg-[#f7f7f7] border-b border-[#dee1e6] px-8 py-4">
+          <div className="grid grid-cols-[2.25rem_1fr_auto_auto] gap-3 px-4 py-3.5 sm:grid-cols-[3rem_1fr_auto_auto] sm:gap-4 sm:px-8 sm:py-4 items-center bg-[#f7f7f7] border-b border-[#dee1e6]">
             {['Rank', 'Ticker', 'Mentions', 'Momentum'].map((h) => (
-              <span key={h} className="text-[11px] font-semibold text-[#7c828a] uppercase tracking-[0.05em]">
+              <span key={h} className="text-[10px] sm:text-[11px] font-semibold text-[#7c828a] uppercase tracking-[0.05em]">
                 {h}
               </span>
             ))}
@@ -84,7 +84,7 @@ export default function SocialFeed({
           {!loaded && (
             <div className="divide-y divide-[#eef0f3]">
               {Array.from({ length: 6 }, (_, i) => (
-                <div key={i} className="grid grid-cols-[3rem_1fr_auto_auto] gap-4 items-center px-8 py-4 animate-pulse">
+                <div key={i} className="grid grid-cols-[2.25rem_1fr_auto_auto] gap-3 px-4 py-3.5 sm:grid-cols-[3rem_1fr_auto_auto] sm:gap-4 sm:px-8 sm:py-4 items-center animate-pulse">
                   <div className="h-3 w-4 bg-[#eef0f3] rounded" />
                   <div className="space-y-1.5">
                     <div className="h-3 w-20 bg-[#eef0f3] rounded" />
@@ -101,7 +101,7 @@ export default function SocialFeed({
           {loaded && (
             <div className="divide-y divide-[#eef0f3] flex-1 flex flex-col">
               {trending.length === 0 ? (
-                <div className="px-8 py-12 text-center text-sm text-[#a8acb3]">
+                <div className="px-4 sm:px-8 py-12 text-center text-sm text-[#a8acb3]">
                   Unavailable
                 </div>
               ) : (
@@ -115,7 +115,7 @@ export default function SocialFeed({
                       viewport={{ once: true }}
                       transition={{ duration: 0.4, delay: Math.min(rowIdx, 7) * 0.04, ease: 'easeOut' }}
                       onClick={() => onNavigate(stock.ticker)}
-                      className="group flex-1 grid grid-cols-[3rem_1fr_auto_auto] gap-4 items-center px-8 py-4 hover:bg-[#f7f7f7] cursor-pointer transition-colors"
+                      className="group flex-1 grid grid-cols-[2.25rem_1fr_auto_auto] gap-3 px-4 py-3.5 sm:grid-cols-[3rem_1fr_auto_auto] sm:gap-4 sm:px-8 sm:py-4 items-center hover:bg-[#f7f7f7] cursor-pointer transition-colors"
                     >
                       {/* Rank */}
                       <span className="text-sm font-mono text-[#7c828a]">{stock.rank}</span>
@@ -140,7 +140,7 @@ export default function SocialFeed({
 
                       {/* Momentum */}
                       <div className="text-right">
-                        <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold uppercase tracking-[0.05em] ${momentumClass(signal)}`}>
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.05em] ${momentumClass(signal)}`}>
                           {signal}
                         </span>
                       </div>

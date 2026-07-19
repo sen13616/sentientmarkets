@@ -48,7 +48,7 @@ export default function MoodCard() {
         <p className="text-[12px] font-semibold uppercase tracking-[0.05em] text-[#7c828a] mb-6">
           Market Mood
         </p>
-        <div className="bg-white border border-[#dee1e6] rounded-xl p-7 w-full animate-pulse">
+        <div className="bg-white border border-[#dee1e6] rounded-xl p-5 sm:p-7 w-full animate-pulse">
           <div className="flex justify-end mb-1">
             <div className="h-6 w-20 bg-[#eef0f3] rounded-full" />
           </div>
@@ -109,7 +109,7 @@ export default function MoodCard() {
         </span>
       </div>
 
-      <div className="bg-white border border-[#dee1e6] rounded-xl p-7 relative overflow-hidden w-full">
+      <div className="bg-white border border-[#dee1e6] rounded-xl p-5 sm:p-7 relative overflow-hidden w-full">
 
         {/* Meta row — model badge only, right-aligned */}
         <div className="flex justify-end mb-1">
@@ -118,10 +118,10 @@ export default function MoodCard() {
           </span>
         </div>
 
-        {/* Headline row — verdict + score own the full width */}
-        <div className="flex items-center justify-between gap-6 pb-[22px] mb-[22px] border-b border-[#eef0f3]">
+        {/* Headline row — verdict + score own the full width; stacks on phones */}
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 pb-[22px] mb-[22px] border-b border-[#eef0f3]">
           <div
-            className={`text-4xl md:text-[44px] font-normal leading-none tracking-[-1.5px] transition-colors duration-500 ${accentText}`}
+            className={`text-3xl sm:text-4xl md:text-[44px] font-normal leading-none tracking-[-1.5px] transition-colors duration-500 ${accentText}`}
           >
             {mood.emotion}
           </div>
@@ -181,7 +181,7 @@ export default function MoodCard() {
                 <p className="text-[11px] font-semibold text-[#7c828a] uppercase tracking-[0.06em] mb-3">
                   5-Day Mood History
                 </p>
-                <div className="flex items-center gap-7">
+                <div className="flex items-center flex-wrap gap-x-5 gap-y-3 sm:gap-7">
                   {history.map((h, i) => {
                     const isToday = i === history.length - 1;
                     const neg = isNegative(h.emotion);
