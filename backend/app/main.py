@@ -33,6 +33,45 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ── Browser-side HTTP caching ────────────────────────────────────────────
+# Redis is the authoritative cache; these headers just let the browser skip
+# re-downloading a payload Redis would serve identically anyway (e.g. when a
+# user navigates home → stock → home). max-age is deliberately a fraction of
+# each route's Redis TTL so the two staleness windows don't stack up, with
+# stale-while-revalidate letting the browser refresh in the background.
+# Rules are (predicate, header) checked in order; first match wins.
+_CACHE_RULES: list[tuple] = [
+    (lambda p: p == "/api/health", "no-store"),
+    (lambda p: p == "/api/mood", "public, max-age=900, stale-while-revalidate=1800"),
+    (lambda p: p == "/api/home", "public, max-age=300, stale-while-revalidate=600"),
+    (lambda p: p == "/api/trending", "public, max-age=600, stale-while-revalidate=1200"),
+    (lambda p: p.startswith("/api/search"), "public, max-age=3600"),
+    (lambda p: p.startswith("/api/sentiment/"), "public, max-age=600, stale-while-revalidate=1200"),
+    (lambda p: p.startswith("/api/price-history/"), "public, max-age=300, stale-while-revalidate=600"),
+    (lambda p: p.startswith("/api/v2/market/"), "public, max-age=300, stale-while-revalidate=600"),
+    (lambda p: p.startswith("/api/v2/stock/") and p.endswith("/quote"), "public, max-age=120, stale-while-revalidate=300"),
+    (lambda p: p.startswith("/api/v2/stock/") and p.endswith("/news"), "public, max-age=900, stale-while-revalidate=1800"),
+    (lambda p: p.startswith("/api/v2/stock/"), "public, max-age=300, stale-while-revalidate=600"),
+]
+
+
+@app.middleware("http")
+async def cache_control_headers(request, call_next):
+    response = await call_next(request)
+    # Only successful GETs are cacheable; never override an explicit header.
+    if (
+        request.method == "GET"
+        and response.status_code == 200
+        and "cache-control" not in response.headers
+    ):
+        path = request.url.path
+        for matches, header in _CACHE_RULES:
+            if matches(path):
+                response.headers["Cache-Control"] = header
+                break
+    return response
+
+
 app.include_router(health.router)
 app.include_router(sentiment.router)
 app.include_router(home.router)
