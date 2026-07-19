@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import ScrollToTop from "./components/ScrollToTop";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -44,6 +45,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
+        <ScrollToTop />
         {children}
       </body>
     </html>

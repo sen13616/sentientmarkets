@@ -25,6 +25,8 @@ function isNegative(emotion: string): boolean {
 export default function MoodCard() {
   const [mood, setMood] = useState<MoodData | null>(null);
   const [minutesAgo, setMinutesAgo] = useState<number | null>(null);
+  // Phones clamp the rationale so the card fits one screen; View more expands.
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     getMood()
@@ -119,9 +121,9 @@ export default function MoodCard() {
         </div>
 
         {/* Headline row — verdict + score own the full width; stacks on phones */}
-        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 pb-[22px] mb-[22px] border-b border-[#eef0f3]">
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 pb-4 mb-4 sm:pb-[22px] sm:mb-[22px] border-b border-[#eef0f3]">
           <div
-            className={`text-3xl sm:text-4xl md:text-[44px] font-normal leading-none tracking-[-1.5px] transition-colors duration-500 ${accentText}`}
+            className={`text-3xl sm:text-4xl md:text-[44px] font-bold leading-none tracking-[-1.5px] transition-colors duration-500 ${accentText}`}
           >
             {mood.emotion}
           </div>
@@ -145,10 +147,22 @@ export default function MoodCard() {
         </div>
 
         {/* Body row — rationale + key signals, two columns */}
-        <div className="grid md:grid-cols-[1.15fr_1fr] gap-6 md:gap-9 items-start">
-          <p className="text-base leading-[1.55] text-[#5b616e]">
-            {mood.rationale}
-          </p>
+        <div className="grid md:grid-cols-[1.15fr_1fr] gap-5 sm:gap-6 md:gap-9 items-start">
+          <div>
+            <p className={`text-[15px] sm:text-base leading-[1.55] text-[#5b616e] sm:line-clamp-none ${expanded ? '' : 'line-clamp-4'}`}>
+              {mood.rationale}
+            </p>
+            {mood.rationale.length > 200 && (
+              <button
+                type="button"
+                onClick={() => setExpanded((v) => !v)}
+                aria-expanded={expanded}
+                className="sm:hidden mt-1 py-2 -my-1 text-[13px] font-semibold text-[#0052ff]"
+              >
+                {expanded ? 'View less' : 'View more'}
+              </button>
+            )}
+          </div>
 
           {signals.length > 0 && (
             <div>
@@ -158,9 +172,9 @@ export default function MoodCard() {
               {signals.map((signal, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-2.5 px-3.5 py-[11px] bg-[#f7f7f7] border border-[#eef0f3] rounded-[10px] mb-2 last:mb-0"
+                  className="flex items-start gap-2.5 px-3 py-2 sm:px-3.5 sm:py-[11px] bg-[#f7f7f7] border border-[#eef0f3] rounded-[10px] mb-2 last:mb-0"
                 >
-                  <span className="text-[10px] font-bold tracking-[0.04em] text-[#7c828a] bg-white border border-[#dee1e6] px-[7px] py-0.5 rounded-[5px] shrink-0 mt-px">
+                  <span className="hidden sm:inline-block text-[10px] font-bold tracking-[0.04em] text-[#7c828a] bg-white border border-[#dee1e6] px-[7px] py-0.5 rounded-[5px] shrink-0 mt-px">
                     SIGNAL
                   </span>
                   <span className="text-[12.5px] font-medium leading-[1.35] text-[#0a0b0d]">
@@ -175,23 +189,23 @@ export default function MoodCard() {
         {/* Footer — 5-day history + freshness, only when history data exists */}
         {history.length > 0 && (
           <>
-            <div className="h-px bg-[#eef0f3] mt-6 mb-5" />
+            <div className="h-px bg-[#eef0f3] mt-4 mb-4 sm:mt-6 sm:mb-5" />
             <div className="flex items-end justify-between flex-wrap gap-4">
               <div>
                 <p className="text-[11px] font-semibold text-[#7c828a] uppercase tracking-[0.06em] mb-3">
                   5-Day Mood History
                 </p>
-                <div className="flex items-center flex-wrap gap-x-5 gap-y-3 sm:gap-7">
+                <div className="grid grid-cols-5 gap-2 sm:flex sm:items-center sm:gap-7">
                   {history.map((h, i) => {
                     const isToday = i === history.length - 1;
                     const neg = isNegative(h.emotion);
                     const textColor = neg ? 'text-[#cf202f]' : 'text-[#05b169]';
                     return (
-                      <div key={i} className="flex flex-col gap-[3px]">
-                        <span className={`text-[13px] font-semibold capitalize ${isToday ? textColor : 'text-[#7c828a]'}`}>
+                      <div key={i} className="flex flex-col gap-[3px] min-w-0">
+                        <span className={`text-[11px] sm:text-[13px] font-semibold capitalize ${isToday ? textColor : 'text-[#7c828a]'}`}>
                           {h.emotion}
                         </span>
-                        <span className="text-[10px] font-medium text-[#a8acb3] uppercase tracking-[0.05em]">
+                        <span className="text-[9px] sm:text-[10px] font-medium text-[#a8acb3] uppercase tracking-[0.05em]">
                           {DAYS[i]}
                         </span>
                       </div>

@@ -21,26 +21,27 @@ export default function AboutPage() {
               About
             </div>
             <h1 className={`text-4xl md:text-[44px] font-normal text-[#5b616e] leading-[1.1] tracking-[-1px] mb-6 ${styles.heroFade1}`}>
-              Built for traders who<br />deserve <em className="not-italic text-[#0a0b0d]">better data.</em>
+              Not another system.<br />An edge for <em className="not-italic text-[#0a0b0d]">yours.</em>
             </h1>
             <p className={`text-[#5b616e] text-base max-w-xl leading-[1.55] ${styles.heroFade2}`}>
-              Hedge funds have always had access to aggregated sentiment signals. SentientMarkets closes
-              that gap — giving every retail trader institutional-grade intelligence at a fraction of the cost.
+              SentientMarkets isn&apos;t here to replace your charts, your screener, or your strategy.
+              It&apos;s one clean sentiment read — four channels distilled into a single number, refreshed
+              every 30 minutes — that you layer on top of the system you already trust.
             </p>
           </section>
 
           {/* MISSION */}
           <section className="py-16 border-b border-[#eef0f3]">
             <Reveal>
-              <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-8">Our mission</div>
+              <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-8">Why we built it</div>
               <div className="grid md:grid-cols-2 gap-12">
                 <div className="text-2xl md:text-3xl font-normal text-[#5b616e] leading-snug tracking-[-0.4px]">
-                  The <em className="not-italic text-[#0a0b0d]">information gap</em> between retail and institutional traders is the problem we&apos;re solving.
+                  The best tool is the one that fits the <em className="not-italic text-[#0a0b0d]">process you already have.</em>
                 </div>
                 <div className="text-[#5b616e] text-sm leading-relaxed space-y-4">
-                  <p>Professional trading desks spend thousands per month on sentiment terminals, options flow data, and social intelligence platforms. That information advantage compounds over time — and retail traders are left making decisions with incomplete signals.</p>
-                  <p>SentientMarkets aggregates technical indicators, crowd sentiment, news flow, insider activity, and macro context into a single MarketMood Score. One number. Full picture.</p>
-                  <p>We built this because we believe access to quality data shouldn&apos;t be a function of your net worth.</p>
+                  <p>Most platforms want to become your whole workflow. But traders already have one — the charts they read, the screeners they run, the rules they size by. What&apos;s genuinely hard to do on your own is reading sentiment: thousands of price ticks, headlines, filings, and macro prints, every day, for every name you follow.</p>
+                  <p>So we do that one job, properly. A continuously running pipeline ingests price action, financial news, insider and analyst activity, and macroeconomic data for all 502 stocks in the S&amp;P 500 — then normalizes, weighs, and blends them into a single 0–100 score with a confidence value, refreshed every 30 minutes around the clock.</p>
+                  <p>You overlay it on your own analysis: confirmation when sentiment agrees with your setup, a flag worth investigating when it doesn&apos;t. The full methodology is documented on the <Link href="/technology" className="text-[#0052ff] hover:underline">Technology page</Link> — no black boxes.</p>
                 </div>
               </div>
             </Reveal>
@@ -51,13 +52,13 @@ export default function AboutPage() {
             <Reveal delay={0.1}>
               <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-8">By the numbers</div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#dee1e6] border border-[#dee1e6] rounded-xl overflow-hidden">
-                {[
-                  { label: 'Data sources', val: '7', desc: 'Aggregated into every score' },
-                  { label: 'Score range', val: '0–100', desc: 'Bearish to Bullish, calibrated' },
-                  { label: 'Update frequency', val: 'Live', desc: 'Redis-cached, sub-second serve' },
-                  { label: 'Pro price', val: '$12', desc: 'Per month — cancel anytime' },
-                ].map(({ label, val, desc }) => (
-                  <div key={label} className="bg-white p-6 flex flex-col gap-2">
+                {([
+                  { label: 'Sentiment channels', val: '4', desc: 'Market · Narrative · Influencer · Macro' },
+                  { label: 'Coverage', val: '502', desc: 'Every stock in the S&P 500' },
+                  { label: 'Refresh cycle', val: '30m', desc: 'Recomputed around the clock' },
+                  { label: 'Pro price', val: '$12.99', desc: 'Per month — cancel anytime', blur: true },
+                ] as { label: string; val: string; desc: string; blur?: boolean }[]).map(({ label, val, desc, blur }) => (
+                  <div key={label} className={`bg-white p-6 flex flex-col gap-2 ${blur ? 'pro-blur' : ''}`} aria-hidden={blur || undefined}>
                     <div className="text-[11px] uppercase tracking-[0.05em] font-semibold text-[#7c828a]">{label}</div>
                     <div className="text-3xl font-mono font-medium text-[#0a0b0d]">{val}</div>
                     <div className="text-xs text-[#a8acb3]">{desc}</div>
@@ -74,19 +75,21 @@ export default function AboutPage() {
               <div className="flex flex-col md:flex-row gap-8 bg-white border border-[#dee1e6] rounded-xl p-8">
                 <div className="text-5xl md:text-7xl font-mono font-medium text-[#05b169] tabular-nums shrink-0">72</div>
                 <div className="flex flex-col gap-4 flex-1">
-                  <div className="text-[11px] uppercase tracking-[0.05em] font-semibold text-[#7c828a]">MarketMood Score — example</div>
-                  <div className="text-lg font-semibold text-[#0a0b0d]">One score, three sentiment pillars</div>
+                  <div className="text-[11px] uppercase tracking-[0.05em] font-semibold text-[#7c828a]">Sentiment score — example</div>
+                  <div className="text-lg font-semibold text-[#0a0b0d]">One score, four channels — and a confidence value</div>
                   <div className="h-1.5 bg-[#eef0f3] rounded-full relative">
                     <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#05b169] border-2 border-white" style={{ left: '72%' }} />
                   </div>
                   <div className="flex justify-between text-[10px] text-[#7c828a] uppercase tracking-[0.05em] font-semibold">
                     <span>Bearish</span><span>Neutral</span><span>Bullish</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-2 mt-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
                     {[
-                      { range: '0 – 44', label: 'Bearish', color: 'text-[#cf202f] border-[rgba(207,32,47,0.2)] bg-[rgba(207,32,47,0.06)]' },
-                      { range: '45 – 64', label: 'Neutral', color: 'text-[#7c828a] border-[#dee1e6] bg-[#f7f7f7]' },
-                      { range: '65 – 100', label: 'Bullish', color: 'text-[#05b169] border-[rgba(5,177,105,0.2)] bg-[rgba(5,177,105,0.06)]' },
+                      { range: '0 – 20', label: 'Strongly Bearish', color: 'text-[#cf202f] border-[rgba(207,32,47,0.25)] bg-[rgba(207,32,47,0.08)]' },
+                      { range: '21 – 40', label: 'Bearish', color: 'text-[#cf202f] border-[rgba(207,32,47,0.15)] bg-[rgba(207,32,47,0.04)]' },
+                      { range: '41 – 60', label: 'Neutral', color: 'text-[#7c828a] border-[#dee1e6] bg-[#f7f7f7]' },
+                      { range: '61 – 80', label: 'Bullish', color: 'text-[#05b169] border-[rgba(5,177,105,0.15)] bg-[rgba(5,177,105,0.04)]' },
+                      { range: '81 – 100', label: 'Strongly Bullish', color: 'text-[#05b169] border-[rgba(5,177,105,0.25)] bg-[rgba(5,177,105,0.08)]' },
                     ].map(({ range, label, color }) => (
                       <div key={label} className={`border rounded-lg p-3 text-center ${color}`}>
                         <div className="text-[10px] font-mono">{range}</div>
@@ -94,58 +97,72 @@ export default function AboutPage() {
                       </div>
                     ))}
                   </div>
+                  <p className="text-xs text-[#5b616e] leading-relaxed">
+                    Every score also carries a <strong className="text-[#0a0b0d]">confidence</strong> value (0–100) that drops when data
+                    is stale, a channel is missing, or channels sharply disagree — so you always know how much
+                    weight the number deserves in your own process.
+                  </p>
                 </div>
               </div>
             </Reveal>
           </section>
 
-          {/* SIGNAL PILLARS */}
+          {/* THE FOUR CHANNELS */}
           <section className="py-16 border-b border-[#eef0f3]">
             <Reveal>
-              <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-8">Signal pillars</div>
+              <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-8">The four channels</div>
             </Reveal>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               {[
                 {
-                  name: 'Technical',
-                  desc: 'Price action, momentum, and moving average signals derived from market data. Cuts through noise to show where a stock actually sits in its trend.',
+                  name: 'Market',
+                  weight: '35%',
+                  desc: 'What the price action itself is saying — returns, intraday order flow, momentum, short volume, liquidity, and volume, each mapped to a bullish–bearish scale.',
                   sources: [
-                    { name: 'RSI (14-day)', tag: 'yfinance' },
-                    { name: 'Moving averages', tag: 'yfinance' },
-                    { name: '52-week range', tag: 'yfinance' },
-                    { name: 'Volume analysis', tag: 'Alpha Vantage' },
+                    { name: 'Price, volume & order flow', tag: 'Yahoo / Polygon' },
+                    { name: 'Daily short-volume files', tag: 'FINRA' },
                   ],
                 },
                 {
-                  name: 'Fundamental',
-                  desc: 'Analyst consensus, price targets, and earnings data. Reflects what the professional research community thinks — and how reality compares to their expectations.',
+                  name: 'Narrative',
+                  weight: '30%',
+                  desc: 'Financial news scored by FinBERT, a transformer fine-tuned on financial text — with relevance filtering and event deduplication so ten outlets covering one story count once.',
                   sources: [
-                    { name: 'Analyst ratings', tag: 'yfinance' },
-                    { name: 'Price targets', tag: 'yfinance' },
-                    { name: 'Earnings surprises', tag: 'Finnhub' },
-                    { name: 'Key metrics', tag: 'yfinance' },
+                    { name: 'Financial news (primary)', tag: 'Alpha Vantage' },
+                    { name: 'News fallback', tag: 'Finnhub' },
                   ],
                 },
                 {
-                  name: 'Sentiment',
-                  desc: 'The signal hedge funds pay most for — crowd psychology, social buzz, insider behaviour, and macro fear. Aggregated from sources retail tools typically ignore.',
+                  name: 'Influencer',
+                  weight: '25%',
+                  desc: 'Not social chatter — the people with real skin in the game. Insider transactions carry the highest weight and the longest memory; analyst consensus, price targets, and estimate revisions follow.',
                   sources: [
-                    { name: 'News sentiment', tag: 'Alpha Vantage' },
-                    { name: 'Reddit mentions', tag: 'ApeWisdom' },
-                    { name: 'Insider activity', tag: 'Finnhub' },
-                    { name: 'Fear & Greed', tag: 'CNN' },
+                    { name: 'Insider transactions', tag: 'Finnhub' },
+                    { name: 'Analyst consensus & targets', tag: 'Finnhub' },
                   ],
                 },
-              ].map(({ name, desc, sources }, i) => (
+                {
+                  name: 'Macro',
+                  weight: '10%',
+                  desc: 'The backdrop every ticker trades against — each stock’s own sector-ETF momentum, the VIX, Treasury yields, and the yield-curve slope.',
+                  sources: [
+                    { name: 'Treasury yields & curve', tag: 'FRED' },
+                    { name: 'VIX', tag: 'CBOE' },
+                  ],
+                },
+              ].map(({ name, weight, desc, sources }, i) => (
                 <Reveal key={name} delay={i * 0.08} className="h-full">
                   <div className="bg-white border border-[#dee1e6] rounded-xl p-6 flex flex-col gap-4 h-full">
-                    <div className="text-sm font-semibold text-[#0a0b0d]">{name}</div>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-semibold text-[#0a0b0d]">{name}</div>
+                      <span className="text-[10px] font-semibold bg-[#eef0f3] text-[#7c828a] px-2 py-0.5 rounded-[5px]">{weight}</span>
+                    </div>
                     <p className="text-xs text-[#5b616e] leading-relaxed">{desc}</p>
                     <div className="border-t border-[#eef0f3] pt-4 flex flex-col gap-2 mt-auto">
                       {sources.map(({ name: sName, tag }) => (
-                        <div key={sName} className="flex justify-between items-center">
+                        <div key={sName} className="flex justify-between items-center gap-2">
                           <span className="text-xs text-[#5b616e]">{sName}</span>
-                          <span className="text-[10px] font-mono bg-[#eef0f3] px-2 py-0.5 rounded-[5px] text-[#7c828a]">{tag}</span>
+                          <span className="text-[10px] font-mono bg-[#eef0f3] px-2 py-0.5 rounded-[5px] text-[#7c828a] shrink-0">{tag}</span>
                         </div>
                       ))}
                     </div>
@@ -155,20 +172,69 @@ export default function AboutPage() {
             </div>
           </section>
 
+          {/* WHAT IT IS / ISN'T */}
+          <section className="py-16 border-b border-[#eef0f3]">
+            <Reveal>
+              <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-8">On top of your system — not instead of it</div>
+            </Reveal>
+            <div className="grid md:grid-cols-2 gap-4">
+              <Reveal className="h-full">
+                <div className="bg-white border border-[#dee1e6] rounded-xl p-6 h-full">
+                  <div className="text-sm font-semibold text-[#0a0b0d] mb-4">What it is</div>
+                  <ul className="flex flex-col gap-3">
+                    {[
+                      'An additional input for the process you already run',
+                      'A measurement of current signal alignment across four channels',
+                      'A documented methodology — every weight and threshold is public',
+                      'The same number for every name, refreshed every 30 minutes, day and night',
+                    ].map(item => (
+                      <li key={item} className="flex gap-2.5 text-xs text-[#5b616e] leading-relaxed">
+                        <span className="text-[#05b169] font-bold shrink-0">+</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+              <Reveal delay={0.08} className="h-full">
+                <div className="bg-white border border-[#dee1e6] rounded-xl p-6 h-full">
+                  <div className="text-sm font-semibold text-[#0a0b0d] mb-4">What it isn&apos;t</div>
+                  <ul className="flex flex-col gap-3">
+                    {[
+                      'A buy/sell signal service — the decisions stay yours',
+                      'A price prediction',
+                      'A replacement for your own analysis or risk management',
+                      'A tick-level feed — sentiment moves in hours, not milliseconds',
+                    ].map(item => (
+                      <li key={item} className="flex gap-2.5 text-xs text-[#5b616e] leading-relaxed">
+                        <span className="text-[#cf202f] font-bold shrink-0">−</span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+            </div>
+          </section>
+
           {/* WHO IT'S FOR */}
           <section className="py-16 border-b border-[#eef0f3]">
             <Reveal>
-              <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-8">Who it&apos;s for</div>
+              <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-8">How traders layer it in</div>
             </Reveal>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-3 gap-4">
               {[
                 {
-                  title: 'Active retail traders',
-                  desc: "You're making your own calls but want more signal. SentientMarkets gives you the same multi-source sentiment picture that professional desks have — without the $500/month data terminal.",
+                  title: 'Discretionary chart traders',
+                  desc: 'You already have your setups. Use the score as a confirmation layer — sentiment agreeing with your read adds conviction; sentiment diverging is a reason to look twice before entering.',
+                },
+                {
+                  title: 'Rules-based traders',
+                  desc: 'Treat the score and its confidence value as one more input alongside your indicators — a regime filter, a screen condition, or a tiebreaker your rules can reference.',
                 },
                 {
                   title: 'Long-term investors',
-                  desc: "You're not day trading, but you want to know whether sentiment is with or against your positions. Our scores give you a fast sanity check before you size up or trim.",
+                  desc: "You're not trading the 30-minute cycle — but before you size up or trim, a fast check of whether sentiment is with or against your position is a cheap sanity test.",
                 },
               ].map(({ title, desc }, i) => (
                 <Reveal key={title} delay={i * 0.08} className="h-full">
@@ -187,9 +253,9 @@ export default function AboutPage() {
             <Reveal>
               <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-4">Get started</div>
               <h2 className="text-3xl md:text-4xl font-normal text-[#5b616e] tracking-[-0.4px] mb-4">
-                Read the market&apos;s <em className="not-italic text-[#0a0b0d]">mood</em><br />in seconds.
+                Add one more signal<br />to <em className="not-italic text-[#0a0b0d]">your process.</em>
               </h2>
-              <p className="text-[#7c828a] text-sm mb-8">Search any US-listed ticker. Free to try — no account required.</p>
+              <p className="text-[#7c828a] text-sm mb-8">Search any S&amp;P 500 ticker. Free to try — no account required.</p>
               <Link href="/" className="inline-block bg-[#0052ff] hover:bg-[#003ecc] text-white px-7 py-3 rounded-full text-sm font-semibold transition-all active:scale-95">
                 Analyse a stock →
               </Link>
@@ -204,6 +270,7 @@ export default function AboutPage() {
         <div className="flex gap-6">
           <Link href="/privacy" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Privacy</Link>
           <Link href="/terms" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Terms</Link>
+          <Link href="/faq" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">FAQ</Link>
           <Link href="/contact" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Contact</Link>
         </div>
         <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a]">© 2026 · Not financial advice.</div>

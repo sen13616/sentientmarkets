@@ -228,7 +228,7 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
             SentientMarkets.
           </Link>
           <NavSearch />
-          <button className={styles.btnPro}>Get Pro</button>
+          <span className={styles.betaTag}>Beta Version</span>
         </div>
       </nav>
 
@@ -503,7 +503,7 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
             <div className={styles.aiPip} />
             <span className={styles.aiHeaderLabel}>AI Insights</span>
           </div>
-          <span className={`${styles.tag} ${styles.tBlue}`}>Pro</span>
+          <span className={`${styles.tag} ${styles.tBlue} pro-blur`} aria-hidden="true">Pro</span>
         </div>
         <InsightTabs
           summary={aiIns.summary ?? null}

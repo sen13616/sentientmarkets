@@ -95,30 +95,43 @@ export default function Home() {
                 <HeroSearch onFocusModeChange={setSearchFocused} />
               </div>
 
-              {/* Trending tickers */}
+              {/* Trending tickers — the chips arrive from an async fetch, so
+                  the row animates open (height 0 → auto) instead of popping
+                  in: the hero re-centers as a glide, not a jump, while the
+                  chips fade up inside the opening space. */}
               {trending.length > 0 && (
-                <div className={`flex flex-wrap items-center justify-center gap-2.5 transition-all duration-300 ease-out ${styles.heroFade4} ${searchFocused ? 'opacity-30 pointer-events-none' : ''}`}>
-                  <span className="text-[11px] font-semibold text-[#7c828a] uppercase tracking-[0.08em]">
-                    Trending
-                  </span>
-                  {trending.map((ticker, i) => (
-                    <motion.button
-                      key={ticker.name}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: 0.65 + i * 0.05, ease: 'easeOut' }}
-                      onClick={() => navigateToStock(ticker.name)}
-                      className="inline-flex items-center gap-1.5 bg-[#f7f7f7] border border-[#dee1e6] px-3.5 py-1.5 rounded-full text-sm font-medium text-[#0a0b0d] hover:border-[#a8acb3] transition-colors"
-                    >
-                      {ticker.name}
-                      {ticker.change && (
-                        <span className={`text-xs font-mono ${ticker.positive ? 'text-[#05b169]' : 'text-[#cf202f]'}`}>
-                          {ticker.change}
-                        </span>
-                      )}
-                    </motion.button>
-                  ))}
-                </div>
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  transition={{
+                    height: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+                    opacity: { duration: 0.45, delay: 0.15, ease: 'easeOut' },
+                  }}
+                  className="overflow-hidden"
+                >
+                  <div className={`flex flex-wrap items-center justify-center gap-2.5 transition-all duration-300 ease-out ${searchFocused ? 'opacity-30 pointer-events-none' : ''}`}>
+                    <span className="text-[11px] font-semibold text-[#7c828a] uppercase tracking-[0.08em]">
+                      Trending
+                    </span>
+                    {trending.map((ticker, i) => (
+                      <motion.button
+                        key={ticker.name}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.2 + i * 0.05, ease: 'easeOut' }}
+                        onClick={() => navigateToStock(ticker.name)}
+                        className="inline-flex items-center gap-1.5 bg-[#f7f7f7] border border-[#dee1e6] px-3.5 py-1.5 rounded-full text-sm font-medium text-[#0a0b0d] hover:border-[#a8acb3] transition-colors"
+                      >
+                        {ticker.name}
+                        {ticker.change && (
+                          <span className={`text-xs font-mono ${ticker.positive ? 'text-[#05b169]' : 'text-[#cf202f]'}`}>
+                            {ticker.change}
+                          </span>
+                        )}
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.div>
               )}
             </div>
           </div>

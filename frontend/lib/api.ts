@@ -1,5 +1,23 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+/* Module-level memo for the market-wide payloads (home, mood) that several
+   components fetch on every mount. Caching the *promise* both dedupes
+   concurrent callers and reuses the result across client-side navigations
+   (home → stock → home no longer refetches). Failures are evicted so a
+   flaky request doesn't poison the window. */
+const _memo: Record<string, { promise: Promise<any>; at: number }> = {};
+
+function memoized(key: string, ttlMs: number, fn: () => Promise<any>): Promise<any> {
+  const hit = _memo[key];
+  if (hit && Date.now() - hit.at < ttlMs) return hit.promise;
+  const entry = { promise: fn(), at: Date.now() };
+  _memo[key] = entry;
+  entry.promise.catch(() => {
+    if (_memo[key] === entry) delete _memo[key];
+  });
+  return entry.promise;
+}
+
 export async function getSentiment(ticker: string) {
   const res = await fetch(`${API_URL}/api/sentiment/${ticker.toUpperCase()}`, {
     next: { revalidate: 60 },
@@ -16,11 +34,13 @@ export async function getSentiment(ticker: string) {
 }
 
 export async function getHomeData() {
-  const res = await fetch(`${API_URL}/api/home`, {
-    next: { revalidate: 900 },
+  return memoized('home', 5 * 60_000, async () => {
+    const res = await fetch(`${API_URL}/api/home`, {
+      next: { revalidate: 900 },
+    });
+    if (!res.ok) throw new Error('Failed to fetch home data');
+    return res.json();
   });
-  if (!res.ok) throw new Error('Failed to fetch home data');
-  return res.json();
 }
 
 async function v2Fetch(path: string) {
@@ -77,9 +97,11 @@ export async function getMarketSp500() {
 }
 
 export async function getMood() {
-  const res = await fetch(`${API_URL}/api/mood`, {
-    next: { revalidate: 3600 },
+  return memoized('mood', 15 * 60_000, async () => {
+    const res = await fetch(`${API_URL}/api/mood`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) throw new Error('Failed to fetch mood');
+    return res.json();
   });
-  if (!res.ok) throw new Error('Failed to fetch mood');
-  return res.json();
 }

@@ -5,12 +5,12 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 
+// FAQ and Contact live in the footer, not here.
 const LINKS: [string, string][] = [
   ['/screener', 'Screener'],
   ['/about', 'About'],
   ['/technology', 'Technology'],
-  ['/faq', 'FAQ'],
-  ['/contact', 'Contact'],
+  ['/api-access', 'API Access'],
 ];
 
 // `variant` defaults to 'dark' so any existing caller keeps the original look.
@@ -50,10 +50,12 @@ export default function Nav({
     : 'text-xs font-bold text-[#A1A1AA] hover:text-white transition-colors uppercase tracking-wide opacity-70 hover:opacity-100';
 
   const ctaCls = light
-    ? 'bg-[#0052ff] hover:bg-[#003ecc] text-white px-5 h-10 rounded-full text-sm font-semibold transition-all active:scale-95'
-    : 'bg-white hover:bg-[#E4E4E7] text-black px-6 py-2 rounded-md text-xs font-bold transition-all active:scale-95 hover:shadow-[0_0_20px_rgba(255,255,255,0.15)]';
+    ? 'text-sm font-semibold text-[#0052ff]'
+    : 'text-xs font-bold uppercase tracking-wide text-[#5c8aff]';
 
-  const menuCls = light ? 'md:hidden text-[#5b616e]' : 'md:hidden text-[#A1A1AA]';
+  // p-3 with negative margins keeps the icon visually in place while giving
+  // the hamburger a 44px touch target on phones.
+  const menuCls = `md:hidden p-3 -m-3 ${light ? 'text-[#5b616e]' : 'text-[#A1A1AA]'}`;
 
   const panelCls = light
     ? 'bg-white/95 border-[#dee1e6]'
@@ -108,7 +110,7 @@ export default function Nav({
 
       {/* Right — on light, the single blue moment in the nav fold */}
       <div className="flex items-center gap-4">
-        <button className={ctaCls}>Get Pro</button>
+        <span className={ctaCls}>Beta Version</span>
         <button
           className={menuCls}
           onClick={() => setOpen((v) => !v)}
@@ -143,7 +145,6 @@ export default function Nav({
                 {label}
               </Link>
             ))}
-            <button className={`${ctaCls} mt-3 w-full`}>Get Pro</button>
           </motion.div>
         )}
       </AnimatePresence>

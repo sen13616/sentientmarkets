@@ -549,9 +549,106 @@
   }
 }
 
+/* ══ mobile filters toggle (hidden on desktop, where the rail is always visible) ══ */
+.filtersToggle {
+  display: none;
+}
+.filtersToggleLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.filtersBadge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 920px) {
   .cols {
     grid-template-columns: 1fr;
+  }
+
+  /* Rail collapses behind a full-width, thumb-sized Filters button so the
+     results table is visible on landing. */
+  .filtersToggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .filtersToggle svg {
+    transition: transform 0.15s ease;
+  }
+  .chevOpen {
+    transform: rotate(180deg);
+  }
+  .railWrap {
+    display: none;
+  }
+  .railWrapOpen {
+    display: block;
+    margin-top: 8px;
+  }
+
+  /* Presets: one horizontally scrollable row instead of a ragged wrap —
+     edge-bleed past the page gutter hints there's more to swipe. */
+  .presets {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 8px;
+    margin-left: -24px;
+    margin-right: -24px;
+    padding-left: 24px;
+    padding-right: 24px;
+    /* Without this, snap aligns the first chip to the border edge and
+       swallows the left gutter — the chip sits flush to the screen. */
+    scroll-padding-left: 24px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .presets::-webkit-scrollbar {
+    display: none;
+  }
+  .preset {
+    position: relative;
+    flex: 0 0 auto;
+    height: 38px;
+    padding: 0 16px;
+    font-size: 13px;
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+  /* Extend the tap area to ~44px without growing the chip visually. */
+  .preset::before {
+    content: '';
+    position: absolute;
+    inset: -4px 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .filtersToggle svg {
+    transition: none;
   }
 }
 @media (max-width: 640px) {

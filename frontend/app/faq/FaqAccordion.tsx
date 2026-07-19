@@ -13,6 +13,8 @@ type FaqGroup = {
   id: string;
   label: string;
   items: FaqItem[];
+  /* Pre-launch: blur the whole group (Pro isn't live yet). */
+  blurred?: boolean;
 };
 
 const groups: FaqGroup[] = [
@@ -21,20 +23,24 @@ const groups: FaqGroup[] = [
     label: 'The score',
     items: [
       {
-        q: 'What is the MarketMood Score?',
-        a: <>The MarketMood Score is a 0–100 composite sentiment rating for any US-listed stock. It aggregates signals from three pillars — <strong>Technical</strong> (price action, RSI, moving averages), <strong>Fundamental</strong> (analyst ratings, earnings, price targets), and <strong>Sentiment</strong> (news tone, Reddit activity, insider behaviour, macro fear). Scores below 45 are Bearish, 45–64 are Neutral, and 65 and above are Bullish.</>,
+        q: 'What is the sentiment score?',
+        a: <>A 0–100 composite sentiment rating for every stock in the S&amp;P 500. It blends four independent channels — <strong>Market</strong> (35%, what the price action itself is saying), <strong>Narrative</strong> (30%, what the financial press is saying), <strong>Influencer</strong> (25%, what insiders and analysts are doing), and <strong>Macro</strong> (10%, what the broader economy is saying). Every formula, weight, and threshold is documented on the <Link href="/technology" className="text-[#0052ff] hover:underline">Technology page</Link> and in our research paper, <em>&ldquo;How to Quantify Stock Sentiment&rdquo;</em>.</>,
+      },
+      {
+        q: 'What do the labels mean?',
+        a: <>The score maps to five plain-English bands: <strong>0–20 Strongly Bearish</strong>, <strong>21–40 Bearish</strong>, <strong>41–60 Neutral</strong>, <strong>61–80 Bullish</strong>, and <strong>81–100 Strongly Bullish</strong>. 50 is neutral by construction — every signal is normalized so that above 50 always means bullish.</>,
       },
       {
         q: 'How often does the score update?',
-        a: "Scores are cached for 15 minutes. When you search a ticker, you'll receive the most recently computed score. If the cache has expired, a fresh score is computed in real time from all seven data sources before being returned to you.",
+        a: <>All four channels are recomputed for all 502 tickers <strong>every 30 minutes, around the clock</strong>. Underneath that, each source refreshes on its own schedule: price data every 15 minutes during US trading hours (with a definitive end-of-day capture after the bell), news every 30 minutes 24/7, insider and analyst data every 6 hours, and macro data daily. The published score is smoothed with a 4-hour half-life moving average, so it reflects sustained shifts in sentiment rather than tick-to-tick noise.</>,
       },
       {
-        q: 'Why do different stocks have similar scores?',
-        a: <>Some market-wide signals — like the CNN Fear &amp; Greed Index — apply equally to all stocks, which can pull scores toward the middle. We&apos;re actively working on per-stock differentiation so that company-specific signals carry more weight relative to macro conditions. Score differentiation is a priority for upcoming releases.</>,
+        q: 'What does the confidence value mean?',
+        a: <>Every score ships with a <strong>confidence</strong> value (0–100). It starts at 100 and takes penalties for stale data, missing channels, or channels that sharply disagree with each other. A score of 72 with confidence 90 and a score of 72 with confidence 55 are different animals — and we tell you which one you&apos;re holding.</>,
       },
       {
-        q: 'What stocks can I look up?',
-        a: 'Any US-listed equity ticker — NYSE, NASDAQ, and AMEX listed stocks. ETFs and indices may return partial scores depending on data availability. Non-US tickers and crypto are not currently supported.',
+        q: 'What stocks are covered?',
+        a: 'Every stock in the S&P 500 — 502 tickers. Smaller caps aren’t scored yet. Coverage expansion is on the roadmap, but we’d rather score 502 names properly than 5,000 names badly.',
       },
     ],
   },
@@ -44,25 +50,30 @@ const groups: FaqGroup[] = [
     items: [
       {
         q: 'Where does the data come from?',
-        a: <>We aggregate from seven sources: <strong>yfinance</strong> for price and fundamentals, <strong>Alpha Vantage</strong> for RSI and news sentiment, <strong>CNN Fear &amp; Greed</strong> for macro context, <strong>Finnhub</strong> for insider activity and earnings, <strong>ApeWisdom</strong> for Reddit mentions, <strong>Google Trends</strong> for search interest, and <strong>NewsAPI</strong> for macro headlines. Full details are on the <Link href="/technology" className="text-[#0052ff] hover:underline">Technology page</Link>.</>,
+        a: <>Six providers, each doing what it&apos;s best at: <strong>Yahoo Finance / Polygon</strong> for price, volume, and order-flow data (primary plus fallback), <strong>Alpha Vantage</strong> for financial news, <strong>Finnhub</strong> for news fallback, insider transactions, and analyst consensus, <strong>FINRA</strong> for official daily short-volume files, <strong>FRED</strong> (the Federal Reserve) for Treasury yields, and <strong>CBOE</strong> data for the VIX. Redundant providers on the critical paths mean a single vendor outage doesn&apos;t blind the system. Full details on the <Link href="/technology" className="text-[#0052ff] hover:underline">Technology page</Link>.</>,
       },
       {
-        q: 'Is the data real-time?',
-        a: "Price data is near real-time during market hours, subject to the standard 15-minute delay from data providers. Sentiment signals like Reddit mentions and news sentiment update on their own schedules — typically within the hour. The CNN Fear & Greed Index refreshes daily. All data is subject to our 15-minute Redis cache TTL.",
+        q: 'How is news turned into a number?',
+        a: <>Not by keyword counting. Articles must first clear a relevance threshold — passing mentions don&apos;t move the score. Near-duplicate coverage is clustered so ten outlets covering the same story count as <strong>one event, not ten signals</strong>. Each surviving article is then scored by <strong>FinBERT</strong>, a transformer model fine-tuned on financial text, and the model&apos;s own uncertainty down-weights ambiguous articles — a confidently bullish article counts more than a hedged one.</>,
       },
       {
-        q: 'What does the Reddit data actually measure?',
-        a: <>We use ApeWisdom to track mention counts, rank, and rank velocity for tickers across major finance subreddits including r/wallstreetbets, r/stocks, and r/investing. Currently this measures <strong>volume</strong> of discussion — how much a stock is being talked about. Sentiment polarity (whether that discussion is bullish or bearish in tone) is on our roadmap as a high-priority enhancement.</>,
+        q: 'Do you track social media?',
+        a: <>No — social-media sentiment is not currently an input. The influencer channel tracks <strong>insiders and analysts</strong> instead: insider transaction filings, analyst buy/hold/sell consensus, price targets, and earnings estimate revisions. Their actions are regulated and verifiable, unlike anonymous posts — and insiders get the highest weight and the longest memory, because they trade on longer horizons than headlines.</>,
+      },
+      {
+        q: 'What happens when data is missing?',
+        a: <>The score degrades gracefully rather than going stale. If a channel has no fresh data for a ticker, its weight is redistributed proportionally across the remaining channels. If a ticker has only a handful of signals in a channel, that channel is shrunk toward neutral — one lone article can&apos;t swing a stock to &ldquo;Strongly Bullish.&rdquo; And whatever happens is reflected honestly in the <strong>confidence</strong> value and the freshness metadata on every response.</>,
       },
     ],
   },
   {
     id: 'pro',
     label: 'Pro plan',
+    blurred: true,
     items: [
       {
         q: 'What do I get with Pro?',
-        a: <>Pro unlocks the AI narrative layer — a Claude (Haiku 4.5) generated analysis for every stock you look up. This includes a <strong>Summary</strong>, a <strong>Bull case</strong>, a <strong>Bear case</strong>, and a <strong>What to watch</strong> section — all grounded in the actual scored data rather than generic commentary. Free users still get the full MarketMood Score and all three signal pillars.</>,
+        a: <>The full breakdown behind every score: <strong>per-channel sub-indices</strong> (how Market, Narrative, Influencer, and Macro each scored), the <strong>top drivers</strong> behind the number, a <strong>generated explanation</strong> of what&apos;s moving it, <strong>divergence</strong> between channels, <strong>data-freshness metadata</strong>, and the <strong>unsmoothed raw score</strong> alongside the published one. Free users get the composite score, its label, and the confidence value.</>,
       },
       {
         q: 'How much does Pro cost?',
@@ -70,7 +81,7 @@ const groups: FaqGroup[] = [
       },
       {
         q: 'Can I try it before subscribing?',
-        a: 'Yes — the full MarketMood Score, all signal pillars, charts, news, and analyst data are free with no account required. Pro is only needed for the AI narrative layer. Search any ticker to see what free access looks like.',
+        a: 'Yes — the composite score, labels, charts, and news are free with no account required. Pro is only needed for the full score breakdown. Search any ticker to see what free access looks like.',
       },
     ],
   },
@@ -83,12 +94,16 @@ const groups: FaqGroup[] = [
         a: 'No. SentientMarkets is an informational tool — it aggregates and presents sentiment data to help you form your own view. Nothing on this platform constitutes a buy or sell recommendation. Always do your own research and consult a qualified financial advisor before making investment decisions.',
       },
       {
-        q: 'How accurate is the score?',
-        a: "The MarketMood Score reflects the current state of aggregated signals — it is not a price prediction. Sentiment scores are useful as a snapshot of market psychology and signal alignment, but they do not guarantee future price direction. Backtesting capability to measure historical score accuracy is on our roadmap.",
+        q: 'Is the score a price prediction?',
+        a: <>No. Sentiment is a measurement of <strong>current signal alignment</strong> — a snapshot of what price action, the press, insiders, analysts, and the macro backdrop are collectively saying right now. It does not guarantee future price direction. Full score history is preserved, which powers the history views and, over time, backtesting.</>,
       },
       {
-        q: 'What if a data source is unavailable?',
-        a: <>If an individual data source fails or is rate-limited, the score is computed from the remaining available sources and the affected signal is marked as <strong>Unavailable</strong> in the UI. We never silently substitute or fabricate data — if something isn&apos;t available, it&apos;s clearly labelled as such.</>,
+        q: 'Why every 30 minutes and not real time?',
+        a: <>This is deliberately not a tick-level feed. Sentiment shifts on the scale of hours, not milliseconds — the pipeline recomputes every 30 minutes and the published score is smoothed over a 4-hour half-life, which filters out noise a tick-level feed would amplify. Every response includes its exact age, so you always know how fresh the score you&apos;re holding is.</>,
+      },
+      {
+        q: 'What if a data source goes down?',
+        a: <>The critical paths — price data and news — each have redundant providers, so a single vendor outage doesn&apos;t blind the system. If a whole channel loses fresh data anyway, its weight is redistributed to the remaining channels and the confidence value takes a penalty. We never silently substitute or fabricate data.</>,
       },
     ],
   },
@@ -98,11 +113,12 @@ const groups: FaqGroup[] = [
     items: [
       {
         q: 'Do I need an account to use SentientMarkets?',
-        a: 'No account is required to search tickers and view the MarketMood Score. An account is only needed to subscribe to Pro and access the AI narrative layer.',
+        a: <>No account is required to search tickers and view the sentiment score.{' '}
+          <span className="pro-blur" aria-hidden="true">An account is only needed to subscribe to Pro and access the full score breakdown.</span></>,
       },
       {
-        q: 'How do I cancel my Pro subscription?',
-        a: 'You can cancel any time from your account settings. Your Pro access continues until the end of the current billing period.',
+        q: 'How do I cancel my subscription?',
+        a: <><span className="pro-blur" aria-hidden="true">You can cancel your Pro subscription any time from your account settings. Your Pro access continues until the end of the current billing period.</span></>,
       },
     ],
   },
@@ -142,7 +158,7 @@ export default function FaqAccordion() {
                 activeNav === g.id
                   ? 'text-[#0a0b0d] bg-[#eef0f3] font-semibold'
                   : 'text-[#5b616e] hover:text-[#0a0b0d]'
-              }`}
+              } ${g.blurred ? 'pro-blur' : ''}`}
             >
               {g.label}
             </button>
@@ -161,8 +177,11 @@ export default function FaqAccordion() {
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="text-[12px] uppercase tracking-[0.06em] text-[#7c828a] font-semibold mb-4">{group.label}</div>
-              <div className="bg-white border border-[#dee1e6] rounded-xl overflow-hidden">
+              <div className={`text-[12px] uppercase tracking-[0.06em] text-[#7c828a] font-semibold mb-4 ${group.blurred ? 'pro-blur' : ''}`}>{group.label}</div>
+              <div
+                className={`bg-white border border-[#dee1e6] rounded-xl overflow-hidden ${group.blurred ? 'pro-blur' : ''}`}
+                aria-hidden={group.blurred || undefined}
+              >
                 {group.items.map((item, i) => {
                   const key = `${group.id}-${i}`;
                   const isOpen = openItem === key;

@@ -365,7 +365,7 @@ export default function TechnologyPage() {
                       {[
                         ['Aggregate', "each channel's weighted signals combine into a 0–100 sub-index."],
                         ['Blend', 'the four sub-indices combine at 35/30/25/10 into the raw composite.'],
-                        ['Smooth', 'an exponential moving average with a 4-hour half-life is applied, so the published score reflects sustained shifts in sentiment rather than tick-to-tick noise. (Pro-tier responses include the unsmoothed raw score too.)'],
+                        ['Smooth', 'an exponential moving average with a 4-hour half-life is applied, so the published score reflects sustained shifts in sentiment rather than tick-to-tick noise.'],
                         ['Label', 'the score maps to a plain-English label.'],
                       ].map(([step, desc], i) => (
                         <li key={step} className="flex gap-3">
@@ -383,10 +383,11 @@ export default function TechnologyPage() {
                       a score of 72 with confidence 55 are different animals — and the system tells you
                       which one you&apos;re holding.
                     </p>
-                    <p className="text-xs text-[#5b616e] leading-relaxed mt-3">
+                    <p className="text-xs text-[#5b616e] leading-relaxed mt-3 pro-blur" aria-hidden="true">
                       Pro-tier responses additionally expose the full breakdown: per-channel sub-indices,
                       the top drivers behind the score, a generated explanation, divergence between
-                      channels, and data-freshness metadata.
+                      channels, and data-freshness metadata. (Pro-tier responses also include the
+                      unsmoothed raw score.)
                     </p>
                   </div>
                   <div className="p-6">
@@ -529,6 +530,7 @@ export default function TechnologyPage() {
         <div className="flex gap-6">
           <Link href="/privacy" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Privacy</Link>
           <Link href="/terms" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Terms</Link>
+          <Link href="/faq" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">FAQ</Link>
           <Link href="/contact" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Contact</Link>
         </div>
         <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a]">© 2026 · Not financial advice.</div>

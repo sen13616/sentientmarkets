@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ChevronDown } from 'lucide-react';
 import Nav from '../Nav';
 import Footer from '../Footer';
 import Reveal from '../Reveal';
@@ -25,6 +26,26 @@ function inRange(v: number, [lo, hi]: Range): boolean {
 
 function rangeActive(value: Range, def: Range): boolean {
   return value[0] !== def[0] || value[1] !== def[1];
+}
+
+/* How many filters differ from defaults — shown on the mobile Filters toggle. */
+function countActiveFilters(f: Filters): number {
+  let n = 0;
+  if (rangeActive(f.composite, DEFAULT_FILTERS.composite)) n++;
+  if (rangeActive(f.change1d, DEFAULT_FILTERS.change1d)) n++;
+  if (rangeActive(f.percentile, DEFAULT_FILTERS.percentile)) n++;
+  for (const ch of Object.keys(f.channels) as (keyof Filters['channels'])[]) {
+    if (rangeActive(f.channels[ch], DEFAULT_FILTERS.channels[ch])) n++;
+  }
+  if (f.spread !== 'any') n++;
+  if (f.sectorRank !== 'any') n++;
+  if (f.sectors.length !== ALL_SECTORS.length) n++;
+  if (f.minConfidence > 0) n++;
+  if (f.excludeMissing) n++;
+  if (f.excludeCold) n++;
+  if (f.excludeStale) n++;
+  if (f.crossingNeutral) n++;
+  return n;
 }
 
 /* Null semantics: a row with a null value for an ACTIVE (narrowed) filter is
@@ -78,6 +99,8 @@ export default function ScreenerPage({ data }: { data: ScreenerPayload }) {
   const [activePreset, setActivePreset] = useState<PresetKey | null>('all');
   const [sortKey, setSortKey] = useState<SortKey>('score');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
+  // Collapsed by default on phones so the results table is visible on landing.
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   // Manual edits clear the active preset highlight; presets replace state.
   const patch = (p: Partial<Filters>) => {
@@ -150,7 +173,25 @@ export default function ScreenerPage({ data }: { data: ScreenerPayload }) {
 
         <div className={s.cols}>
           <Reveal>
-            <FilterRail filters={filters} patch={patch} clearAll={clearAll} />
+            <div>
+              <button
+                type="button"
+                className={s.filtersToggle}
+                onClick={() => setFiltersOpen((v) => !v)}
+                aria-expanded={filtersOpen}
+              >
+                <span className={s.filtersToggleLabel}>
+                  Filters
+                  {countActiveFilters(filters) > 0 && (
+                    <span className={s.filtersBadge}>{countActiveFilters(filters)}</span>
+                  )}
+                </span>
+                <ChevronDown size={16} className={filtersOpen ? s.chevOpen : undefined} />
+              </button>
+              <div className={`${s.railWrap} ${filtersOpen ? s.railWrapOpen : ''}`}>
+                <FilterRail filters={filters} patch={patch} clearAll={clearAll} />
+              </div>
+            </div>
           </Reveal>
           <Reveal delay={0.1}>
             <ResultsTable

@@ -1,3 +1,14 @@
+import Link from 'next/link';
+
+// FAQ and Contact live here (not the top nav) alongside the legal links.
+const FOOTER_LINKS: [string, string][] = [
+  ['/privacy', 'Privacy'],
+  ['/terms', 'Terms'],
+  ['/faq', 'FAQ'],
+  ['/contact', 'Contact'],
+  ['#', 'Legal Disclaimer'],
+];
+
 // `variant` defaults to 'dark' so every existing caller (asset pages via
 // IndexConstituents, stock pages via PriceChart) keeps its current look.
 // The redesigned homepage opts into the light NEW_DESIGN treatment.
@@ -22,11 +33,17 @@ export default function Footer({ variant = 'dark' }: { variant?: 'dark' | 'light
         <span className={copyCls}>
           © 2026 SENTIENTMARKETS.
         </span>
-        {['Privacy', 'Terms', 'Contact', 'Legal Disclaimer'].map((link) => (
-          <a key={link} href="#" className={linkCls}>
-            {link}
-          </a>
-        ))}
+        {FOOTER_LINKS.map(([href, label]) =>
+          href === '#' ? (
+            <a key={label} href="#" className={linkCls}>
+              {label}
+            </a>
+          ) : (
+            <Link key={label} href={href} className={linkCls}>
+              {label}
+            </Link>
+          ),
+        )}
       </div>
     </footer>
   );

@@ -14,7 +14,7 @@ export default function ContactPage() {
       <Nav variant="light" />
 
       <div className="px-6 md:px-20">
-        <div className="mx-auto w-full max-w-[1200px] pb-24">
+        <div className="mx-auto w-full max-w-[1200px] pb-16">
 
           {/* HERO — CSS stagger on load, same recipe as the homepage hero */}
           <section className="py-20 border-b border-[#eef0f3]">
@@ -41,13 +41,13 @@ export default function ContactPage() {
                   label: 'General enquiries',
                   title: 'Send us an email',
                   desc: 'For questions about the platform, your account, data, or anything else — email is the fastest way to reach us.',
-                  action: { href: 'mailto:hello@sentientmarkets.ai', text: 'hello@sentientmarkets.ai →', isExternal: true },
+                  action: { href: 'mailto:aayudh.sen@gmail.com', text: 'aayudh.sen@gmail.com →', isExternal: true },
                   highlight: true,
                 },
                 {
                   label: 'Have a question first?',
                   title: 'Check the FAQ',
-                  desc: 'Most common questions about the score, data sources, and Pro are already answered in our FAQ — worth a quick look before reaching out.',
+                  desc: <>Most common questions about the score, data sources, and <span className="pro-blur" aria-hidden="true">Pro</span> are already answered in our FAQ — worth a quick look before reaching out.</>,
                   action: { href: '/faq', text: 'Browse FAQ →', isExternal: false },
                   highlight: false,
                 },
@@ -55,7 +55,7 @@ export default function ContactPage() {
                   label: 'Found a bug?',
                   title: 'Report an issue',
                   desc: "If something looks wrong — a bad score, a broken chart, a ticker that isn't loading — let us know and we'll look into it straight away.",
-                  action: { href: 'mailto:hello@sentientmarkets.ai?subject=Bug report', text: 'Report a bug →', isExternal: true },
+                  action: { href: 'mailto:aayudh.sen@gmail.com?subject=Bug report', text: 'Report a bug →', isExternal: true },
                   highlight: false,
                 },
               ].map(({ label, title, desc, action, highlight }, i) => (
@@ -91,12 +91,12 @@ export default function ContactPage() {
           </section>
 
           {/* FAQ NUDGE */}
-          <section className="py-16">
+          <section className="pt-10">
             <Reveal>
               <div className="flex items-center justify-between bg-white border border-[#dee1e6] rounded-xl p-6">
                 <div>
                   <div className="text-sm font-semibold text-[#0a0b0d] mb-1">Looking for something specific?</div>
-                  <div className="text-xs text-[#7c828a]">Our FAQ covers the score, data sources, Pro features, and more.</div>
+                  <div className="text-xs text-[#7c828a]">Our FAQ covers the score, data sources, <span className="pro-blur" aria-hidden="true">Pro features</span>, and more.</div>
                 </div>
                 <Link href="/faq" className="shrink-0 ml-4 text-xs font-semibold text-[#0a0b0d] bg-[#eef0f3] hover:bg-[#dee1e6] px-4 py-2 rounded-full transition-colors">
                   Go to FAQ →
@@ -113,6 +113,7 @@ export default function ContactPage() {
         <div className="flex gap-6">
           <Link href="/privacy" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Privacy</Link>
           <Link href="/terms" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Terms</Link>
+          <Link href="/faq" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">FAQ</Link>
           <Link href="/contact" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Contact</Link>
         </div>
         <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a]">© 2026 · Not financial advice.</div>

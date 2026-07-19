@@ -73,14 +73,11 @@
 .navSearch::placeholder { color: var(--tx3); }
 .navSearch:focus { border-color: rgba(255,255,255,0.18); color: var(--tx1); background: var(--surface-2); }
 
-.btnPro {
-  background: var(--tx1); color: var(--bg); flex-shrink: 0;
-  border: none; border-radius: 6px;
-  padding: 6px 16px; font-size: 13px; font-weight: 500;
-  font-family: var(--sans); cursor: pointer; transition: opacity .15s, transform .1s;
+.betaTag {
+  color: #5c8aff; flex-shrink: 0;
+  font-size: 13px; font-weight: 500;
+  font-family: var(--sans);
 }
-.btnPro:hover { opacity: .86; }
-.btnPro:active { transform: scale(0.97); }
 
 /* ═══════════════════════════════════════════
    2. TOP SECTION — stock header + chart + gauge
