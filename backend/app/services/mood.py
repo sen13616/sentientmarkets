@@ -1,6 +1,6 @@
 """
 Market Mood Service
-Fetches macro signals every 15 minutes and uses Claude to generate
+Fetches macro signals every 60 minutes and uses Claude to generate
 a single emotional state word describing the overall market mood.
 """
 import asyncio
@@ -16,6 +16,7 @@ from app.services.sources.yfinance import get_yfinance_data
 from app.services.sources.fear_greed import get_fear_greed_data
 from app.services.sources.apewisdom import get_trending_tickers
 from app.services.sources.finnhub import get_market_news
+from app.services.sentiment_api import get_overview
 
 logger = logging.getLogger(__name__)
 
@@ -115,11 +116,12 @@ Respond with JSON:
 async def fetch_mood_signals() -> dict:
     """Fetch all macro signals needed for mood generation."""
     try:
-        spy_data, fear_greed, ape, news = await asyncio.gather(
+        spy_data, fear_greed, ape, news, ov = await asyncio.gather(
             get_yfinance_data('SPY'),
             get_fear_greed_data(),
             get_trending_tickers(10),
             get_market_news(),
+            get_overview(),
             return_exceptions=True,
         )
 
@@ -128,6 +130,20 @@ async def fetch_mood_signals() -> dict:
         fg   = fear_greed if isinstance(fear_greed, dict) else {}
         ape  = ape        if isinstance(ape,        list) else []
         news = news       if isinstance(news,       dict) else {}
+        overview = ov     if isinstance(ov,         dict) else {}
+
+        sectors = sorted(
+            (s for s in overview.get("sectors", []) if s.get("average_score") is not None),
+            key=lambda s: s["average_score"],
+            reverse=True,
+        )
+
+        def _fmt_movers(movers: list) -> list[str]:
+            return [
+                f"{m['ticker']} {m['score_change_1d']:+.1f}"
+                for m in movers[:3]
+                if m.get("ticker") and m.get("score_change_1d") is not None
+            ]
 
         spy_price  = spy.get("price_data", {}).get("current_price")
         spy_vol    = spy.get("price_data", {}).get("volume")
@@ -155,6 +171,15 @@ async def fetch_mood_signals() -> dict:
             "stock_breadth":        (fg.get("sub_indicators") or {}).get("stock_price_breadth", {}).get("score"),
             "put_call_ratio":       (fg.get("sub_indicators") or {}).get("put_call_ratio", {}).get("score"),
             "junk_bond_demand":     (fg.get("sub_indicators") or {}).get("junk_bond_demand", {}).get("score"),
+            "sp500_average_score":          overview.get("average_score"),
+            "sp500_breadth_above_50_pct":   overview.get("breadth_above_50_pct"),
+            "sp500_breadth_improving_pct":  overview.get("breadth_improving_pct"),
+            "sp500_summary":                overview.get("summary") or None,
+            "sp500_top_movers":             _fmt_movers(overview.get("top_movers") or []),
+            "sp500_bottom_movers":          _fmt_movers(overview.get("bottom_movers") or []),
+            "sp500_leading_sectors":        [f"{s['sector']} ({s['average_score']:.1f})" for s in sectors[:2]],
+            "sp500_lagging_sectors":        [f"{s['sector']} ({s['average_score']:.1f})" for s in sectors[-1:] if len(sectors) > 2],
+            "sp500_universe_scored":        overview.get("universe_scored"),
             "top_reddit_tickers":   [t.get("ticker") for t in ape[:5]],
             "reddit_momentum":      [t.get("momentum_signal") for t in ape[:5]],
             "news_sentiment_label": None,
@@ -184,6 +209,33 @@ async def generate_mood(snapshot: dict) -> dict:
         spy_200d   = snapshot.get('spy_vs_200d_ma') or 0
         vix_chg    = snapshot.get('vix_change_percent') or 0
 
+        # S&P 500 universe block — omitted entirely when the overview endpoint
+        # is unavailable; individual lines drop out after a data gap (null
+        # improving breadth, empty movers).
+        sp500_block = ""
+        if snapshot.get('sp500_average_score') is not None:
+            n = snapshot.get('sp500_universe_scored')
+            breadth = f"  Breadth: {snapshot.get('sp500_breadth_above_50_pct')}% above neutral"
+            if snapshot.get('sp500_breadth_improving_pct') is not None:
+                breadth += f", {snapshot.get('sp500_breadth_improving_pct')}% improving vs 1d ago"
+            lines = [
+                f"S&P 500 SENTIMENT (in-house per-ticker universe, {n} names scored):",
+                f"  Average score: {snapshot.get('sp500_average_score')}/100",
+                breadth,
+            ]
+            if snapshot.get('sp500_summary'):
+                lines.append(f"  Summary: {snapshot['sp500_summary']}")
+            if snapshot.get('sp500_top_movers'):
+                lines.append(f"  Top movers: {', '.join(snapshot['sp500_top_movers'])}")
+            if snapshot.get('sp500_bottom_movers'):
+                lines.append(f"  Bottom movers: {', '.join(snapshot['sp500_bottom_movers'])}")
+            if snapshot.get('sp500_leading_sectors'):
+                sector_line = f"  Leading sectors: {', '.join(snapshot['sp500_leading_sectors'])}"
+                if snapshot.get('sp500_lagging_sectors'):
+                    sector_line += f" | Lagging: {', '.join(snapshot['sp500_lagging_sectors'])}"
+                lines.append(sector_line)
+            sp500_block = "\n".join(lines) + "\n\n"
+
         user_prompt = f"""MARKET SNAPSHOT ({snapshot.get('timestamp', 'now')}):
 
 PRICE ACTION (SPY):
@@ -200,7 +252,7 @@ FEAR & GREED (CNN):
   Put/call ratio score: {snapshot.get('put_call_ratio')}
   Junk bond demand: {snapshot.get('junk_bond_demand')}
 
-RETAIL SENTIMENT (Reddit):
+{sp500_block}RETAIL SENTIMENT (Reddit):
   Top tickers: {', '.join(t for t in snapshot.get('top_reddit_tickers', []) if t)}
 
 TOP HEADLINES:
