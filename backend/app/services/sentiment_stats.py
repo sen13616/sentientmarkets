@@ -6,7 +6,7 @@ serves them) and returns plain values, so this module is unit-testable.
 A "point" is an upstream history entry:
   {"timestamp": iso8601, "score": float, "score_raw": float, ...}
 """
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from statistics import pstdev
 
 # Gap thresholds by interval. Daily entries are spaced ~24h (max observed

@@ -30,13 +30,14 @@ export default async function StockPage({ params }: { params: { ticker: string }
   // (never claim non-coverage when coverage is simply unknown). In-universe
   // tickers with sparse data (no score yet, thin history, missing overview)
   // still get the full light page with pending/em-dash states.
-  let composite: any = null;
-  try {
-    composite = await getStockSentimentV2(ticker);
-  } catch {
-    composite = null;
-  }
+  // Both SSR fetches start together — composite gates what renders, but
+  // waiting for it before *starting* the history fetch just serialized the
+  // page's latency. A wasted history call for non-covered tickers is cheap
+  // (backend 404s fast and the promise is caught below).
+  const compositePromise = getStockSentimentV2(ticker).catch(() => null);
+  const historyPromise = getStockHistoryV2(ticker, 30).catch(() => null);
 
+  const composite: any = await compositePromise;
   if (!composite) {
     return <NotCoveredPage ticker={ticker} variant="unavailable" />;
   }
@@ -44,12 +45,8 @@ export default async function StockPage({ params }: { params: { ticker: string }
     return <NotCoveredPage ticker={ticker} variant="not-covered" />;
   }
 
-  let initialHistory = null;
-  try {
-    initialHistory = await getStockHistoryV2(ticker, 30);
-  } catch {
-    initialHistory = null; // charts degrade; the page still renders
-  }
+  // Charts degrade when null; the page still renders.
+  const initialHistory = await historyPromise;
 
   return <StockSentimentPage composite={composite} initialHistory={initialHistory} />;
 }

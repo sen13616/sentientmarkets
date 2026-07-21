@@ -5,5 +5,5 @@ export function generateMetadata({ params }: { params: { ticker: string } }) {
 }
 
 export default function EtfPage({ params }: { params: { ticker: string } }) {
-  return <AssetPage ticker={params.ticker} assetTypeHint="etf" />;
+  return <AssetPage ticker={params.ticker} />;
 }

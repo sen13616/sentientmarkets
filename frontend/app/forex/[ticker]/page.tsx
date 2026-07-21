@@ -5,5 +5,5 @@ export function generateMetadata({ params }: { params: { ticker: string } }) {
 }
 
 export default function ForexPage({ params }: { params: { ticker: string } }) {
-  return <AssetPage ticker={params.ticker} assetTypeHint="forex" />;
+  return <AssetPage ticker={params.ticker} />;
 }

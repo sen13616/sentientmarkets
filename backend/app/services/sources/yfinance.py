@@ -1,6 +1,5 @@
 """
-Fetches all yfinance data for a given ticker and returns it as a dict
-whose keys and field names match the Pydantic models in app/models/sentiment.py.
+Fetches all yfinance data for a given ticker and returns it as a plain dict.
 yfinance is synchronous, so the network call is offloaded via asyncio.to_thread
 to avoid blocking the event loop.
 """
@@ -8,9 +7,19 @@ import asyncio
 import logging
 import math
 
+import pandas as pd
 import yfinance as yf
 
 logger = logging.getLogger(__name__)
+
+
+def _first_not_none(*values):
+    """First value that is not None. Unlike an `or` chain, a legitimate 0/0.0
+    (possible for changes and some quotes) is not treated as missing."""
+    for v in values:
+        if v is not None:
+            return v
+    return None
 
 
 def _safe_pct(numerator, denominator) -> float | None:
@@ -32,23 +41,25 @@ def _safe_sub(a, b) -> float | None:
         return None
 
 
+# Map yfinance quoteType to our clean type system. Single source of truth —
+# sources/search.py imports this too.
+QUOTE_TYPE_TO_ASSET = {
+    'EQUITY': 'stock',
+    'ETF': 'etf',
+    'INDEX': 'index',
+    'CRYPTOCURRENCY': 'crypto',
+    'FUTURE': 'commodity',
+    'CURRENCY': 'forex',
+    'MUTUALFUND': 'etf',  # treat mutual funds like ETFs
+}
+
+
 def detect_asset_type(info: dict) -> dict:
     """Detect asset type from yfinance info and return type + metadata."""
     quote_type = (info.get('quoteType') or '').upper()
     ticker_symbol = (info.get('symbol') or '').upper()
 
-    # Map yfinance quoteType to our clean type system
-    type_map = {
-        'EQUITY': 'stock',
-        'ETF': 'etf',
-        'INDEX': 'index',
-        'CRYPTOCURRENCY': 'crypto',
-        'FUTURE': 'commodity',
-        'CURRENCY': 'forex',
-        'MUTUALFUND': 'etf',  # treat mutual funds like ETFs
-    }
-
-    asset_type = type_map.get(quote_type, 'stock')  # default to stock
+    asset_type = QUOTE_TYPE_TO_ASSET.get(quote_type, 'stock')  # default to stock
 
     # Build metadata based on asset type
     meta = {
@@ -110,15 +121,16 @@ async def get_quote(ticker: str) -> dict:
         t = yf.Ticker(ticker)
         info = await asyncio.to_thread(lambda: t.info)
 
-        current_price = (
-            info.get('regularMarketPrice') or
-            info.get('currentPrice') or
-            info.get('previousClose') or
-            info.get('ask') or
-            info.get('bid') or
-            None
+        current_price = _first_not_none(
+            info.get('regularMarketPrice'),
+            info.get('currentPrice'),
+            info.get('previousClose'),
+            info.get('ask'),
+            info.get('bid'),
         )
-        previous_close = info.get('previousClose') or info.get('regularMarketPreviousClose')
+        previous_close = _first_not_none(
+            info.get('previousClose'), info.get('regularMarketPreviousClose')
+        )
 
         change = info.get('regularMarketChange')
         if change is None:
@@ -129,6 +141,7 @@ async def get_quote(ticker: str) -> dict:
 
         if current_price is None:
             return {}
+
         return {
             "price": current_price,
             "change": change,
@@ -148,19 +161,29 @@ async def get_yfinance_data(ticker: str) -> dict:
         t = yf.Ticker(ticker)
         info = await asyncio.to_thread(lambda: t.info)
 
+        # The remaining yfinance reads only depend on `info` being fetched
+        # (not on each other) — run them concurrently instead of serially.
+        earnings_raw, hist, holders_raw = await asyncio.gather(
+            asyncio.to_thread(lambda: t.earnings_dates),
+            asyncio.to_thread(lambda: t.history(period="1mo")),
+            asyncio.to_thread(lambda: t.institutional_holders),
+            return_exceptions=True,
+        )
+
         # Detect asset type
         asset_info = detect_asset_type(info)
 
         # ── price_data ────────────────────────────────────────────────────────
-        current_price = (
-            info.get('regularMarketPrice') or
-            info.get('currentPrice') or
-            info.get('previousClose') or
-            info.get('ask') or
-            info.get('bid') or
-            None
+        current_price = _first_not_none(
+            info.get('regularMarketPrice'),
+            info.get('currentPrice'),
+            info.get('previousClose'),
+            info.get('ask'),
+            info.get('bid'),
         )
-        previous_close = info.get('previousClose') or info.get('regularMarketPreviousClose')
+        previous_close = _first_not_none(
+            info.get('previousClose'), info.get('regularMarketPreviousClose')
+        )
         day_low        = info.get('regularMarketDayLow')  or info.get('dayLow')
         day_high       = info.get('regularMarketDayHigh') or info.get('dayHigh')
         ftw_low        = info.get('fiftyTwoWeekLow')  or info.get('52WeekLow')
@@ -232,7 +255,9 @@ async def get_yfinance_data(ticker: str) -> dict:
         # Earnings surprises from earnings_dates DataFrame
         earnings_surprises = []
         try:
-            ed = await asyncio.to_thread(lambda: t.earnings_dates)
+            if isinstance(earnings_raw, BaseException):
+                raise earnings_raw
+            ed = earnings_raw
             if ed is not None and not ed.empty:
                 ed = ed.dropna(subset=["EPS Estimate", "Reported EPS"]).head(4)
                 for date, row in ed.iterrows():
@@ -272,8 +297,10 @@ async def get_yfinance_data(ticker: str) -> dict:
         fifty_day_ma       = info.get("fiftyDayAverage")
         two_hundred_day_ma = info.get("twoHundredDayAverage")
 
-        # Fetch recent history for short-term MA calculations
-        hist = await asyncio.to_thread(lambda: t.history(period="1mo"))
+        # Recent history (pre-fetched above) for short-term MA calculations
+        if isinstance(hist, BaseException):
+            logger.warning("history(1mo) unavailable for %s: %s", ticker, hist)
+            hist = pd.DataFrame()
 
         five_day_ma = None
         twenty_day_ma = None
@@ -282,7 +309,7 @@ async def get_yfinance_data(ticker: str) -> dict:
         one_month_return = None
 
         try:
-            current = info.get('regularMarketPrice') or info.get('currentPrice')
+            current = _first_not_none(info.get('regularMarketPrice'), info.get('currentPrice'))
             if not hist.empty and len(hist) >= 5:
                 five_day_ma = round(float(hist['Close'].tail(5).mean()), 4)
                 if current and five_day_ma:
@@ -324,7 +351,9 @@ async def get_yfinance_data(ticker: str) -> dict:
 
         top_holders = []
         try:
-            ih = await asyncio.to_thread(lambda: t.institutional_holders)
+            if isinstance(holders_raw, BaseException):
+                raise holders_raw
+            ih = holders_raw
             if ih is not None and not ih.empty:
                 for _, row in ih.head(5).iterrows():
                     top_holders.append({
@@ -459,6 +488,26 @@ async def get_price_history(ticker: str, period: str = "3mo") -> dict:
 
         stock_close = clean_close(hist)
         index_close = clean_close(index_hist)
+
+        # Align the index series to the stock's trading days. The two series
+        # come from different exchanges with different holidays, so their rows
+        # don't line up — and the frontend consumes both positionally against
+        # `dates`, which would drift the comparison line onto wrong dates.
+        def to_dates(series):
+            s = series.copy()
+            idx = s.index
+            if getattr(idx, "tz", None) is not None:
+                idx = idx.tz_localize(None)
+            s.index = idx.normalize()
+            # Duplicate normalized dates are possible on odd bars — keep last.
+            return s[~s.index.duplicated(keep="last")]
+
+        if stock_close is not None and index_close is not None:
+            stock_close = to_dates(stock_close)
+            # Holidays on the index side carry the previous close forward
+            # (bfill only covers a leading gap).
+            aligned = to_dates(index_close).reindex(stock_close.index).ffill().bfill()
+            index_close = aligned.dropna() if aligned.isna().all() else aligned
 
         def normalise(series):
             if series is None or len(series) == 0:

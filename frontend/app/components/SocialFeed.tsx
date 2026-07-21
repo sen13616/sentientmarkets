@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { getHomeData } from '@/lib/api';
+import { timeAgo } from '@/lib/format';
 
 type RedditStock = {
   rank: number;
@@ -19,13 +20,6 @@ type Article = {
   url: string;
   published_at: string;
 };
-
-function fmtTime(iso: string): string {
-  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (diff < 3600)  return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
-}
 
 function momentumClass(signal: string): string {
   const s = signal.toLowerCase();
@@ -196,7 +190,7 @@ export default function SocialFeed({
                     {article.source}
                   </span>
                   <span className="text-[9px] font-semibold text-[#7c828a] uppercase tracking-[0.05em] px-2 py-0.5 bg-[#eef0f3] rounded shrink-0 font-mono">
-                    {fmtTime(article.published_at)}
+                    {timeAgo(article.published_at)}
                   </span>
                 </div>
 

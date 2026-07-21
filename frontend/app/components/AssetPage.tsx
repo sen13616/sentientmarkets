@@ -1,6 +1,8 @@
 import { getSentiment } from '@/lib/api';
+import { timeAgo } from '@/lib/format';
 import styles from '@/app/components/AssetPage.module.css';
 import Link from 'next/link';
+import Footer from '@/app/components/Footer';
 import NavSearch from '@/app/components/stock/NavSearch';
 import InsightTabs from '@/app/components/stock/InsightTabs';
 import PriceChart from '@/app/components/stock/PriceChart';
@@ -22,10 +24,12 @@ function fmtPct(n: number | null | undefined): string {
 
 function fmtLargeNum(n: number | null | undefined): string {
   if (n == null) return '—';
-  if (n >= 1e12) return `$${(n / 1e12).toFixed(2)}T`;
-  if (n >= 1e9)  return `$${(n / 1e9).toFixed(1)}B`;
-  if (n >= 1e6)  return `$${(n / 1e6).toFixed(1)}M`;
-  return `$${n.toFixed(0)}`;
+  const sign = n < 0 ? '-' : '';
+  const abs = Math.abs(n);
+  if (abs >= 1e12) return `${sign}$${(abs / 1e12).toFixed(2)}T`;
+  if (abs >= 1e9)  return `${sign}$${(abs / 1e9).toFixed(1)}B`;
+  if (abs >= 1e6)  return `${sign}$${(abs / 1e6).toFixed(1)}M`;
+  return `${sign}$${abs.toFixed(0)}`;
 }
 
 function fmtShares(n: number | null | undefined): string {
@@ -34,16 +38,6 @@ function fmtShares(n: number | null | undefined): string {
   if (n >= 1e6)  return `${(n / 1e6).toFixed(0)}M`;
   if (n >= 1e3)  return `${(n / 1e3).toFixed(0)}K`;
   return `${n}`;
-}
-
-function fmtTime(iso: string | null | undefined): string {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  const now = new Date();
-  const diff = Math.floor((now.getTime() - d.getTime()) / 1000);
-  if (diff < 3600)  return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
 }
 
 export function scoreColor(score: number | null | undefined): string {
@@ -64,19 +58,11 @@ function tagClass(signal: string | null | undefined): string {
 
 function fmtQuarter(period: string | null | undefined): string {
   if (!period) return '—';
-  try {
-    const d = new Date(period);
-    const month = d.getMonth(); // 0-indexed
-    const year  = d.getFullYear() % 100;
-    // Apple fiscal quarters: Q1=Oct-Dec, Q2=Jan-Mar, Q3=Apr-Jun, Q4=Jul-Sep
-    let q: number;
-    if (month <= 2)       q = 2;  // Jan-Mar → Q2
-    else if (month <= 5)  q = 3;  // Apr-Jun → Q3
-    else if (month <= 8)  q = 4;  // Jul-Sep → Q4
-    else                  q = 1;  // Oct-Dec → Q1
-    const fy = month <= 8 ? year : year + 1;
-    return `Q${q} FY${fy < 10 ? '0' + fy : fy}`;
-  } catch { return period; }
+  const d = new Date(period);
+  if (Number.isNaN(d.getTime())) return period;
+  // Standard calendar quarters: Q1=Jan-Mar, Q2=Apr-Jun, Q3=Jul-Sep, Q4=Oct-Dec
+  const q = Math.floor(d.getMonth() / 3) + 1;
+  return `Q${q} ${d.getFullYear()}`;
 }
 
 function calcUpside(target: number | null | undefined, current: number | null | undefined): string {
@@ -166,10 +152,9 @@ function InvalidTickerPage({ ticker }: { ticker: string }) {
 
 interface AssetPageProps {
   ticker: string
-  assetTypeHint?: string
 }
 
-export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: AssetPageProps) {
+export default async function AssetPage({ ticker: tickerParam }: AssetPageProps) {
   let data: any;
   try {
     data = await getSentiment(tickerParam);
@@ -511,7 +496,6 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
           bearCase={aiIns.bear_case ?? null}
           whatToWatch={aiIns.what_to_watch ?? null}
           ticker={ticker}
-          signals={data}
         />
       </div>
       </FadeIn>
@@ -850,7 +834,9 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
                       <div className={styles.numRow}>
                         <span className={styles.nrName}>Distance from low</span>
                         <span className={styles.nrVal} style={{ color: 'var(--green)' }}>
-                          {cur != null && low52 != null ? `+${(((cur - low52) / low52) * 100).toFixed(1)}%` : '—'}
+                          {cur != null && low52 != null
+                            ? `${cur - low52 >= 0 ? '+' : ''}${(((cur - low52) / low52) * 100).toFixed(1)}%`
+                            : '—'}
                         </span>
                         <div className={styles.nrTag}/>
                       </div>
@@ -912,47 +898,23 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
               : sentScore >= -0.1 ? 'var(--amber)'
               : 'var(--red)';
 
-            // Analyst
+            // Analyst — per-grade counts render only when the API provides
+            // them; we never fabricate a split from mean_score.
             const totalAnalysts = analyst.number_of_analysts ?? 0;
-            const meanScore = analyst.mean_score as number | null | undefined;
-            let strongBuy: number, buyCount: number, holdCount: number, sellCount: number;
+            const hasGradeCounts = (analyst.strong_buy as number | null) != null;
+            const strongBuy = hasGradeCounts ? (analyst.strong_buy as number) : null;
+            const buyCount  = hasGradeCounts ? ((analyst.buy ?? 0) as number) : null;
+            const holdCount = hasGradeCounts ? ((analyst.hold ?? 0) as number) : null;
+            const sellCount = hasGradeCounts
+              ? ((analyst.sell ?? 0) as number) + ((analyst.strong_sell ?? 0) as number)
+              : null;
 
-            if ((analyst.strong_buy as number | null) != null) {
-              strongBuy  = analyst.strong_buy as number;
-              buyCount   = (analyst.buy ?? 0) as number;
-              holdCount  = (analyst.hold ?? 0) as number;
-              sellCount  = ((analyst.sell ?? 0) as number) + ((analyst.strong_sell ?? 0) as number);
-            } else {
-              const total = totalAnalysts;
-              if (meanScore != null && meanScore <= 1.5) {
-                strongBuy = Math.round(total * 0.55);
-                buyCount  = Math.round(total * 0.25);
-                holdCount = Math.round(total * 0.15);
-                sellCount = total - strongBuy - buyCount - holdCount;
-              } else if (meanScore != null && meanScore <= 2.5) {
-                strongBuy = Math.round(total * 0.30);
-                buyCount  = Math.round(total * 0.35);
-                holdCount = Math.round(total * 0.25);
-                sellCount = total - strongBuy - buyCount - holdCount;
-              } else if (meanScore != null && meanScore <= 3.5) {
-                strongBuy = Math.round(total * 0.10);
-                buyCount  = Math.round(total * 0.20);
-                holdCount = Math.round(total * 0.50);
-                sellCount = total - strongBuy - buyCount - holdCount;
-              } else {
-                strongBuy = 0;
-                buyCount  = Math.round(total * 0.10);
-                holdCount = Math.round(total * 0.30);
-                sellCount = total - buyCount - holdCount;
-              }
-            }
-
-            const buyTotal   = strongBuy + buyCount;
+            const buyTotal   = hasGradeCounts ? (strongBuy! + buyCount!) : null;
             const holdTotal  = holdCount;
             const sellTotal  = sellCount;
-            const buyPctBar  = totalAnalysts > 0 ? Math.round((buyTotal  / totalAnalysts) * 100) : 0;
-            const holdPctBar = totalAnalysts > 0 ? Math.round((holdTotal / totalAnalysts) * 100) : 0;
-            const sellPctBar = 100 - buyPctBar - holdPctBar;
+            const buyPctBar  = hasGradeCounts && totalAnalysts > 0 ? Math.round((buyTotal!  / totalAnalysts) * 100) : 0;
+            const holdPctBar = hasGradeCounts && totalAnalysts > 0 ? Math.round((holdTotal! / totalAnalysts) * 100) : 0;
+            const sellPctBar = hasGradeCounts && totalAnalysts > 0 ? 100 - buyPctBar - holdPctBar : 0;
 
             const consensus = analyst.consensus as string | null | undefined;
             const verdictColor = (consensus?.toLowerCase().includes('buy'))  ? 'var(--green)'
@@ -998,53 +960,65 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
                   {hasAnalyst && <div className={styles.pCell}>
                     <div className={styles.pCellLabel}>Analyst consensus</div>
                     <div className={styles.cellChart}>
-                      <div className={styles.analystBar}>
-                        <div className={styles.abBuy}  style={{ width: `${buyPctBar}%` }}/>
-                        <div className={styles.abHold} style={{ width: `${holdPctBar}%` }}/>
-                        <div className={styles.abSell} style={{ width: `${sellPctBar}%` }}/>
-                      </div>
-                      <div className={styles.analystLegend}>
-                        <div className={styles.alItem}>
-                          <div className={styles.alDot} style={{ background: 'var(--green)' }}/>
-                          <span style={{ color: 'var(--tx3)' }}>Buy</span>
-                          <span style={{ color: 'var(--tx1)' }}>{buyTotal || '—'}</span>
-                        </div>
-                        <div className={styles.alItem}>
-                          <div className={styles.alDot} style={{ background: 'var(--amber)' }}/>
-                          <span style={{ color: 'var(--tx3)' }}>Hold</span>
-                          <span style={{ color: 'var(--tx1)' }}>{holdTotal || '—'}</span>
-                        </div>
-                        <div className={styles.alItem}>
-                          <div className={styles.alDot} style={{ background: 'var(--red)' }}/>
-                          <span style={{ color: 'var(--tx3)' }}>Sell</span>
-                          <span style={{ color: 'var(--tx1)' }}>{sellTotal || '—'}</span>
-                        </div>
-                      </div>
+                      {hasGradeCounts && (
+                        <>
+                          <div className={styles.analystBar}>
+                            <div className={styles.abBuy}  style={{ width: `${buyPctBar}%` }}/>
+                            <div className={styles.abHold} style={{ width: `${holdPctBar}%` }}/>
+                            <div className={styles.abSell} style={{ width: `${sellPctBar}%` }}/>
+                          </div>
+                          <div className={styles.analystLegend}>
+                            <div className={styles.alItem}>
+                              <div className={styles.alDot} style={{ background: 'var(--green)' }}/>
+                              <span style={{ color: 'var(--tx3)' }}>Buy</span>
+                              <span style={{ color: 'var(--tx1)' }}>{buyTotal || '—'}</span>
+                            </div>
+                            <div className={styles.alItem}>
+                              <div className={styles.alDot} style={{ background: 'var(--amber)' }}/>
+                              <span style={{ color: 'var(--tx3)' }}>Hold</span>
+                              <span style={{ color: 'var(--tx1)' }}>{holdTotal || '—'}</span>
+                            </div>
+                            <div className={styles.alItem}>
+                              <div className={styles.alDot} style={{ background: 'var(--red)' }}/>
+                              <span style={{ color: 'var(--tx3)' }}>Sell</span>
+                              <span style={{ color: 'var(--tx1)' }}>{sellTotal || '—'}</span>
+                            </div>
+                          </div>
+                        </>
+                      )}
                       <div className={styles.analystVerdict} style={{ color: verdictColor }}>{consensus ?? '—'}</div>
                       <div className={styles.analystCount}>{totalAnalysts ? `${totalAnalysts} analysts` : '—'}</div>
                     </div>
                     <div className={styles.cellDivider}/>
                     <div className={styles.numTable}>
-                      <div className={styles.numRow}>
-                        <span className={styles.nrName}>Strong Buy</span>
-                        <span className={styles.nrVal} style={{ color: 'var(--green)' }}>{strongBuy}</span>
-                        <div className={styles.nrTag}/>
-                      </div>
-                      <div className={styles.numRow}>
-                        <span className={styles.nrName}>Buy</span>
-                        <span className={styles.nrVal} style={{ color: 'var(--green)' }}>{buyCount}</span>
-                        <div className={styles.nrTag}/>
-                      </div>
-                      <div className={styles.numRow}>
-                        <span className={styles.nrName}>Hold</span>
-                        <span className={styles.nrVal} style={{ color: 'var(--amber)' }}>{holdCount}</span>
-                        <div className={styles.nrTag}/>
-                      </div>
-                      <div className={styles.numRow}>
-                        <span className={styles.nrName}>Sell</span>
-                        <span className={styles.nrVal} style={{ color: 'var(--red)' }}>{sellCount}</span>
-                        <div className={styles.nrTag}/>
-                      </div>
+                      {hasGradeCounts ? (
+                        <>
+                          <div className={styles.numRow}>
+                            <span className={styles.nrName}>Strong Buy</span>
+                            <span className={styles.nrVal} style={{ color: 'var(--green)' }}>{strongBuy}</span>
+                            <div className={styles.nrTag}/>
+                          </div>
+                          <div className={styles.numRow}>
+                            <span className={styles.nrName}>Buy</span>
+                            <span className={styles.nrVal} style={{ color: 'var(--green)' }}>{buyCount}</span>
+                            <div className={styles.nrTag}/>
+                          </div>
+                          <div className={styles.numRow}>
+                            <span className={styles.nrName}>Hold</span>
+                            <span className={styles.nrVal} style={{ color: 'var(--amber)' }}>{holdCount}</span>
+                            <div className={styles.nrTag}/>
+                          </div>
+                          <div className={styles.numRow}>
+                            <span className={styles.nrName}>Sell</span>
+                            <span className={styles.nrVal} style={{ color: 'var(--red)' }}>{sellCount}</span>
+                            <div className={styles.nrTag}/>
+                          </div>
+                        </>
+                      ) : (
+                        <div style={{ padding: '8px 0', fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--tx3)' }}>
+                          Per-grade breakdown unavailable
+                        </div>
+                      )}
                       <div className={styles.numRow}>
                         <span className={styles.nrName}>Mean score</span>
                         <span className={styles.nrVal} style={{ color: verdictColor }}>
@@ -1324,16 +1298,18 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
             const subScores = subList.map(s => s.val).filter((v): v is number => v != null);
             const subAvg = subScores.length > 0 ? subScores.reduce((a, b) => a + b, 0) / subScores.length : null;
 
-            // VIX (from sub_indicators.market_volatility.score — this IS the VIX proxy from F&G)
-            const vixScore = volatility;
-            const vixLabel = vixScore == null ? 'Unknown'
-              : vixScore < 15 ? 'Calm market'
-              : vixScore < 25 ? 'Moderate volatility'
-              : 'High volatility';
-            const vixPct = vixScore != null ? Math.min(100, Math.max(0, (vixScore / 50) * 100)) : 0;
-            const vixTagCls = vixScore == null ? styles.tNeu
-              : vixScore < 15 ? styles.tBull
-              : vixScore < 25 ? styles.tNeu
+            // Volatility mood — fg.sub_indicators.market_volatility.score is a
+            // 0-100 CNN Fear & Greed component, NOT the actual VIX. Higher =
+            // calmer conditions scored as greed; lower = volatile / fear.
+            const volMoodScore = volatility;
+            const volMoodLabel = volMoodScore == null ? 'Unknown'
+              : volMoodScore >= 55 ? 'Calm conditions'
+              : volMoodScore >= 35 ? 'Neutral'
+              : 'Volatile conditions';
+            const volMoodPct = volMoodScore != null ? Math.min(100, Math.max(0, volMoodScore)) : 0;
+            const volMoodTagCls = volMoodScore == null ? styles.tNeu
+              : volMoodScore >= 55 ? styles.tBull
+              : volMoodScore >= 35 ? styles.tNeu
               : styles.tBear;
 
             // Short float (from institutional data)
@@ -1477,37 +1453,40 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
                     </div>
                   </div>}
 
-                  {/* Cell 3: VIX */}
+                  {/* Cell 3: Volatility mood (F&G component — not the VIX) */}
                   <div className={styles.pCell}>
-                    <div className={styles.pCellLabel}>VIX — volatility index</div>
+                    <div className={styles.pCellLabel}>Volatility mood</div>
                     <div className={styles.cellChart}>
-                      <div className={styles.vixNum} style={{ color: subColor(vixScore) }}>
-                        {vixScore != null ? vixScore.toFixed(1) : '—'}
+                      <div className={styles.vixNum} style={{ color: subColor(volMoodScore) }}>
+                        {volMoodScore != null ? Math.round(volMoodScore) : '—'}
                       </div>
-                      <div className={styles.vixSub}>{vixLabel}</div>
+                      <div className={styles.vixSub}>{volMoodLabel}</div>
                       <div className={styles.vixTrack}>
-                        <div className={styles.vixThumb} style={{ left: `${vixPct}%`, boxShadow: `0 0 0 2px ${subColor(vixScore)}` }}/>
+                        <div className={styles.vixThumb} style={{ left: `${volMoodPct}%`, boxShadow: `0 0 0 2px ${subColor(volMoodScore)}` }}/>
                       </div>
-                      <div className={styles.vixAxis}><span>0</span><span>25</span><span>50+</span></div>
-                      <span className={`${styles.tag} ${vixTagCls}`}>
-                        {vixScore == null ? 'N/A' : vixScore < 15 ? 'Calm' : vixScore < 25 ? 'Moderate' : 'High'}
+                      <div className={styles.vixAxis}><span>0</span><span>50</span><span>100</span></div>
+                      <span className={`${styles.tag} ${volMoodTagCls}`}>
+                        {volMoodScore == null ? 'N/A' : volMoodScore >= 55 ? 'Calm' : volMoodScore >= 35 ? 'Neutral' : 'Volatile'}
                       </span>
+                      <div style={{ marginTop: 8, fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--tx3)', lineHeight: 1.5 }}>
+                        CNN Fear &amp; Greed volatility component — 0-100, higher = calmer conditions scored as greed
+                      </div>
                     </div>
                     <div className={styles.cellDivider}/>
                     <div className={styles.numTable}>
                       <div className={styles.numRow}>
-                        <span className={styles.nrName}>VIX level</span>
-                        <span className={styles.nrVal} style={{ color: subColor(vixScore) }}>{vixScore != null ? vixScore.toFixed(1) : '—'}</span>
-                        <div className={styles.nrTag}><span className={`${styles.tag} ${vixTagCls}`}>{subs.market_volatility?.label ?? 'N/A'}</span></div>
+                        <span className={styles.nrName}>Volatility mood score</span>
+                        <span className={styles.nrVal} style={{ color: subColor(volMoodScore) }}>{volMoodScore != null ? Math.round(volMoodScore) : '—'}</span>
+                        <div className={styles.nrTag}><span className={`${styles.tag} ${volMoodTagCls}`}>{subs.market_volatility?.label ?? 'N/A'}</span></div>
                       </div>
                       <div className={styles.numRow}>
-                        <span className={styles.nrName}>Calm threshold</span>
-                        <span className={styles.nrVal}>&lt; 15</span>
+                        <span className={styles.nrName}>Calm (greed) threshold</span>
+                        <span className={styles.nrVal}>&ge; 55</span>
                         <div className={styles.nrTag}/>
                       </div>
                       <div className={styles.numRow}>
                         <span className={styles.nrName}>Fear threshold</span>
-                        <span className={styles.nrVal}>&gt; 25</span>
+                        <span className={styles.nrVal}>&lt; 35</span>
                         <div className={styles.nrTag}/>
                       </div>
                     </div>
@@ -1536,11 +1515,6 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
                       </div>
                       <div className={styles.numRow}>
                         <span className={styles.nrName}>Short ratio</span>
-                        <span className={styles.nrVal}>{shortRatio != null ? (shortRatio as number).toFixed(2) : '—'}</span>
-                        <div className={styles.nrTag}/>
-                      </div>
-                      <div className={styles.numRow}>
-                        <span className={styles.nrName}>Days to cover</span>
                         <span className={styles.nrVal}>{shortRatio != null ? (shortRatio as number).toFixed(2) : '—'}</span>
                         <div className={styles.nrTag}/>
                       </div>
@@ -1583,7 +1557,7 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
                 <div className={styles.newsTitle}>{article.title}</div>
                 <div className={styles.newsMeta}>
                   <span>{article.source}</span>
-                  <span>{fmtTime(article.published_at)}</span>
+                  <span>{timeAgo(article.published_at)}</span>
                 </div>
               </div>
               <span className={`${styles.tag} ${tagClass(article.sentiment_label)}`}>
@@ -1814,19 +1788,7 @@ export default async function AssetPage({ ticker: tickerParam, assetTypeHint }: 
       </FadeIn>}
 
       {/* ── 9. FOOTER ──────────────────────────────────────────── */}
-      <footer className={styles.footer}>
-        <div className={styles.footerLogo}>
-          <span className={styles.footerLogoWord}>TheMarketMood</span>
-          <span className={styles.footerLogoTld}>.ai</span>
-        </div>
-        <div className={styles.footerLinks}>
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Contact</a>
-          <a href="#">API</a>
-        </div>
-        <div className={styles.footerCopy}>© 2026 · Data for informational purposes only. Not financial advice.</div>
-      </footer>
+      <Footer />
 
     </div>
   );

@@ -5,7 +5,6 @@ from app.services.sources.yfinance import get_price_history
 
 router = APIRouter()
 
-VALID_PERIODS = {"1mo": "1M", "3mo": "3M", "6mo": "6M", "1y": "1Y"}
 FRONTEND_TO_YF = {"1M": "1mo", "3M": "3mo", "6M": "6mo", "1Y": "1y"}
 
 

@@ -1,10 +1,16 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Single source of truth for the API base — HeroSearch/NavSearch import this
+// rather than re-deriving it. 8080 matches the README's local backend port.
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 /* Module-level memo for the market-wide payloads (home, mood) that several
    components fetch on every mount. Caching the *promise* both dedupes
    concurrent callers and reuses the result across client-side navigations
    (home → stock → home no longer refetches). Failures are evicted so a
-   flaky request doesn't poison the window. */
+   flaky request doesn't poison the window.
+
+   CLIENT-ONLY: every caller today is a client component. If a server
+   component ever imports these, this memo becomes a process-wide cache that
+   fights Next's own fetch caching — add a bare-fetch server variant instead. */
 const _memo: Record<string, { promise: Promise<any>; at: number }> = {};
 
 function memoized(key: string, ttlMs: number, fn: () => Promise<any>): Promise<any> {

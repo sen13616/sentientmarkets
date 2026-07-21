@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import FaqAccordion from './FaqAccordion';
 import styles from '../page.module.css';
 import Nav from '../components/Nav';
+import Footer from '../components/Footer';
 
 export const metadata = {
   title: 'FAQ — SentientMarkets',
@@ -36,16 +36,7 @@ export default function FaqPage() {
         </div>
       </div>
 
-      <footer className="border-t border-[#dee1e6] bg-white py-8 px-6 md:px-20 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="text-base font-semibold tracking-[-0.01em] text-[#0a0b0d]">SentientMarkets</div>
-        <div className="flex gap-6">
-          <Link href="/privacy" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Privacy</Link>
-          <Link href="/terms" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Terms</Link>
-          <Link href="/faq" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">FAQ</Link>
-          <Link href="/contact" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a] hover:text-[#0a0b0d] transition-colors">Contact</Link>
-        </div>
-        <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a]">© 2026 · Not financial advice.</div>
-      </footer>
+      <Footer variant="light" />
     </div>
   );
 }

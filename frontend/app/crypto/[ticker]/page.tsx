@@ -5,5 +5,5 @@ export function generateMetadata({ params }: { params: { ticker: string } }) {
 }
 
 export default function CryptoPage({ params }: { params: { ticker: string } }) {
-  return <AssetPage ticker={params.ticker} assetTypeHint="crypto" />;
+  return <AssetPage ticker={params.ticker} />;
 }

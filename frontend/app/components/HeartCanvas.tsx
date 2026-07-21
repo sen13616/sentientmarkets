@@ -42,7 +42,12 @@ export default function HeartCanvas() {
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     resize();
-    addEventListener('resize', resize);
+    function onResize() {
+      resize();
+      // Reduced motion has no rAF loop, so repaint the static frame here.
+      if (reduce && lutReady) drawFrame(performance.now());
+    }
+    addEventListener('resize', onResize);
 
     function F(x: number, y: number, z: number) {
       const a = x * x + 2.25 * y * y + z * z - 1;
@@ -50,7 +55,11 @@ export default function HeartCanvas() {
     }
 
     /* surface radius lookup r(v,u): built once by bisection so beads can
-       FLOW across the surface cheaply at runtime (magic currents) */
+       FLOW across the surface cheaply at runtime (magic currents).
+       The full grid is ~2M evaluations of F, so it's built lazily in
+       row-chunks via requestIdleCallback (setTimeout fallback) instead of
+       synchronously on mount — nothing is drawn until it's ready, then the
+       visual result is identical. */
     const VS = 96, US = 192, LUT = new Float32Array(VS * US);
     function surfR(dx: number, dy: number, dz: number) {
       let lo = 0, hi = -1;
@@ -64,19 +73,43 @@ export default function HeartCanvas() {
       }
       return (lo + hi) / 2;
     }
-    let zMin = Infinity, zMax = -Infinity;
-    for (let i = 0; i < VS; i++) {
-      const v = (i + 0.5) / VS * Math.PI, sv = Math.sin(v), cv = Math.cos(v);
-      for (let j = 0; j < US; j++) {
-        const u = j / US * Math.PI * 2;
-        const r = surfR(sv * Math.cos(u), sv * Math.sin(u), cv);
-        LUT[i * US + j] = r;
-        const z = r * cv;
-        if (z < zMin) zMin = z;
-        if (z > zMax) zMax = z;
+    let zMin = Infinity, zMax = -Infinity, zMid = 0;
+    let lutReady = false;
+    let buildRow = 0;
+    let idleId = 0;
+    let timerId: ReturnType<typeof setTimeout> | undefined;
+    const hasIdle = typeof window.requestIdleCallback === 'function';
+    function buildRows(deadline?: IdleDeadline) {
+      const BATCH = 8; // rows per slice on the setTimeout fallback
+      const start = buildRow;
+      while (buildRow < VS) {
+        const i = buildRow;
+        const v = (i + 0.5) / VS * Math.PI, sv = Math.sin(v), cv = Math.cos(v);
+        for (let j = 0; j < US; j++) {
+          const u = j / US * Math.PI * 2;
+          const r = surfR(sv * Math.cos(u), sv * Math.sin(u), cv);
+          LUT[i * US + j] = r;
+          const z = r * cv;
+          if (z < zMin) zMin = z;
+          if (z > zMax) zMax = z;
+        }
+        buildRow++;
+        if (deadline ? deadline.timeRemaining() < 2 : buildRow - start >= BATCH) break;
+      }
+      if (buildRow < VS) { scheduleBuild(); return; }
+      zMid = (zMin + zMax) / 2;
+      lutReady = true;
+      if (reduce) {
+        drawFrame(performance.now()); // one static frame, no animation loop
+      } else {
+        raf = requestAnimationFrame(frame);
       }
     }
-    const zMid = (zMin + zMax) / 2;
+    function scheduleBuild() {
+      if (hasIdle) idleId = window.requestIdleCallback(buildRows, { timeout: 200 });
+      else timerId = setTimeout(() => buildRows(), 0);
+    }
+    scheduleBuild();
     function lutR(v: number, u: number) { // bilinear lookup on the grid
       const fi = Math.min(Math.max(v / Math.PI * VS - 0.5, 0), VS - 1.001);
       let fj = (u / (Math.PI * 2)) * US;
@@ -118,7 +151,12 @@ export default function HeartCanvas() {
 
     /* scroll → explosion progress 0..1 over the first 60% of a viewport */
     let prog = 0;
-    function onScroll() { prog = Math.min(1, Math.max(0, scrollY / (innerHeight * 0.6))); }
+    function onScroll() {
+      prog = Math.min(1, Math.max(0, scrollY / (innerHeight * 0.6)));
+      // No rAF loop under reduced motion — repaint so the scroll explosion
+      // still tracks (a single cheap draw per scroll event).
+      if (reduce && lutReady) drawFrame(performance.now());
+    }
     addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     const ease = (p: number) => p * p * (3 - 2 * p);
@@ -139,7 +177,7 @@ export default function HeartCanvas() {
     const TILT = -0.18, SIN_T = Math.sin(TILT), COS_T = Math.cos(TILT);
     const t0 = performance.now();
     let raf = 0;
-    function frame(now: number) {
+    function drawFrame(now: number) {
       const t = (now - t0) / 1000;
       ctx!.clearRect(0, 0, W, H);
       const th = reduce ? 0.6 : t * 0.11;      // horizontal spin (very slow)
@@ -185,13 +223,19 @@ export default function HeartCanvas() {
         ctx!.fillStyle = `rgba(${q.rgb[0]},${q.rgb[1]},${q.rgb[2]},${Math.min(alpha, 1)})`;
         ctx!.fill();
       }
+    }
+    function frame(now: number) {
+      drawFrame(now);
       raf = requestAnimationFrame(frame);
     }
-    raf = requestAnimationFrame(frame);
+    // The loop (or the single reduced-motion frame) starts once the LUT
+    // finishes building in buildRows().
 
     return () => {
       cancelAnimationFrame(raf);
-      removeEventListener('resize', resize);
+      if (hasIdle && idleId) window.cancelIdleCallback(idleId);
+      if (timerId !== undefined) clearTimeout(timerId);
+      removeEventListener('resize', onResize);
       removeEventListener('scroll', onScroll);
       parent?.removeEventListener('pointermove', onPointerMove);
       parent?.removeEventListener('pointerleave', onPointerLeave);

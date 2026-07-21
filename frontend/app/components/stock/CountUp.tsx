@@ -20,15 +20,17 @@ export default function CountUp({
 
     const end = value;
     const t0 = performance.now();
+    let rafId = 0;
 
     const tick = (now: number) => {
       const p = Math.min((now - t0) / duration, 1);
       const eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
       el.textContent = prefix + (eased * end).toFixed(decimals);
-      if (p < 1) requestAnimationFrame(tick);
+      if (p < 1) rafId = requestAnimationFrame(tick);
     };
-    requestAnimationFrame(tick);
-  }, [value, prefix, decimals]);
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [value, prefix, decimals, duration]);
 
   // suppressHydrationWarning: server renders final value, client animates from 0
   return (

@@ -11,11 +11,18 @@ type MoodData = {
   intensity: number;
   accent_color?: string;
   key_signals?: string[];
-  history?: { emotion: string }[];
+  history?: { emotion: string; timestamp?: string }[];
   timestamp?: string;
 };
 
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+/** Weekday label from the entry's own timestamp — positional labels drift
+ * with <5 entries or across weekends. */
+function dayLabel(ts: string | undefined): string {
+  if (!ts) return '';
+  const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-US', { weekday: 'short' });
+}
 
 function isNegative(emotion: string): boolean {
   const e = emotion.toLowerCase();
@@ -206,7 +213,7 @@ export default function MoodCard() {
                           {h.emotion}
                         </span>
                         <span className="text-[9px] sm:text-[10px] font-medium text-[#a8acb3] uppercase tracking-[0.05em]">
-                          {DAYS[i]}
+                          {dayLabel(h.timestamp)}
                         </span>
                       </div>
                     );

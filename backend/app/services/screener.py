@@ -12,7 +12,7 @@ thresholds are unit-testable.
 import asyncio
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from app.services import sentiment_api
 from app.services.cache import get_cached, set_cached
@@ -191,7 +191,7 @@ async def refresh_screener() -> None:
                 tick_timestamp = payload.get("timestamp")
 
     blob = clean_json_floats({
-        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "tick_timestamp": tick_timestamp,
         "universe_scored": (overview or {}).get("universe_scored") or len(rows),
         "rows": rows,

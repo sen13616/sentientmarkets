@@ -1,6 +1,5 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -10,7 +9,7 @@ import HeroSearch from './HeroSearch';
 import MoodCard from './components/MoodCard';
 import MarketSnapshot from './components/MarketSnapshot';
 import SocialFeed from './components/SocialFeed';
-import TickerTape from './components/TickerTape';
+import TickerTape, { type TapeItem } from './components/TickerTape';
 import HeartCanvas from './components/HeartCanvas';
 import { getHomeData, getStockQuoteV2 } from '@/lib/api';
 import styles from './page.module.css';
@@ -20,6 +19,7 @@ type TrendingTicker = { name: string; change: string; positive: boolean };
 export default function Home() {
   const router = useRouter();
   const [trending, setTrending] = useState<TrendingTicker[]>([]);
+  const [tape, setTape] = useState<TapeItem[]>([]);
   const [searchFocused, setSearchFocused] = useState<boolean>(false);
 
   useEffect(() => {
@@ -27,7 +27,6 @@ export default function Home() {
       try {
         const data = await getHomeData();
         const top: any[] = (data.trending_tickers ?? []).slice(0, 5);
-        if (top.length === 0) return;
         // The chip % is the 1d PRICE change (cheap cached quote route) — the
         // old mention_change_percent was Reddit mention growth and read as a
         // wildly wrong price stat (e.g. NFLX "+603.6%").
@@ -43,16 +42,43 @@ export default function Home() {
             positive: pct != null ? pct >= 0 : true,
           };
         });
-        setTrending(top5);
+        if (top5.length > 0) setTrending(top5);
+
+        // Ticker tape: real index levels + trending quotes only — the tape
+        // renders nothing it didn't get from the API.
+        const idx = data.market_indices ?? {};
+        const items: TapeItem[] = [];
+        for (const key of ['sp500', 'nasdaq', 'dow'] as const) {
+          const e = idx[key];
+          if (e?.change_percent != null) {
+            items.push({
+              ticker: e.name ?? key.toUpperCase(),
+              change: (e.change_percent >= 0 ? '+' : '') + e.change_percent.toFixed(2) + '%',
+              positive: e.change_percent >= 0,
+            });
+          }
+        }
+        if (idx.vix?.price != null) {
+          items.push({ ticker: 'VIX', change: idx.vix.price.toFixed(2), positive: null });
+        }
+        top.forEach((t, i) => {
+          const pct: number | null = quotes[i]?.change_percent ?? null;
+          if (pct != null) {
+            items.push({
+              ticker: t.ticker,
+              change: (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%',
+              positive: pct >= 0,
+            });
+          }
+        });
+        setTape(items);
       } catch {
-        /* chips simply don't render */
+        /* chips and tape simply don't render */
       }
     })();
   }, []);
 
-  // Ticker clicks route to the SentimentAPI-driven /stock/[ticker] page
-  // (the old in-page StockDetailPage swap is retired; the component remains
-  // in the repo for the asset-page fallback ecosystem).
+  // Ticker clicks route to the SentimentAPI-driven /stock/[ticker] page.
   function navigateToStock(ticker: string) {
     router.push(`/stock/${encodeURIComponent(ticker)}`);
   }
@@ -140,7 +166,7 @@ export default function Home() {
               data footer to the fold. z-[1]: above the heart canvas, below
               the search focus vignette. ── */}
           <div className="relative z-[1]">
-            <TickerTape />
+            <TickerTape tickers={tape} />
           </div>
         </section>
 

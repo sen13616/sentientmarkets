@@ -17,12 +17,17 @@ from app.services.sources.google_trends import get_google_trends_data
 logger = logging.getLogger(__name__)
 
 
-async def gather_signals(ticker: str) -> dict:
-    """Collect signals from all relevant sources based on asset type."""
+async def gather_signals(ticker: str, yfinance_data: dict | None = None) -> dict:
+    """Collect signals from all relevant sources based on asset type.
+
+    Pass *yfinance_data* when the caller already fetched it (e.g. for the
+    existence check in sentiment_service) to avoid a duplicate fetch.
+    """
     logger.info("Gathering signals for %s", ticker)
 
     # Step 1 — always fetch yfinance first to detect asset type
-    yfinance_data = await get_yfinance_data(ticker)
+    if yfinance_data is None:
+        yfinance_data = await get_yfinance_data(ticker)
     asset_type = yfinance_data.get('asset_type', 'stock')
     asset_meta = yfinance_data.get('asset_meta', {})
 

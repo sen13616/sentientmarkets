@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { getStockNewsV2 } from '@/lib/api';
+import { timeAgo } from '@/lib/format';
 import s from './stockpage.module.css';
 
 type Article = {
@@ -11,18 +12,6 @@ type Article = {
   description: string | null;
   url: string | null;
 };
-
-function timeAgo(iso: string): string {
-  const ms = Date.now() - Date.parse(iso);
-  if (!Number.isFinite(ms) || ms < 0) return '';
-  const mins = Math.floor(ms / 60000);
-  if (mins < 60) return `${Math.max(mins, 1)}m ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
 
 /* Latest per-ticker coverage from Finnhub in a responsive 3×3 grid.
    Hidden entirely when the (backend-cached) result comes back empty. */

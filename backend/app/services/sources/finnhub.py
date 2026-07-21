@@ -25,7 +25,11 @@ def _get(endpoint: str, extra_params: dict) -> dict | list:
 
 def _iso(ts) -> str | None:
     try:
-        return datetime.utcfromtimestamp(ts).isoformat() + "Z"
+        return (
+            datetime.fromtimestamp(ts, tz=timezone.utc)
+            .isoformat()
+            .replace("+00:00", "Z")
+        )
     except Exception:
         return None
 
@@ -35,11 +39,14 @@ async def get_finnhub_data(ticker: str) -> dict:
     from Finnhub for *ticker*. All three requests run concurrently.
     Each section fails independently — errors in one do not affect the others.
     """
-    today     = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    week_ago  = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
+    today       = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    week_ago    = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
+    # Rolling window: a fixed start date grew the payload (and the cached
+    # sentiment blob) monotonically forever.
+    six_months_ago = (datetime.now(timezone.utc) - timedelta(days=183)).strftime("%Y-%m-%d")
 
     news_task      = asyncio.to_thread(_get, "/company-news",             {"symbol": ticker, "from": week_ago, "to": today})
-    insider_task   = asyncio.to_thread(_get, "/stock/insider-sentiment",  {"symbol": ticker, "from": "2025-01-01", "to": today})
+    insider_task   = asyncio.to_thread(_get, "/stock/insider-sentiment",  {"symbol": ticker, "from": six_months_ago, "to": today})
     earnings_task  = asyncio.to_thread(_get, "/stock/earnings",           {"symbol": ticker})
 
     news_raw, insider_raw, earnings_raw = await asyncio.gather(
@@ -101,7 +108,7 @@ async def get_finnhub_data(ticker: str) -> dict:
                         "mspr":   r.get("mspr"),
                         "change": r.get("change"),
                     }
-                    for r in sorted_records
+                    for r in sorted_records[:12]
                 ],
             }
     except Exception as exc:

@@ -5,7 +5,7 @@ Assembled from three already-cached upstream reads (overview, universe,
 one sentiment payload for freshness) plus the same yfinance index-level
 mechanism /api/home uses. There is deliberately NO index-level sentiment
 score in this payload — the page is built on breadth and dispersion of
-constituents. The existing /api/v2/market/overview passthrough is untouched.
+constituents.
 """
 import asyncio
 import logging
@@ -18,6 +18,7 @@ from app.services.screener import get_screener_blob
 from app.services.market_stats import distribution_stats, histogram, widest_sector_gap
 from app.services.sanitize import clean_json_floats
 from app.services.sentiment_api import UpstreamUnavailable
+from app.services.singleflight import coalesce
 from app.services.sources.yfinance import get_market_indices
 
 logger = logging.getLogger(__name__)
@@ -72,6 +73,15 @@ async def get_sp500():
     cached = await get_cached(CACHE_KEY)
     if cached is not None:
         # Heal any pre-sanitizer poisoned entries on read (sentiment.py lesson).
+        return clean_json_floats(cached)
+    # Coalesced: N concurrent cold-cache requests run the build once. The
+    # build manages its own set_cached because the TTL depends on market hours.
+    return await coalesce(CACHE_KEY, _build_sp500)
+
+
+async def _build_sp500() -> dict:
+    cached = await get_cached(CACHE_KEY)
+    if cached is not None:
         return clean_json_floats(cached)
 
     # Overview is load-bearing; everything else degrades to nulls.

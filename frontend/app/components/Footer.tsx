@@ -6,7 +6,7 @@ const FOOTER_LINKS: [string, string][] = [
   ['/terms', 'Terms'],
   ['/faq', 'FAQ'],
   ['/contact', 'Contact'],
-  ['#', 'Legal Disclaimer'],
+  ['/terms#disclaimer', 'Legal Disclaimer'],
 ];
 
 // `variant` defaults to 'dark' so every existing caller (asset pages via
@@ -33,17 +33,11 @@ export default function Footer({ variant = 'dark' }: { variant?: 'dark' | 'light
         <span className={copyCls}>
           © 2026 SENTIENTMARKETS.
         </span>
-        {FOOTER_LINKS.map(([href, label]) =>
-          href === '#' ? (
-            <a key={label} href="#" className={linkCls}>
-              {label}
-            </a>
-          ) : (
-            <Link key={label} href={href} className={linkCls}>
-              {label}
-            </Link>
-          ),
-        )}
+        {FOOTER_LINKS.map(([href, label]) => (
+          <Link key={label} href={href} className={linkCls}>
+            {label}
+          </Link>
+        ))}
       </div>
     </footer>
   );

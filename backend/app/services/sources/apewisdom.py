@@ -50,9 +50,6 @@ async def get_apewisdom_data(ticker: str) -> dict:
             logger.info("get_apewisdom_data: %s not found in either feed", ticker)
             return {}
 
-        # Decode any HTML entities in the name field (not used in output but kept clean)
-        _ = html.unescape(item.get("name") or "")
-
         current_rank   = item.get("rank")
         rank_24h_ago   = item.get("rank_24h_ago")
         mentions       = item.get("mentions")

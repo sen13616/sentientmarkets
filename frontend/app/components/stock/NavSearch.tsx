@@ -3,40 +3,18 @@
 import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
 import styles from '../AssetPage.module.css';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+import { navigateToTicker } from '@/lib/navigation';
 
 export default function NavSearch() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  async function navigateToTicker(input: string) {
-    const ticker = input.trim().toUpperCase();
-    if (!ticker) return;
-    if (inputRef.current) inputRef.current.value = '';
-    try {
-      const res = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(ticker)}`);
-      const data = await res.json();
-      const exact = data.results?.find(
-        (r: any) => r.ticker.toUpperCase() === ticker || (r.display_ticker ?? '').toUpperCase() === ticker
-      );
-      if (exact) {
-        router.push(`/${exact.asset_type}/${encodeURIComponent(exact.ticker)}`);
-      } else if (data.results?.length > 0) {
-        const first = data.results[0];
-        router.push(`/${first.asset_type}/${encodeURIComponent(first.ticker)}`);
-      } else {
-        router.push(`/stock/${ticker}`);
-      }
-    } catch {
-      router.push(`/stock/${ticker}`);
-    }
-  }
-
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       const value = inputRef.current?.value ?? '';
-      navigateToTicker(value);
+      if (!value.trim()) return;
+      if (inputRef.current) inputRef.current.value = '';
+      navigateToTicker(router, value);
     }
   }
 

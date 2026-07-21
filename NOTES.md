@@ -5,30 +5,24 @@ backend :8080, Next dev :3000; ~1,500 requests, zero 5xx, clean recovery). None
 of these block the beta, but all should be addressed before a real launch.
 Ordered by priority.
 
-## 1. Rate limiting on the public backend  ⚠️ do first
+**2026-07-21 remediation pass:** items 1, 2 (coalescing), 4, and 5 are done,
+plus the smaller items marked ✅ below. Status noted inline.
 
-There is none today. Two concrete exposures:
+## 1. Rate limiting on the public backend  ✅ done (2026-07-21)
 
-- `/api/v2/stock/{ticker}/insight` triggers a **paid Claude call** on every
-  cache miss — a hostile loop over all 502 tickers spends real Anthropic budget
-  (one call per ticker per 15-min window).
-- `/api/sentiment/{ticker}` (v1) runs ~17s of live computation per uncached
-  ticker — a cheap DoS vector.
+Per-IP fixed-window limits via `app/services/ratelimit.py` (Redis INCR, fails
+open): deep-analysis 10/min, v1 sentiment 20/min, v2 insight 20/min, search
+60/min, all other cached GETs 120/min shared. Deep-analysis additionally no
+longer trusts client-supplied signals (rebuilt server-side) and caches its
+output per (ticker, tab).
 
-Fix: per-IP rate limit middleware (e.g. `slowapi`) with a tight budget on the
-two expensive routes, generous elsewhere. The API-access product tier limits
-(10/600 req/min) are enforced upstream by SentimentAPI and don't cover these.
+## 2. The v1 sentiment cold path (~17s) blocks asset pages  ✅ mostly done
 
-## 2. The v1 sentiment cold path (~17s) blocks asset pages
-
-`/api/sentiment/{ticker}` computes in-process on cache miss (measured 16.9s for
-AAPL; `/etf/QQQ` SSR: 15.2s cold vs 0.09s warm, 1-hour TTL). The dark asset
-pages (`/etf`, `/crypto`, `/forex`, `/commodity`) fetch it during SSR, so the
-first visitor per ticker per hour eats the full wait. No request coalescing:
-N concurrent misses on one ticker = N parallel 17s computations.
-
-Options (any one helps, roughly in order of effort):
-- In-flight lock so concurrent misses share one computation (coalescing).
+Coalescing shipped (`app/services/singleflight.py`): N concurrent misses share
+one computation, and invalid tickers are rejected before the signal fan-out
+and negative-cached. Price history now overlaps the Claude round-trip and the
+independent yfinance reads run concurrently, shaving several seconds off the
+cold path. Still open if needed later:
 - Scheduled pre-warm for the most-visited asset tickers (the mood/screener
   APScheduler pattern already exists in `main.py`).
 - Long-term: migrate asset pages to SentimentAPI (blocked on its coverage —
@@ -42,39 +36,34 @@ must be in the same Railway region/network — verify, or the whole caching
 layer is 250ms slower than it should be. (FastAPI itself measured 3,800 req/s;
 the app server is not the bottleneck.)
 
-## 4. Unknown-ticker semantics are inconsistent (v1 vs v2)
+## 4. Unknown-ticker semantics  ✅ done (2026-07-21)
 
-- v2 (`/api/v2/stock/ZZZZFAKE`) returns **HTTP 200** with a `ticker_not_found`
-  body — which now also picks up a `public` Cache-Control header, so junk
-  tickers get browser-cached like real ones.
-- v1 returns a 404, but only after ~3.6s of live lookups.
+v2 not-covered bodies now set `Cache-Control: no-store` (as do null-insight
+and fallback-mood responses), so the middleware never browser-caches them.
+The v2 200-with-body convention is kept deliberately — the frontend's
+fallback boundary keys on `in_universe: false`. v1's 404 is now fast: ticker
+shape is validated up front and unknown tickers are negative-cached for 1h.
 
-Pick one convention (404 with JSON body recommended), and exclude error bodies
-from the Cache-Control middleware in `backend/app/main.py`.
+## 5. Stock-page SSR fetches are sequential  ✅ done (2026-07-21)
 
-## 5. Stock-page SSR fetches are sequential
-
-`/stock/[ticker]` renders at p50 1.2s / p95 2.7s under just 15 concurrent
-users (dev server, but the shape carries to prod): the server component makes
-several `no-store` backend calls one after another. Wrap them in
-`Promise.all` for an easy win.
+`/stock/[ticker]` now starts the composite and history fetches together.
 
 ## 6. Smaller items
 
 - **Screener payload**: ~0.5–1s per request even warm, ~15 req/s ceiling
   (502-row JSON blob). Consider trimming fields the table doesn't render, or
   gzip/brotli at the proxy.
-- **Cache observability**: add a hit/miss log line in
-  `backend/app/services/cache.py` so post-launch caching decisions are driven
-  by real hit rates.
+- **Cache observability** ✅ done (2026-07-21): `get_cached` logs hit/miss
+  per key at info level.
 - **Memory soak**: backend RSS grew 12→38MB during the campaign — most likely
   pool warmup, but run a longer soak test before launch to rule out a leak.
-- **Dead footer links**: `/privacy`, `/terms`, and "Legal Disclaimer" have no
-  pages behind them. Write them or drop the links before launch.
+- **Dead footer links** ✅ done (2026-07-21): `/privacy` and `/terms` pages
+  exist (entity details still placeholder — fill in before launch); "Legal
+  Disclaimer" links to `/terms#disclaimer`.
 - **Pro blur**: the site-wide `.pro-blur` treatment (globals.css) is a
   pre-launch tease — remove the class usages when Pro actually launches.
 - **API-access email capture**: the "Get notified" CTA is a mailto stopgap;
   replace with a real email-capture endpoint/list before promoting the page.
-- **Secrets hygiene**: `backend/.env` and `USABLEKEYS.md` are untracked but
-  not gitignored — add them to `.gitignore`, and rotate any keys that were
-  ever shared or screenshotted.
+- **Secrets hygiene** ✅ gitignore done (verified 2026-07-21: `.env` files
+  ignored and never committed; `USABLEKEYS.md` no longer exists). Key
+  rotation for anything previously shared/screenshotted is still on you.

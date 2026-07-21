@@ -73,7 +73,6 @@ function vixTag(price: number): string {
 
 export default function MarketSnapshot() {
   const [data, setData] = useState<HomeData | null>(null);
-  const [activeHistorical, setActiveHistorical] = useState(0);
 
   useEffect(() => {
     getHomeData().then(setData).catch(() => {});
@@ -174,19 +173,14 @@ export default function MarketSnapshot() {
               Historical
             </p>
             <div className="flex gap-3">
-              {historical.map((h, i) => (
-                <button
+              {historical.map((h) => (
+                <div
                   key={h.label}
-                  onClick={() => setActiveHistorical(i)}
-                  className={`px-4 py-2 rounded-full font-mono flex items-center gap-2 transition-all ${
-                    i === activeHistorical
-                      ? 'bg-[rgba(0,82,255,0.08)] border border-[rgba(0,82,255,0.3)] text-[#0052ff]'
-                      : 'bg-[#f7f7f7] border border-[#dee1e6] text-[#7c828a] hover:border-[#a8acb3]'
-                  }`}
+                  className="px-4 py-2 rounded-full font-mono flex items-center gap-2 bg-[#f7f7f7] border border-[#dee1e6] text-[#7c828a]"
                 >
                   <span className="text-[10px] opacity-70">{h.label}</span>
                   <span className="text-sm font-medium">{h.value > 0 ? h.value : '—'}</span>
-                </button>
+                </div>
               ))}
             </div>
           </div>
@@ -199,7 +193,9 @@ export default function MarketSnapshot() {
             const isVix = key === 'vix';
             const isPos = (idx.change_percent ?? 0) >= 0;
             const tag   = isVix ? vixTag(idx.price ?? 0) : (isPos ? 'Bullish' : 'Bearish');
-            const changeColor = isPos ? 'text-[#05b169]' : 'text-[#cf202f]';
+            // A rising VIX means rising fear — red, not green.
+            const isGood = isVix ? !isPos : isPos;
+            const changeColor = isGood ? 'text-[#05b169]' : 'text-[#cf202f]';
             const absChange   = idx.change ?? 0;
 
             const tile = (
@@ -222,11 +218,11 @@ export default function MarketSnapshot() {
                   </div>
                 </div>
 
-                {/* Price — mono per NEW_DESIGN. Font shrinks in the narrow lg
-                    band (2-col grid on a row layout) so 5-digit index levels
-                    like the Dow don't overflow the card. */}
+                {/* Level — mono per NEW_DESIGN; index levels and the VIX are
+                    points, not dollars, so no $ prefix. Font shrinks in the
+                    narrow lg band (2-col grid on a row layout) so 5-digit
+                    index levels like the Dow don't overflow the card. */}
                 <div className="text-3xl sm:text-4xl lg:text-2xl xl:text-4xl font-mono font-medium text-[#0a0b0d] tracking-tight mb-3 whitespace-nowrap">
-                  <span className="text-xl sm:text-2xl lg:text-lg xl:text-2xl mr-0.5 text-[#a8acb3]">$</span>
                   {fmtPrice(idx.price)}
                 </div>
 

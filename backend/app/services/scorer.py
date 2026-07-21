@@ -12,7 +12,7 @@ import json
 import logging
 from datetime import datetime, timezone
 
-from anthropic import AsyncAnthropic
+from app.services.anthropic_client import get_anthropic
 
 from app.config import settings
 
@@ -303,8 +303,7 @@ async def score_sentiment(ticker: str, signals: dict) -> dict:
         ai_insights = _FALLBACK_INSIGHTS.copy()
         try:
             prompt  = _build_narrative_prompt(ticker, asset_type, final_score, label, sub_scores, signals)
-            client  = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
-            message = await client.messages.create(
+            message = await get_anthropic().messages.create(
                 model="claude-haiku-4-5",
                 max_tokens=800,
                 messages=[{"role": "user", "content": prompt}],

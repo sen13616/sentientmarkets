@@ -10,7 +10,6 @@ interface InsightTabsProps {
   bearCase: string | null;
   whatToWatch: string | null;
   ticker: string;
-  signals: any;
 }
 
 const TABS = [
@@ -70,7 +69,6 @@ export default function InsightTabs({
   bearCase,
   whatToWatch,
   ticker,
-  signals,
 }: InsightTabsProps) {
   const [active, setActive] = useState<TabKey>('summary');
   const [deepContent, setDeepContent] = useState<Record<string, string>>({});
@@ -88,18 +86,11 @@ export default function InsightTabs({
     if (deepContent[key] || loading[key]) return;
     setLoading(prev => ({ ...prev, [key]: true }));
     try {
-      // Strip large arrays that add noise without analytical value
-      const { price_history, ...rest } = signals as any;
-      const trimmedSignals = {
-        ...rest,
-        news_sentiment: rest.news_sentiment
-          ? { ...rest.news_sentiment, articles: undefined }
-          : undefined,
-      };
+      // The backend rebuilds the signal payload server-side from the ticker.
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/deep-analysis`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ticker, tab: key, signals: trimmedSignals }),
+        body: JSON.stringify({ ticker, tab: key }),
       });
       const data = await res.json();
       setDeepContent(prev => ({ ...prev, [key]: data.content }));

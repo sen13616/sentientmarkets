@@ -8,17 +8,9 @@ import logging
 
 import yfinance as yf
 
-logger = logging.getLogger(__name__)
+from app.services.sources.yfinance import QUOTE_TYPE_TO_ASSET as _TYPE_TO_ASSET
 
-_TYPE_TO_ASSET = {
-    'EQUITY':       'stock',
-    'ETF':          'etf',
-    'INDEX':        'index',
-    'CRYPTOCURRENCY': 'crypto',
-    'FUTURE':       'commodity',
-    'CURRENCY':     'forex',
-    'MUTUALFUND':   'etf',
-}
+logger = logging.getLogger(__name__)
 
 
 async def search_tickers(query: str) -> list:

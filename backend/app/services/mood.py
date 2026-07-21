@@ -8,7 +8,7 @@ import json
 import logging
 from datetime import datetime, timezone
 
-from anthropic import AsyncAnthropic
+from app.services.anthropic_client import get_anthropic
 
 from app.config import settings
 from app.services.cache import get_cached, set_cached
@@ -259,8 +259,7 @@ TOP HEADLINES:
   {chr(10).join(f'- {h}' for h in snapshot.get('top_headlines', []) if h)}
 """
 
-        client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
-        response = await client.messages.create(
+        response = await get_anthropic().messages.create(
             model="claude-haiku-4-5",
             max_tokens=400,
             system=_SYSTEM_PROMPT,
@@ -299,14 +298,23 @@ async def refresh_mood() -> dict:
         and mood.get("rationale") == _FALLBACK_MOOD["rationale"]
     ):
         logger.warning("Mood generation fell back — not caching fallback mood")
+        # Short-lived backoff so an Anthropic outage doesn't re-run the full
+        # signal fan-out on every /api/mood request while mood:latest is empty.
+        await set_cached("mood:fallback", mood, ttl=120)
         return mood
 
     # Store latest (65 min TTL — longer than the 60 min refresh interval)
     await set_cached("mood:latest", mood, ttl=3900)
 
-    # Append to history (keep last 5 entries)
+    # Append to history (keep last 5 entries). Writers are serialized through
+    # coalesce("mood:refresh", ...) — route misses and the scheduler share the
+    # same key — so this read-modify-write cannot interleave; the timestamp
+    # guard additionally makes a back-to-back double refresh idempotent.
     history_raw = await get_cached("mood:history")
     history = history_raw if isinstance(history_raw, list) else []
+    if history and history[-1].get("timestamp") == mood.get("timestamp"):
+        logger.info("Mood history already has this tick — skipping append")
+        return mood
     history.append({
         "emotion":      mood.get("emotion"),
         "accent_color": mood.get("accent_color"),

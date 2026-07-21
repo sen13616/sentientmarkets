@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { getSentiment, getHomeData } from '@/lib/api';
+import { API_URL, getSentiment, getHomeData } from '@/lib/api';
+import { getAssetUrl, navigateToTicker as resolveTicker } from '@/lib/navigation';
 import styles from './page.module.css';
 
 interface SearchResult {
@@ -40,7 +41,6 @@ interface HeroSearchProps {
   onFocusModeChange?: (focused: boolean) => void;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const RECENT_KEY = 'sm_recent_searches';
 const MAX_RECENT = 5;
 const HOVER_DELAY_MS = 200;
@@ -48,10 +48,6 @@ const SEARCH_DEBOUNCE_MS = 300;
 const RESULT_LIMIT = 6;
 const TRENDING_DISPLAY_LIMIT = 3;
 const RECENT_DISPLAY_LIMIT = 3;
-
-function getAssetUrl(r: SearchResult): string {
-  return `/${r.asset_type || 'stock'}/${encodeURIComponent(r.ticker)}`;
-}
 
 export function moodColor(label: string | undefined | null): string {
   const l = (label || '').toLowerCase();
@@ -119,6 +115,10 @@ export default function HeroSearch({ onFocusModeChange }: HeroSearchProps) {
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const previewCache = useRef<Map<string, SentimentPreview>>(new Map());
+  // Mirrors previewTicker so async preview fetches can check the latest
+  // hovered ticker without calling setPreview inside a state updater
+  // (updaters must be pure).
+  const previewTickerRef = useRef<string | null>(null);
   const fetchSeqRef = useRef(0);
   const trendingFetchedRef = useRef<boolean>(false);
 
@@ -216,6 +216,7 @@ export default function HeroSearch({ onFocusModeChange }: HeroSearchProps) {
 
   // Hover/keyboard preview resolution: trending cache → previewCache → network.
   useEffect(() => {
+    previewTickerRef.current = previewTicker;
     clearTimeout(hoverTimerRef.current);
     if (!previewTicker) {
       setPreview(null);
@@ -252,10 +253,7 @@ export default function HeroSearch({ onFocusModeChange }: HeroSearchProps) {
           market_mood_label: data.market_mood_label,
         };
         previewCache.current.set(target, entry);
-        setPreviewTicker(curr => {
-          if (curr === target) setPreview(entry);
-          return curr;
-        });
+        if (previewTickerRef.current === target) setPreview(entry);
       } catch {
         // preview is optional — swallow and keep dropdown usable
       }
@@ -292,30 +290,14 @@ export default function HeroSearch({ onFocusModeChange }: HeroSearchProps) {
   }, [recordRecent, exitFocusMode, router]);
 
   const navigateToTicker = useCallback(async (input: string) => {
-    const ticker = input.trim().toUpperCase();
-    if (!ticker) return;
+    if (!input.trim()) return;
     exitFocusMode();
     setQuery('');
-    try {
-      const res = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(ticker)}`);
-      const data = await res.json();
-      const exact = data.results?.find(
-        (x: SearchResult) =>
-          x.ticker.toUpperCase() === ticker || (x.display_ticker ?? '').toUpperCase() === ticker
-      );
-      if (exact) {
-        recordRecent(exact);
-        router.push(getAssetUrl(exact));
-      } else if (data.results?.length > 0) {
-        const first: SearchResult = data.results[0];
-        recordRecent(first);
-        router.push(getAssetUrl(first));
-      } else {
-        router.push(`/stock/${ticker}`);
-      }
-    } catch {
-      router.push(`/stock/${ticker}`);
-    }
+    await resolveTicker(router, input, (match) => recordRecent({
+      ticker: match.ticker,
+      name: typeof match.name === 'string' ? match.name : match.ticker,
+      asset_type: match.asset_type ?? undefined,
+    }));
   }, [exitFocusMode, recordRecent, router]);
 
   const trimmedQuery = query.trim();

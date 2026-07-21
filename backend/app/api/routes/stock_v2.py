@@ -14,13 +14,16 @@ import asyncio
 import json
 import logging
 
-from anthropic import AsyncAnthropic
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
-from app.config import settings
+from app.services.ratelimit import rate_limit
+
 from app.services import sentiment_api
+from app.services.anthropic_client import get_anthropic
 from app.services.cache import get_cached, set_cached
 from app.services.sentiment_api import TickerNotFound, UpstreamUnavailable
+from app.services.sentiment_service import TICKER_RE
+from app.services.singleflight import get_or_build
 from app.services.sources.finnhub import get_company_news
 from app.services.sources.yfinance import get_quote
 from app.services.sentiment_stats import (
@@ -94,7 +97,7 @@ def _sector_context(overview: dict | None, ticker: str, sector: str | None, scor
 
 
 @router.get("/api/v2/stock/{ticker}")
-async def get_stock_composite(ticker: str):
+async def get_stock_composite(ticker: str, response: Response):
     ticker = ticker.upper()
     try:
         universe = await sentiment_api.get_universe()
@@ -103,6 +106,9 @@ async def get_stock_composite(ticker: str):
 
     meta = universe.get(ticker)
     if meta is None:
+        # Not-covered bodies must not inherit the middleware's public,max-age —
+        # a browser would keep showing "not covered" after the universe grows.
+        response.headers["Cache-Control"] = "no-store"
         return {"ticker": ticker, "in_universe": False}
 
     try:
@@ -125,6 +131,7 @@ async def get_stock_composite(ticker: str):
 
     status = sentiment.get("status")
     if status == "ticker_not_found":
+        response.headers["Cache-Control"] = "no-store"
         return {"ticker": ticker, "in_universe": False}
     if status == "temporarily_unavailable":
         raise HTTPException(
@@ -247,14 +254,7 @@ def _insight_prompt(ticker: str, name: str | None, sector: str | None,
     )
 
 
-@router.get("/api/v2/stock/{ticker}/insight")
-async def get_stock_insight(ticker: str):
-    ticker = ticker.upper()
-    cache_key = f"sapi:insight:{ticker}"
-    cached = await get_cached(cache_key)
-    if cached is not None:
-        return cached
-
+async def _build_insight(ticker: str) -> dict:
     try:
         universe = await sentiment_api.get_universe()
     except UpstreamUnavailable:
@@ -271,8 +271,8 @@ async def get_stock_insight(ticker: str):
     if status == "ticker_not_found":
         raise _NOT_FOUND
     if status is not None or sentiment.get("score") is None:
-        # No scored data this tick — nothing to interpret. Don't cache: the
-        # next tick may score it.
+        # No scored data this tick — nothing to interpret. Not cached (see
+        # cache_if below): the next tick may score it.
         return {"ticker": ticker, "insight": None}
 
     try:
@@ -283,8 +283,7 @@ async def get_stock_insight(ticker: str):
     sector_ctx = _sector_context(overview, ticker, sector, sentiment.get("score"))
 
     try:
-        client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
-        message = await client.messages.create(
+        message = await get_anthropic().messages.create(
             model="claude-haiku-4-5",
             max_tokens=300,
             messages=[{
@@ -299,8 +298,26 @@ async def get_stock_insight(ticker: str):
         logger.error("stock insight generation failed for %s: %s", ticker, exc)
         return {"ticker": ticker, "insight": None}
 
-    payload = {"ticker": ticker, "insight": insight, "generated_at": sentiment.get("timestamp")}
-    await set_cached(cache_key, payload, INSIGHT_TTL)
+    return {"ticker": ticker, "insight": insight, "generated_at": sentiment.get("timestamp")}
+
+
+@router.get(
+    "/api/v2/stock/{ticker}/insight",
+    dependencies=[Depends(rate_limit(20, 60, "insight"))],
+)
+async def get_stock_insight(ticker: str, response: Response):
+    ticker = ticker.upper()
+    # Coalesced: concurrent cold-cache requests share one Claude call. Only
+    # real insights are cached; null (no-score / Claude-failure) passes through.
+    payload = await get_or_build(
+        f"sapi:insight:{ticker}",
+        INSIGHT_TTL,
+        lambda: _build_insight(ticker),
+        cache_if=lambda v: v.get("insight") is not None,
+    )
+    if payload.get("insight") is None:
+        # Uncached negative — keep the browser from caching it for 300s too.
+        response.headers["Cache-Control"] = "no-store"
     return payload
 
 
@@ -311,6 +328,10 @@ QUOTE_NEG_TTL = 120  # brief shield when yfinance errors out
 @router.get("/api/v2/stock/{ticker}/quote")
 async def get_stock_quote(ticker: str):
     ticker = ticker.upper()
+    # No universe gate here (quotes serve non-universe assets too), so validate
+    # the shape before it becomes a yfinance call and an unbounded cache key.
+    if not TICKER_RE.fullmatch(ticker):
+        raise _NOT_FOUND
     cache_key = f"sapi:quote:{ticker}"
     cached = await get_cached(cache_key)
     if cached is not None:
@@ -348,14 +369,3 @@ async def get_stock_news(ticker: str):
     payload = {"ticker": ticker, "articles": articles[:9]}
     await set_cached(cache_key, payload, NEWS_TTL if articles else NEWS_NEG_TTL)
     return payload
-
-
-@router.get("/api/v2/market/overview")
-async def get_market_overview():
-    try:
-        overview = await sentiment_api.get_overview()
-    except UpstreamUnavailable:
-        raise _UNAVAILABLE
-    if overview is None:
-        return {"available": False}
-    return {"available": True, **overview}

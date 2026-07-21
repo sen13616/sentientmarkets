@@ -6,22 +6,17 @@ export type TapeItem = {
   positive: boolean | null; // null = neutral / no direction (e.g. VIX raw value)
 };
 
-const DEFAULT_TICKERS: TapeItem[] = [
-  { ticker: 'SPY',   change: '+1.24%', positive: true  },
-  { ticker: 'AAPL',  change: '+0.82%', positive: true  },
-  { ticker: 'TSLA',  change: '-3.14%', positive: false },
-  { ticker: 'NVDA',  change: '+4.60%', positive: true  },
-  { ticker: 'MSFT',  change: '+0.55%', positive: true  },
-  { ticker: 'AMZN',  change: '+1.18%', positive: true  },
-  { ticker: 'META',  change: '+0.38%', positive: true  },
-  { ticker: 'GOOGL', change: '-0.21%', positive: false },
-  { ticker: 'GME',   change: '+44.2%', positive: true  },
-  { ticker: 'RKLB',  change: '+9.1%',  positive: true  },
-  { ticker: 'VIX',   change: '18.87',  positive: null  },
-  { ticker: 'ASTS',  change: '-5.3%',  positive: false },
-];
+export default function TickerTape({ tickers }: { tickers: TapeItem[] }) {
+  // Real data only — while the feed loads, hold the band's height with an
+  // empty shell so the hero doesn't jump when items arrive.
+  if (tickers.length === 0) {
+    return (
+      <div className="overflow-hidden whitespace-nowrap border-t border-b border-[#dee1e6] bg-[#f7f7f7] py-3 select-none">
+        <span className="text-[0.75rem] opacity-0">·</span>
+      </div>
+    );
+  }
 
-export default function TickerTape({ tickers = DEFAULT_TICKERS }: { tickers?: TapeItem[] }) {
   // Duplicate for seamless infinite loop: CSS shifts -50% = back to visual start
   const doubled = [...tickers, ...tickers];
 

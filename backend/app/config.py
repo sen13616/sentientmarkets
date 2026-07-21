@@ -43,6 +43,7 @@ class Settings(BaseSettings):
             "https://sentientmarkets.vercel.app",
             "https://sentientmarkets-git-main-sen13616.vercel.app",
             "https://themarketmood.ai",
+            "https://www.themarketmood.ai",
         ]
 
 

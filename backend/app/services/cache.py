@@ -15,16 +15,22 @@ logger = logging.getLogger(__name__)
 _client: Optional[aioredis.Redis] = None
 
 
-def _get_client() -> aioredis.Redis:
+def get_client() -> aioredis.Redis:
     global _client
     if _client is None:
         _client = aioredis.from_url(settings.REDIS_URL, decode_responses=True)
     return _client
 
+
+_get_client = get_client
+
 async def get_cached(key: str) -> Optional[dict]:
     """Return the cached dict for *key*, or None if missing / Redis is down."""
     try:
         raw = await _get_client().get(key)
+        # Hit/miss observability: post-launch cache decisions should be driven
+        # by real hit rates, not guesses.
+        logger.info("cache %s key=%s", "miss" if raw is None else "hit", key)
         if raw is None:
             return None
         return json.loads(raw)

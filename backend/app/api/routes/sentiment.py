@@ -1,53 +1,49 @@
-from fastapi import APIRouter, HTTPException
-from app.services.cache import get_cached, set_cached
-from app.services.aggregator import gather_signals
-from app.services.sanitize import clean_json_floats
-from app.services.scorer import score_sentiment
-from app.services.sources.yfinance import get_price_history
+import logging
 
+from fastapi import APIRouter, Depends, HTTPException
+
+from app.services.ratelimit import rate_limit
+from app.services.sanitize import clean_json_floats
+from app.services.sentiment_service import (
+    SENTIMENT_TTL,
+    TICKER_RE,
+    InvalidTicker,
+    build_sentiment,
+    sentiment_key,
+)
+from app.services.singleflight import get_or_build
+
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
-CACHE_TTL = 3600  # 1 hour
 
-
-@router.get("/api/sentiment/{ticker}")
+@router.get(
+    "/api/sentiment/{ticker}",
+    dependencies=[Depends(rate_limit(20, 60, "sentiment"))],
+)
 async def get_sentiment(ticker: str):
     ticker = ticker.upper()
-    cache_key = f"sentiment:{ticker}"
+    not_found = HTTPException(
+        status_code=404,
+        detail={"error": "invalid_ticker", "message": f"Ticker {ticker} not found"},
+    )
+    if not TICKER_RE.fullmatch(ticker):
+        raise not_found
 
     try:
-        cached = await get_cached(cache_key)
-        if cached is not None:
-            cached["cached"] = True
-            # Sanitize on read too — heals entries cached before the NaN fix
-            # (json.dumps allowed NaN into Redis; the response encoder doesn't).
-            return clean_json_floats(cached)
-
-        signals = await gather_signals(ticker)
-
-        # Validate the ticker actually exists
-        yf_data = signals.get("yfinance", {})
-        has_price = yf_data.get("price_data", {}).get("current_price") is not None
-        has_name = bool(yf_data.get("company_name"))
-        if not yf_data or (not has_price and not has_name):
-            raise HTTPException(
-                status_code=404,
-                detail={"error": "invalid_ticker", "message": f"Ticker {ticker} not found"},
-            )
-
-        result = await score_sentiment(ticker, signals)
-
-        price_history = await get_price_history(ticker)
-        result["price_history"] = price_history
-
-        # Sanitize BEFORE caching so non-finite floats can neither 500 the
-        # response nor poison the cache for the full TTL.
-        result = clean_json_floats(result)
-
-        await set_cached(cache_key, result, CACHE_TTL)
-        return result
-
+        result = await get_or_build(
+            sentiment_key(ticker), SENTIMENT_TTL, lambda: build_sentiment(ticker)
+        )
+        # Sanitize on read too — heals entries cached before the NaN fix
+        # (json.dumps allowed NaN into Redis; the response encoder doesn't).
+        return clean_json_floats(result)
+    except InvalidTicker:
+        raise not_found
     except HTTPException:
         raise
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch sentiment for {ticker}: {exc}")
+    except Exception:
+        # Log the real error server-side; never leak internals to the client.
+        logger.exception("get_sentiment failed for %s", ticker)
+        raise HTTPException(
+            status_code=500, detail=f"Failed to fetch sentiment for {ticker}"
+        )

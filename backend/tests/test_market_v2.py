@@ -131,3 +131,53 @@ def test_route_null_level_when_index_unavailable(client, monkeypatch):
     r = client.get("/api/v2/market/sp500")
     assert r.status_code == 200
     assert r.json()["level"] is None  # null, never fabricated or zeroed
+
+
+# ── cache-hit path ───────────────────────────────────────────────────────────
+
+def test_cache_hit_heals_poisoned_nan_payload(client, monkeypatch):
+    """A pre-sanitizer blob with NaN/Inf in Redis must be healed on read —
+    FastAPI serializes with allow_nan=False, so an unhealed hit would 500."""
+    poisoned = {
+        "timestamp": "cached",
+        "stats": {"mean": 55.0, "stdev": float("nan")},
+        "level": {"value": float("inf"), "change": -10.0},
+    }
+
+    async def hit(key):
+        return poisoned
+
+    async def boom():
+        raise AssertionError("upstream must not be called on a cache hit")
+
+    monkeypatch.setattr(market_v2, "get_cached", hit)
+    monkeypatch.setattr(market_v2.sentiment_api, "get_overview", boom)
+
+    r = client.get("/api/v2/market/sp500")
+    assert r.status_code == 200
+    assert "NaN" not in r.text and "Infinity" not in r.text
+    d = r.json()
+    assert d["stats"] == {"mean": 55.0, "stdev": None}   # NaN -> null
+    assert d["level"] == {"value": None, "change": -10.0}  # Inf -> null
+    assert d["timestamp"] == "cached"
+
+
+def test_cache_hit_short_circuits_without_upstream_or_rewrite(client, monkeypatch):
+    cached_payload = {"timestamp": "cached", "universe_scored": 4, "level": None}
+
+    async def hit(key):
+        return cached_payload
+
+    async def boom():
+        raise AssertionError("upstream must not be called on a cache hit")
+
+    monkeypatch.setattr(market_v2, "get_cached", hit)
+    monkeypatch.setattr(market_v2.sentiment_api, "get_overview", boom)
+    monkeypatch.setattr(market_v2.sentiment_api, "get_universe", boom)
+    monkeypatch.setattr(market_v2.sentiment_api, "get_sentiment", boom)
+    monkeypatch.setattr(market_v2, "get_market_indices", boom)
+
+    r = client.get("/api/v2/market/sp500")
+    assert r.status_code == 200
+    assert r.json() == cached_payload
+    assert client.set_calls == []  # a hit is never re-cached

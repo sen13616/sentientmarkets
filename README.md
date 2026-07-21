@@ -50,22 +50,25 @@ Weight from any unavailable signal is redistributed proportionally across the re
 ```
 backend/                 FastAPI service (the scoring engine + API)
   app/
-    main.py              app, CORS, routers, 15-min mood scheduler
+    main.py              app, CORS, rate limits, routers, schedulers
     config.py            settings / env vars
     services/
       aggregator.py      concurrent signal collection
       scorer.py          deterministic scoring + Claude narrative
-      mood.py            overall-market mood (refreshed every 15 min)
+      mood.py            overall-market mood (refreshed every 60 min)
+      sentiment_service.py  shared v1 sentiment builder (invalid-ticker fast path)
+      singleflight.py    request coalescing for cold-cache misses
+      ratelimit.py       per-IP fixed-window rate limiting (Redis)
+      screener.py        scheduled S&P 500 sweep (every 15 min)
       sources/           one module per data provider
-    api/routes/          health · sentiment · home · search ·
-                         trending · mood · price_history · deep_analysis
+    api/routes/          health · sentiment · home · search · mood ·
+                         price_history · deep_analysis · stock_v2 · market_v2
 frontend/                Next.js 14 (App Router, TypeScript, Tailwind)
   app/                   pages + components; per-asset routes
                          (stock/etf/index/crypto/commodity/forex)
-                         all render through components/AssetPage.tsx
   lib/api.ts             typed client for the backend
-  lib/data/              static Dow 30 / Nasdaq 100 constituents
 data_validation/         standalone scripts to test each data source
+docs/                    external SentimentAPI contract docs
 agent/                   design-system, checklist & feature-spec docs
 ```
 
@@ -77,16 +80,25 @@ Base path `/api`:
 |--------|-------|-------------|
 | `GET`  | `/api/health` | Health check |
 | `GET`  | `/api/sentiment/{ticker}` | Full mood score + signals + narrative for a ticker |
-| `GET`  | `/api/home` | Home-page payload |
-| `GET`  | `/api/mood` | Overall market mood (cached, refreshed every 15 min) |
-| `GET`  | `/api/trending` | Trending tickers |
+| `GET`  | `/api/home` | Home-page payload (Fear & Greed, trending, news, indices) |
+| `GET`  | `/api/mood` | Overall market mood (cached, refreshed every 60 min) |
 | `GET`  | `/api/search?q=` | Ticker search |
 | `GET`  | `/api/price-history/{ticker}` | Price history series |
-| `POST` | `/api/deep-analysis` | Deeper on-demand analysis |
+| `POST` | `/api/deep-analysis` | Per-tab expanded narrative (signals rebuilt server-side) |
+| `GET`  | `/api/v2/stock/{ticker}` | Composite SentimentAPI payload for the light stock page |
+| `GET`  | `/api/v2/stock/{ticker}/history?days=` | Score history (7/30/90 days) |
+| `GET`  | `/api/v2/stock/{ticker}/insight` | Claude one-liner over the cached score |
+| `GET`  | `/api/v2/stock/{ticker}/quote` | Lightweight price quote |
+| `GET`  | `/api/v2/stock/{ticker}/news` | Company news (Finnhub) |
+| `GET`  | `/api/v2/market/screener` | Swept screener blob (scheduled writer only) |
+| `GET`  | `/api/v2/market/sp500` | S&P 500 breadth/dispersion payload |
+
+All routes are per-IP rate-limited; expensive routes (LLM-backed) carry
+tighter limits and Redis-coalesce concurrent cold-cache misses.
 
 ## Running locally
 
-### Backend (Python 3.10)
+### Backend (Python 3.12)
 
 ```bash
 cd backend
@@ -100,12 +112,13 @@ Environment variables (`backend/.env`):
 
 ```
 ALPHA_VANTAGE_API_KEY=
-NEWSAPI_KEY=
 FINNHUB_API_KEY=
 ANTHROPIC_API_KEY=          # for the narrative (Claude Haiku)
+SENTIMENT_API_BASE_URL=     # external SentimentAPI (docs/SENTIMENTAPI_CONTRACT.md)
+PRO_API_KEY=                # SentimentAPI pro Bearer key (stays server-side)
 REDIS_URL=redis://localhost:6379
 ENVIRONMENT=development
-CORS_ORIGINS=               # comma-separated; empty = localhost only
+CORS_ORIGINS=               # comma-separated; empty = default deployed origins
 ```
 
 ### Frontend (Next.js)
@@ -130,4 +143,4 @@ NEXT_PUBLIC_API_URL=http://localhost:8080
 ## Tech stack
 
 **Backend:** FastAPI · APScheduler · Anthropic (Claude Haiku) · yfinance · pytrends · pandas/numpy · Redis
-**Frontend:** Next.js 14 · React 18 · TypeScript · Tailwind CSS · Recharts / Chart.js · Framer Motion
+**Frontend:** Next.js 14 · React 18 · TypeScript · Tailwind CSS · Chart.js · Framer Motion

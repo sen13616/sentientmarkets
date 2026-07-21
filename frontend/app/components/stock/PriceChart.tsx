@@ -58,6 +58,13 @@ export default function PriceChart({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef  = useRef<any>(null);
 
+  // Sequence counter so a slow older period fetch can never land after a
+  // newer one (pill and data always commit together — see switchRange in
+  // StockSentimentPage for the same pattern).
+  const periodSeqRef = useRef(0);
+  // Per-period cache so revisiting a period doesn't refetch.
+  const periodCacheRef = useRef<Record<string, { dates: string[]; stockPrices: number[]; indexPrices: number[] }>>({});
+
   const [activePeriod, setActivePeriod] = useState<Period>('3M');
   const [showIndex, setShowIndex] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -198,15 +205,23 @@ export default function PriceChart({
 
   const handlePeriodChange = useCallback(async (period: Period) => {
     if (period === activePeriod) return;
-    setActivePeriod(period);
+    const seq = ++periodSeqRef.current;
 
     // 3M data is already loaded from the server
     if (period === '3M') {
+      setActivePeriod(period);
       setChartData({
         dates: initialDates,
         stockPrices: initialStockPrices,
         indexPrices: initialIndexPrices,
       });
+      return;
+    }
+
+    const cached = periodCacheRef.current[period];
+    if (cached) {
+      setActivePeriod(period);
+      setChartData(cached);
       return;
     }
 
@@ -217,15 +232,21 @@ export default function PriceChart({
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      setChartData({
+      const next = {
         dates: data.dates ?? [],
         stockPrices: data.stock_prices ?? [],
         indexPrices: data.index_prices ?? [],
-      });
+      };
+      periodCacheRef.current[period] = next;
+      // Only the latest request may commit — pill and data flip together.
+      if (seq === periodSeqRef.current) {
+        setActivePeriod(period);
+        setChartData(next);
+      }
     } catch {
-      // Keep existing data on error
+      // fetch failed — pill and chart both stay on the previous period
     } finally {
-      setLoading(false);
+      if (seq === periodSeqRef.current) setLoading(false);
     }
   }, [activePeriod, ticker, initialDates, initialStockPrices, initialIndexPrices]);
 

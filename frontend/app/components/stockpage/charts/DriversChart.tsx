@@ -61,25 +61,31 @@ export default function DriversChart({ history }: { history: HistoryPayload }) {
 
   const { hover, handlers } = useChartHover({ svgRef, xs: geom.hoverXs, viewBoxWidth: W });
 
+  // Path strings are O(points × channels) string builds — memoized on the
+  // data inputs (never hover state) so hover ticks don't rebuild the stack.
+  const { areas, outlines } = useMemo(() => {
+    const { contribs, s } = geom;
+    const areas: JSX.Element[] = [];
+    const outlines: JSX.Element[] = [];
+    segments.forEach(([a, b], si) => {
+      if (b <= a) return; // an area needs at least two points
+      const base = new Array(points.length).fill(0);
+      for (const key of CHANNEL_ORDER) {
+        let d = '';
+        for (let i = a; i <= b; i++) d += `${i === a ? 'M' : 'L'}${s.x(i).toFixed(1)} ${s.y(base[i] + (contribs[i][key] ?? 0)).toFixed(1)} `;
+        for (let i = b; i >= a; i--) d += `L${s.x(i).toFixed(1)} ${s.y(base[i]).toFixed(1)} `;
+        areas.push(<path key={`${si}-${key}`} d={`${d}Z`} fill={COLORS[key]} opacity={key === 'market' ? 0.92 : 1} />);
+        for (let i = a; i <= b; i++) base[i] += contribs[i][key] ?? 0;
+      }
+      let outline = '';
+      for (let i = a; i <= b; i++) outline += `${i === a ? 'M' : 'L'}${s.x(i).toFixed(1)} ${s.y(base[i]).toFixed(1)} `;
+      outlines.push(<path key={`o-${si}`} d={outline} fill="none" stroke="#0a0b0d" strokeWidth={1} opacity={0.35} />);
+    });
+    return { areas, outlines };
+  }, [geom, segments, points]);
+
   if (points.length === 0) return null;
   const { contribs, totals, s, grid } = geom;
-
-  const areas: JSX.Element[] = [];
-  const outlines: JSX.Element[] = [];
-  segments.forEach(([a, b], si) => {
-    if (b <= a) return; // an area needs at least two points
-    const base = new Array(points.length).fill(0);
-    for (const key of CHANNEL_ORDER) {
-      let d = '';
-      for (let i = a; i <= b; i++) d += `${i === a ? 'M' : 'L'}${s.x(i).toFixed(1)} ${s.y(base[i] + (contribs[i][key] ?? 0)).toFixed(1)} `;
-      for (let i = b; i >= a; i--) d += `L${s.x(i).toFixed(1)} ${s.y(base[i]).toFixed(1)} `;
-      areas.push(<path key={`${si}-${key}`} d={`${d}Z`} fill={COLORS[key]} opacity={key === 'market' ? 0.92 : 1} />);
-      for (let i = a; i <= b; i++) base[i] += contribs[i][key] ?? 0;
-    }
-    let outline = '';
-    for (let i = a; i <= b; i++) outline += `${i === a ? 'M' : 'L'}${s.x(i).toFixed(1)} ${s.y(base[i]).toFixed(1)} `;
-    outlines.push(<path key={`o-${si}`} d={outline} fill="none" stroke="#0a0b0d" strokeWidth={1} opacity={0.35} />);
-  });
 
   const hp = hover ? contribs[hover.i] : null;
 
