@@ -2,10 +2,19 @@ import Link from 'next/link';
 import styles from '../page.module.css';
 import Nav from '../components/Nav';
 import Reveal from '../components/Reveal';
+import DemoKeyProvider from './DemoKeyProvider';
+import DemoKeyCard from './DemoKeyCard';
+import LiveCurl from './LiveCurl';
+import ContactSection from './ContactSection';
 
 export const metadata = {
   title: 'API Access — SentientMarkets',
 };
+
+// Gate (APIACESSPAGE.md §2): the demo-key flow stays behind this flag until
+// rate limiting, storage remediation, and the cleanup job are all verified.
+// Flipping live is an env change + redeploy, never a code change.
+const LIVE = process.env.NEXT_PUBLIC_API_ACCESS_LIVE === 'true';
 
 const TIER_ROWS: { feature: string; free: boolean; pro: boolean }[] = [
   { feature: 'Composite score (0–100), label, confidence', free: true, pro: true },
@@ -61,24 +70,9 @@ const ENDPOINTS: { path: string; tier: string; title: string; desc: string }[] =
   },
 ];
 
-const FREE_RESPONSE = `{
-  "ticker": "AAPL",
-  "score": 72,
-  "score_change_1d": 3.25,
-  "score_change_1d_pct": 4.73,
-  "label": "Bullish",
-  "confidence": 81,
-  "timestamp": "2026-04-24T14:32:00Z",
-  "cache_age_seconds": 480,
-  "market_hours": {
-    "is_open": true,
-    "next_open": "2026-04-27T14:30:00Z",
-    "last_close": "2026-04-24T21:00:00Z"
-  }
-}`;
-
 export default function ApiAccessPage() {
   return (
+    <DemoKeyProvider enabled={LIVE}>
     <div className={`${styles.home} home-light min-h-screen`}>
       <Nav variant="light" />
 
@@ -92,7 +86,7 @@ export default function ApiAccessPage() {
                 API Access
               </span>
               <span className="text-[10px] font-semibold uppercase tracking-[0.06em] bg-[#0052ff] text-white px-2.5 py-1 rounded-full">
-                Coming soon
+                {LIVE ? 'Free tier live · Pro coming soon' : 'Coming soon'}
               </span>
             </div>
             <h1 className={`text-4xl md:text-[44px] font-normal text-[#5b616e] leading-[1.1] tracking-[-1px] mb-6 ${styles.heroFade1}`}>
@@ -105,12 +99,16 @@ export default function ApiAccessPage() {
               research, screeners, and apps.
             </p>
             <div className={styles.heroFade2}>
-              <a
-                href="mailto:aayudh.sen@gmail.com?subject=Notify%20me%20when%20API%20keys%20open%20up"
-                className="inline-block bg-[#0052ff] hover:bg-[#003ecc] text-white px-6 py-3 rounded-full text-sm font-semibold transition-all active:scale-95"
-              >
-                Get notified when keys open up →
-              </a>
+              {LIVE ? (
+                <DemoKeyCard />
+              ) : (
+                <a
+                  href="mailto:aayudh.sen@gmail.com?subject=Notify%20me%20when%20API%20keys%20open%20up"
+                  className="inline-block bg-[#0052ff] hover:bg-[#003ecc] text-white px-6 py-3 rounded-full text-sm font-semibold transition-all active:scale-95"
+                >
+                  Get notified when keys open up →
+                </a>
+              )}
             </div>
           </section>
 
@@ -126,7 +124,9 @@ export default function ApiAccessPage() {
               <Reveal className="min-w-0">
                 <ol className="flex flex-col gap-5">
                   {[
-                    ['Get your key', 'Every user receives a personal API key (format: sk-sm-…). It’s shown once at creation — we store only a hash.'],
+                    LIVE
+                      ? ['Get your key', 'A free key (format: sk-sm-free-…) is provisioned to this browser automatically — no signup, no email. It’s saved locally and shown in the card above. Pro keys will be shown once at creation — we store only a hash.']
+                      : ['Get your key', 'Every user receives a personal API key (format: sk-sm-…). It’s shown once at creation — we store only a hash.'],
                     ['Call the API', 'One HTTPS request with your key in the Authorization header. That’s the whole integration.'],
                     ['Get JSON back', 'Pre-computed scores served from cache — responses are fast and never trigger heavy computation. Typical response time is a few hundred milliseconds, dominated by network distance, not processing.'],
                   ].map(([step, desc], i) => (
@@ -149,24 +149,7 @@ export default function ApiAccessPage() {
               </Reveal>
 
               <Reveal delay={0.08} className="min-w-0">
-                <div className="bg-[#0a0b0d] rounded-xl overflow-hidden">
-                  <div className="flex items-center gap-1.5 px-4 py-3 border-b border-white/10">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#cf202f]/60" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#f5a623]/60" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#05b169]/60" />
-                    <span className="ml-3 text-[10px] font-mono text-white/40">terminal</span>
-                  </div>
-                  <div className="p-4 overflow-x-auto">
-                    <pre className="font-mono text-[11.5px] leading-[1.6] text-white/80 whitespace-pre">
-{`$ curl -H "Authorization: Bearer sk-sm-your-key" \\
-    https://sentimentapi-p.up.railway.app/v1/sentiment/AAPL
-`}
-                      <span className="text-white/50">{FREE_RESPONSE.split('"score": 72')[0]}</span>
-                      <span className="text-[#4ade80] font-semibold">&quot;score&quot;: 72</span>
-                      <span className="text-white/50">{FREE_RESPONSE.split('"score": 72')[1]}</span>
-                    </pre>
-                  </div>
-                </div>
+                <LiveCurl />
               </Reveal>
             </div>
           </section>
@@ -280,7 +263,9 @@ export default function ApiAccessPage() {
                 {[
                   ['Rate limits', '10 requests/min (Free) and 600 requests/min (Pro), enforced per key per rolling minute. Exceeding it returns HTTP 429 — back off and retry after the minute window.'],
                   ['Coverage', 'US-listed S&P 500 equities (502 tickers). Unsupported tickers return a clean ticker_not_found response, and newly supported tickers return insufficient_data until enough history accumulates — the API never guesses.'],
-                  ['Keys are secret', 'Treat sk-sm-… like a password. It’s shown once at creation and cannot be recovered — only regenerated.'],
+                  LIVE
+                    ? ['Keys: demo vs Pro', 'Your demo key is a sandbox credential — safe to display on this page, stored in your browser. Pro keys are different: treat them like passwords. They’re shown once at creation and cannot be recovered — only regenerated.']
+                    : ['Keys are secret', 'Treat sk-sm-… like a password. It’s shown once at creation and cannot be recovered — only regenerated.'],
                   ['Errors are predictable', '401 (bad or missing key), 403 (endpoint needs Pro), 429 (rate limit), 500 (our fault) — all with JSON error bodies.'],
                 ].map(([title, desc]) => (
                   <div key={title} className="bg-white border border-[#dee1e6] rounded-xl p-5">
@@ -289,6 +274,18 @@ export default function ApiAccessPage() {
                   </div>
                 ))}
               </div>
+            </Reveal>
+          </section>
+
+          {/* CONTACT */}
+          <section className="py-16 border-t border-[#eef0f3]">
+            <Reveal>
+              <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-3">Get in touch</div>
+              <p className="text-sm text-[#5b616e] leading-relaxed max-w-xl mb-6">
+                Questions about the API, an integration you&apos;re planning, or interest in Pro —
+                send a message and it lands straight in the owner&apos;s inbox.
+              </p>
+              <ContactSection />
             </Reveal>
           </section>
 
@@ -306,5 +303,6 @@ export default function ApiAccessPage() {
         <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7c828a]">© 2026 · Not financial advice.</div>
       </footer>
     </div>
+    </DemoKeyProvider>
   );
 }

@@ -14,6 +14,12 @@ class Settings(BaseSettings):
     SENTIMENT_API_BASE_URL: str = "https://sentimentapi-p.up.railway.app"
     PRO_API_KEY: str = ""
     REDIS_URL: str = "redis://localhost:6379"
+    # Contact form (api/routes/contact.py). RESEND_API_KEY is server-side
+    # only — it must never reach the client. The route refuses to send and
+    # returns 502 when RESEND_API_KEY or CONTACT_INBOX_EMAIL is empty.
+    RESEND_API_KEY: str = ""
+    RESEND_FROM: str = "onboarding@resend.dev"  # verified sender post-domain-cutover
+    CONTACT_INBOX_EMAIL: str = ""
     ENVIRONMENT: str = "development"
     # Comma-separated list of allowed CORS origins, e.g.:
     # "https://themarketmood.ai,https://www.themarketmood.ai"

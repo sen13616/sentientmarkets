@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from app.api.routes import health, sentiment, home, search
+from app.api.routes.contact import router as contact_router
 from app.api.routes.deep_analysis import router as deep_analysis_router
 from app.api.routes.price_history import router as price_history_router
 from app.api.routes.mood import router as mood_router
@@ -124,3 +125,5 @@ app.include_router(price_history_router, dependencies=_CHEAP)
 app.include_router(mood_router, dependencies=_CHEAP)
 app.include_router(stock_v2_router, dependencies=_CHEAP)
 app.include_router(market_v2_router, dependencies=_CHEAP)
+# Sends email — tight per-IP cap lives on the route itself (5/hour).
+app.include_router(contact_router)

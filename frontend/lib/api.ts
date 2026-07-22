@@ -2,6 +2,12 @@
 // rather than re-deriving it. 8080 matches the README's local backend port.
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
+// External SentimentAPI base. The browser calls its /v1/demo-key mint
+// endpoint directly (not through our backend) — the mint's origin-allowlist
+// protection checks the browser's Origin header, which a proxy would hide.
+export const SENTIMENT_API_BASE =
+  process.env.NEXT_PUBLIC_SENTIMENT_API_BASE || 'https://sentimentapi-p.up.railway.app';
+
 /* Module-level memo for the market-wide payloads (home, mood) that several
    components fetch on every mount. Caching the *promise* both dedupes
    concurrent callers and reuses the result across client-side navigations
