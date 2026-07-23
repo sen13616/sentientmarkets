@@ -31,21 +31,21 @@ export default function LiveCurl() {
   const key = status === 'ready' && apiKey ? apiKey : 'sk-sm-your-key';
 
   return (
-    <div className="bg-[#0a0b0d] rounded-xl overflow-hidden">
-      <div className="flex items-center gap-1.5 px-4 py-3 border-b border-white/10">
+    <div className="bg-white border border-[#dee1e6] rounded-xl overflow-hidden">
+      <div className="flex items-center gap-1.5 px-4 py-3 bg-[#f7f7f7] border-b border-[#dee1e6]">
         <span className="w-2.5 h-2.5 rounded-full bg-[#cf202f]/60" />
         <span className="w-2.5 h-2.5 rounded-full bg-[#f5a623]/60" />
         <span className="w-2.5 h-2.5 rounded-full bg-[#05b169]/60" />
-        <span className="ml-3 text-[10px] font-mono text-white/40">terminal</span>
+        <span className="ml-3 text-[10px] font-mono text-[#7c828a]">terminal</span>
       </div>
       <div className="p-4 overflow-x-auto">
-        <pre className="font-mono text-[11.5px] leading-[1.6] text-white/80 whitespace-pre">
+        <pre className="font-mono text-[11px] leading-[1.6] text-[#0a0b0d] whitespace-pre">
 {`$ curl -H "Authorization: Bearer ${key}" \\
     ${SENTIMENT_API_BASE}/v1/sentiment/AAPL
 `}
-          <span className="text-white/50">{FREE_RESPONSE.split('"score": 72')[0]}</span>
-          <span className="text-[#4ade80] font-semibold">&quot;score&quot;: 72</span>
-          <span className="text-white/50">{FREE_RESPONSE.split('"score": 72')[1]}</span>
+          <span className="text-[#5b616e]">{FREE_RESPONSE.split('"score": 72')[0]}</span>
+          <span className="text-[#05b169] font-semibold">&quot;score&quot;: 72</span>
+          <span className="text-[#5b616e]">{FREE_RESPONSE.split('"score": 72')[1]}</span>
         </pre>
       </div>
     </div>

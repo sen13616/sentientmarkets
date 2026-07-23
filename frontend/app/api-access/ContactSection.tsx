@@ -50,7 +50,7 @@ export default function ContactSection() {
 
   if (state === 'sent') {
     return (
-      <div className="bg-white border border-[#dee1e6] rounded-xl p-6 max-w-xl">
+      <div className="bg-white border border-[#dee1e6] rounded-xl p-6 max-w-xl mx-auto text-center">
         <div className="text-sm font-semibold text-[#05b169] mb-1.5">Message sent.</div>
         <p className="text-xs text-[#5b616e] leading-relaxed">
           Replies go straight to your inbox — check {email || 'your email'} in the next day or two.
@@ -60,7 +60,7 @@ export default function ContactSection() {
   }
 
   return (
-    <form onSubmit={submit} className="bg-white border border-[#dee1e6] rounded-xl p-6 max-w-xl">
+    <form onSubmit={submit} className="bg-white border border-[#dee1e6] rounded-xl p-6 max-w-xl mx-auto">
       <label className="block text-xs font-semibold text-[#0a0b0d] mb-1.5" htmlFor="contact-email">
         Your email
       </label>
@@ -100,7 +100,7 @@ export default function ContactSection() {
         className="absolute -left-[9999px] h-0 w-0 opacity-0"
       />
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col items-center gap-3">
         <button
           type="submit"
           disabled={state === 'sending'}

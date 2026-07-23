@@ -4,7 +4,9 @@ import Nav from '../components/Nav';
 import Reveal from '../components/Reveal';
 import DemoKeyProvider from './DemoKeyProvider';
 import DemoKeyCard from './DemoKeyCard';
+import GateCanvas from './GateCanvas';
 import LiveCurl from './LiveCurl';
+import PythonQuickstart from './PythonQuickstart';
 import ContactSection from './ContactSection';
 
 export const metadata = {
@@ -80,7 +82,9 @@ export default function ApiAccessPage() {
         <div className="mx-auto w-full max-w-[1200px] pb-24">
 
           {/* HERO */}
-          <section className="py-20 border-b border-[#eef0f3]">
+          <section className="relative overflow-hidden py-20 border-b border-[#eef0f3]">
+            <GateCanvas />
+            <div className="relative z-[2]">
             <div className={`flex items-center gap-3 mb-6 ${styles.heroFade0}`}>
               <span className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a]">
                 API Access
@@ -109,6 +113,15 @@ export default function ApiAccessPage() {
                   Get notified when keys open up →
                 </a>
               )}
+              <a
+                href="https://github.com/sen13616/sentientmarkets-api"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-4 bg-[#0052ff] hover:bg-[#003ecc] text-white px-6 py-3 rounded-full text-sm font-semibold transition-all active:scale-95"
+              >
+                View on GitHub ↗
+              </a>
+            </div>
             </div>
           </section>
 
@@ -120,7 +133,9 @@ export default function ApiAccessPage() {
             {/* min-w-0 on the columns: grid items default to min-width auto,
                 so the terminal's unwrappable curl line would otherwise force
                 both columns wider than a phone viewport. */}
-            <div className="grid md:grid-cols-2 gap-6 items-start">
+            {/* 2fr/3fr: the terminal needs ~640px so the curl line (with a
+                full-length demo key) fits without a horizontal scrollbar. */}
+            <div className="grid md:grid-cols-[2fr_3fr] gap-6 md:gap-12 items-start">
               <Reveal className="min-w-0">
                 <ol className="flex flex-col gap-5">
                   {[
@@ -152,6 +167,18 @@ export default function ApiAccessPage() {
                 <LiveCurl />
               </Reveal>
             </div>
+          </section>
+
+          {/* PYTHON QUICKSTART */}
+          <section className="py-16 border-b border-[#eef0f3]">
+            <Reveal>
+              <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-3">Try it in Python</div>
+              <p className="text-sm text-[#5b616e] leading-relaxed max-w-xl mb-8">
+                A complete script with your key already in it — copy the file, paste it into your
+                editor, run it. Live sentiment in your terminal in under a minute, no installs.
+              </p>
+              <PythonQuickstart />
+            </Reveal>
           </section>
 
           {/* TIERS */}
@@ -277,15 +304,46 @@ export default function ApiAccessPage() {
             </Reveal>
           </section>
 
-          {/* CONTACT */}
+          {/* CONTACT + GITHUB */}
           <section className="py-16 border-t border-[#eef0f3]">
             <Reveal>
-              <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-3">Get in touch</div>
-              <p className="text-sm text-[#5b616e] leading-relaxed max-w-xl mb-6">
-                Questions about the API, an integration you&apos;re planning, or interest in Pro —
-                send a message and it lands straight in the owner&apos;s inbox.
-              </p>
-              <ContactSection />
+              {/* Two-row grid: headings share row 1, cards share row 2 — the
+                  GitHub card's top AND bottom align with the contact card
+                  even though the intros differ in line count. */}
+              <div className="grid md:grid-cols-2 md:grid-rows-[auto_1fr] gap-x-10">
+                <div className="text-center md:col-start-1 md:row-start-1">
+                  <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-3">Get in touch</div>
+                  <p className="text-sm text-[#5b616e] leading-relaxed max-w-xl mx-auto mb-6">
+                    Questions about the API, an integration you&apos;re planning, or interest in Pro —
+                    send a message and it lands straight in the owner&apos;s inbox.
+                  </p>
+                </div>
+                <div className="md:col-start-1 md:row-start-2">
+                  <ContactSection />
+                </div>
+                <div className="text-center mt-10 md:mt-0 md:col-start-2 md:row-start-1">
+                  <div className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#7c828a] mb-3">See the GitHub</div>
+                  <p className="text-sm text-[#5b616e] leading-relaxed max-w-xl mx-auto mb-6">
+                    The code behind the API — examples, clients, and issues. Star it, fork it, or
+                    file a bug.
+                  </p>
+                </div>
+                <div className="md:col-start-2 md:row-start-2 flex">
+                  <div className="bg-white border border-[#dee1e6] rounded-xl p-6 w-full max-w-xl mx-auto text-center flex-1 flex flex-col items-center justify-center">
+                    <a
+                      href="https://github.com/sen13616/sentientmarkets-api"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block bg-[#0052ff] hover:bg-[#003ecc] text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all active:scale-95"
+                    >
+                      View on GitHub ↗
+                    </a>
+                    <p className="text-xs text-[#5b616e] leading-relaxed mt-3">
+                      github.com/sen13616/sentientmarkets-api — opens in a new tab.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </Reveal>
           </section>
 
