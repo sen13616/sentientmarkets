@@ -7,7 +7,11 @@ import { useEffect, useRef } from 'react';
    Particles sampled on the surface by ray-bisection from the centre.
    Beads flow across the surface, the heart spins slowly around the
    vertical axis, beats (lub-dub scale pulse), repels from the cursor,
-   and explodes outward as the user scrolls. All constants are final. */
+   and explodes outward as the user scrolls. Twice per revolution, as the
+   spin passes the heart's side-on profile, the beads unwind into a
+   full-width rolling double-helix (DNA) wave — green strand vs red
+   strand, the market's mood entwined — then wind back into the heart.
+   All constants are final. */
 
 type Bead = {
   u: number;      // azimuth on the surface
@@ -20,6 +24,10 @@ type Bead = {
   ox: number;     // cursor-repulsion offset (screen px)
   oy: number;
   speed: number;
+  hs: number;     // helix: 0..1 position along the horizontal axis
+  hp: number;     // helix: −1..1 radius/thickness jitter
+  sp: number;     // helix: strand phase — 0 (green) | π (red)
+  rt: number;     // helix: rung chord param, −0.85..0.85 (0 = strand bead)
 };
 
 export default function HeartCanvas() {
@@ -126,7 +134,8 @@ export default function HeartCanvas() {
     const GREENS = [[5, 177, 105], [62, 207, 142], [16, 200, 120], [88, 220, 160]];
     const REDS = [[224, 85, 99], [236, 64, 79], [240, 110, 120], [220, 50, 66]];
     for (let k = 0; k < N; k++) {
-      const rgb = Math.random() < 0.5
+      const isGreen = Math.random() < 0.5;
+      const rgb = isGreen
         ? GREENS[Math.floor(Math.random() * GREENS.length)]
         : REDS[Math.floor(Math.random() * REDS.length)];
       pts.push({
@@ -139,6 +148,12 @@ export default function HeartCanvas() {
         aJit: 0.65 + Math.random() * 0.7,
         ox: 0, oy: 0,
         speed: 0.8 + Math.random() * 0.6,
+        // helix params are frozen at init — NOT derived from u/v, which the
+        // surface drift mutates every frame (the helix must never reshuffle)
+        hs: Math.random(),
+        hp: Math.random() * 2 - 1,
+        sp: isGreen ? 0 : Math.PI,
+        rt: Math.random() < 0.12 ? Math.random() * 1.7 - 0.85 : 0,
       });
     }
 
@@ -183,9 +198,20 @@ export default function HeartCanvas() {
       const th = reduce ? 0.6 : t * 0.11;      // horizontal spin (very slow)
       const c = Math.cos(th), s = Math.sin(th);
       const sc = Math.min(W, H) * 0.34;        // heart size on screen
-      const bs = reduce ? 1 : beat(t);         // beat scale
+      /* morph m: heart ↔ DNA helix, keyed to the spin. The heart is thin
+         along body-y, so it is side-on at th ≡ π/2 (mod π) — one cycle per
+         half-revolution (~28.6s). tri ∈ [0.4, 0.6] is the transition band:
+         ~11.4s dwell in each state, ~2.9s eased transitions, exact 50/50. */
+      const cyc = (th / Math.PI) % 1;          // 0 = face-on, 0.5 = side-on
+      const tri = 1 - Math.abs(2 * cyc - 1);
+      const m = reduce ? 0 : ease(Math.min(Math.max((tri - 0.4) / 0.2, 0), 1));
+      const bs = reduce ? 1 : 1 + (beat(t) - 1) * (1 - m);  // beat fades as helix forms
       const p = ease(prog), spread = 3.2;
       const cx = W / 2, cy = H * 0.5;          // true centre of the hero
+      /* helix constants (screen space — spans full W, immune to spin/tilt) */
+      const R = sc * 0.5;                      // strand radius
+      const TWX = Math.PI * 2 * 2.5;           // 2.5 twists across the screen
+      const roll = t * 0.6;                    // roll about the axis (~10.5s/turn)
       for (const q of pts) {
         // magic currents: drift each bead along the surface via a gentle flow field
         if (!reduce && p < 0.98) {
@@ -193,19 +219,44 @@ export default function HeartCanvas() {
           q.v += 0.0010 * Math.sin(q.u * 1.7 - t * 0.21 + q.seed * 2.0) * q.drift;
           if (q.v < 0.03) { q.v = 0.06 - q.v; } else if (q.v > Math.PI - 0.03) { q.v = 2 * (Math.PI - 0.03) - q.v; }
         }
-        const sv = Math.sin(q.v), cv = Math.cos(q.v);
-        const rr = lutR(q.v, q.u);
-        const bx = rr * sv * Math.cos(q.u), by = rr * sv * Math.sin(q.u), bz = rr * cv - zMid;
-        // explode: push outward along the bead's own radial
-        const bm = Math.hypot(bx, by, bz) || 1;
-        const px = bx + (bx / bm) * p * spread * q.speed,
-              py = by + (by / bm) * p * spread * q.speed,
-              pz = bz + (bz / bm) * p * spread * q.speed;
-        // spin around vertical (z) axis
-        const x = px * c - py * s, y = px * s + py * c, z = pz;
-        // slight tilt around x for a nicer 3/4 view
-        const z2 = z * COS_T - y * SIN_T, y2 = z * SIN_T + y * COS_T;
-        const X0 = cx + x * sc * bs, Y0 = cy - z2 * sc * bs;
+        let Xh = 0, Yh = 0, dh = 0;            // heart endpoint (skip at full helix)
+        if (m < 1) {
+          const sv = Math.sin(q.v), cv = Math.cos(q.v);
+          const rr = lutR(q.v, q.u);
+          const bx = rr * sv * Math.cos(q.u), by = rr * sv * Math.sin(q.u), bz = rr * cv - zMid;
+          // explode: push outward along the bead's own radial
+          const bm = Math.hypot(bx, by, bz) || 1;
+          const px = bx + (bx / bm) * p * spread * q.speed,
+                py = by + (by / bm) * p * spread * q.speed,
+                pz = bz + (bz / bm) * p * spread * q.speed;
+          // spin around vertical (z) axis
+          const x = px * c - py * s, y = px * s + py * c, z = pz;
+          // slight tilt around x for a nicer 3/4 view
+          const z2 = z * COS_T - y * SIN_T, y2 = z * SIN_T + y * COS_T;
+          Xh = cx + x * sc * bs; Yh = cy - z2 * sc * bs;
+          dh = (y2 + 1.4) / 2.8;               // 0 back → 1 front
+        }
+        let Xw = 0, Yw = 0, dw = 0;            // helix endpoint (skip at full heart)
+        if (m > 0) {
+          const ang = q.hs * TWX + q.sp + roll;
+          Xw = (-0.05 + 1.1 * q.hs) * W;       // axis bleeds past both edges
+          if (q.rt !== 0) {
+            // rung: sits on the chord between strands — green phase for both
+            // endpoints (own phase would fold rungs onto the strands)
+            const angG = ang - q.sp;
+            Yw = cy + Math.cos(angG) * R * q.rt;
+            dw = (Math.sin(angG) * q.rt + 1) / 2;
+          } else {
+            Yw = cy + Math.cos(ang) * R * (1 + q.hp * 0.08) + q.hp * 5;
+            dw = (Math.sin(ang) + 1) / 2;
+          }
+          // scroll explosion: radial from screen centre, heart-matched magnitude
+          const ex = Xw - cx, ey = Yw - cy, em = Math.hypot(ex, ey) || 1;
+          Xw += (ex / em) * p * spread * q.speed * sc;
+          Yw += (ey / em) * p * spread * q.speed * sc;
+        }
+        const X0 = Xh + (Xw - Xh) * m, Y0 = Yh + (Yw - Yh) * m;
+        const depth = dh + (dw - dh) * m;      // 0 back → 1 front
         // cursor repulsion (screen space): push away inside radius, spring back
         let tx = 0, ty = 0;
         const ddx = X0 - mx, ddy = Y0 - my, d = Math.hypot(ddx, ddy);
@@ -215,7 +266,6 @@ export default function HeartCanvas() {
         }
         q.ox += (tx - q.ox) * 0.14; q.oy += (ty - q.oy) * 0.14;   // spring toward target
         const X = X0 + q.ox, Y = Y0 + q.oy;
-        const depth = (y2 + 1.4) / 2.8;        // 0 back → 1 front
         const alpha = (0.45 + depth * 0.35) * Math.min(q.aJit, 1.1) * (1 - p * 0.9);
         if (alpha <= 0.01) continue;
         ctx!.beginPath();
